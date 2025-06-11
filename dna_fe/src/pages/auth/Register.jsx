@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { registerUser } from '../../api/authApi';
 import '../../styles/auth/register.css';
 
 const Register = () => {
@@ -9,38 +10,39 @@ const Register = () => {
     fullName: '',
     email: '',
     phone: '',
-    address: '',
   });
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const navigate = useNavigate();
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleRegister = (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
     setError('');
+    setSuccess('');
 
-    const users = JSON.parse(localStorage.getItem('users')) || [];
-
-    const existingUser = users.find(user => user.username === form.username || user.email === form.email);
-    if (existingUser) {
-      setError('Email đã được sử dụng. Vui lòng chọn email khác.');
-      return;
+    try {
+      await registerUser(form); // Gọi API register
+      setSuccess('Đăng ký thành công! Đang chuyển hướng...');
+      setTimeout(() => {
+        navigate('/login');
+      }, 2000);
+    } catch (err) {
+      if (err.response && err.response.data) {
+        setError(err.response.data); // Thông báo lỗi từ backend
+      } else {
+        setError('Đăng ký thất bại. Vui lòng thử lại.');
+      }
     }
-
-    const newUsers = [...users, form];
-    localStorage.setItem('users', JSON.stringify(newUsers));
-
-    navigate('/login');
   };
 
   return (
     <div className="auth-container">
       <form className="auth-form" onSubmit={handleRegister}>
         <h2>Đăng ký</h2>
-
         <input
           type="text"
           name="username"
@@ -49,7 +51,6 @@ const Register = () => {
           value={form.username}
           onChange={handleChange}
         />
-
         <input
           type="password"
           name="password"
@@ -58,7 +59,6 @@ const Register = () => {
           value={form.password}
           onChange={handleChange}
         />
-
         <input
           type="text"
           name="fullName"
@@ -67,7 +67,6 @@ const Register = () => {
           value={form.fullName}
           onChange={handleChange}
         />
-
         <input
           type="email"
           name="email"
@@ -76,7 +75,6 @@ const Register = () => {
           value={form.email}
           onChange={handleChange}
         />
-
         <input
           type="text"
           name="phone"
@@ -85,11 +83,12 @@ const Register = () => {
           value={form.phone}
           onChange={handleChange}
         />
-
         {error && <p className="error">{error}</p>}
-
+        {success && <p className="success">{success}</p>}
         <button type="submit">Đăng ký</button>
-        <p>Đã có tài khoản? <a href="/login">Đăng nhập</a></p>
+        <p>
+          Đã có tài khoản? <a href="/login">Đăng nhập</a>
+        </p>
       </form>
     </div>
   );
