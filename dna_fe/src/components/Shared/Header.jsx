@@ -54,7 +54,7 @@ const Header = () => {
           <a href="/pricing"><strong>Bảng giá</strong></a>
           <Link to="/payment/123" className="nav-link">Test Payment</Link>
           <a href="/guide"><strong>Hướng dẫn</strong></a>
-          <a href="/news"><strong>Tin tức</strong></a>
+         <Link to="/news"><strong>Tin tức</strong></Link>
         </nav>
         <div className="search-box">
           <input type="text" placeholder="Tìm kiếm..." />
