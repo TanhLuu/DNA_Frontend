@@ -6,13 +6,30 @@ import "../../styles/components/adminLayout.css";
 const AdminLayout = ({ children }) => {
   const [user, setUser] = useState({ name: "", role: "" });
 
-//   useEffect(() => {
-//     async function fetchUser() {
-//       const res = await getUserInfo();
-//       setUser(res);
-//     }
-//     fetchUser();
-//   }, []);
+  // useEffect(() => {
+  //   async function fetchUser() {
+  //     const res = await getUserInfo();
+  //     setUser(res);
+  //   }
+  //   fetchUser();
+  // }, []);
+  useEffect(() => {
+  // async function fetchUser() {
+  //   const res = await getUserInfo();
+  //   setUser(res);
+  // }
+  // fetchUser();
+
+  // Tạm gán thông tin user cho test
+  setUser({ name: localStorage.getItem('fullName'), role: localStorage.getItem('role') });
+}, []);
+
+
+const handleLogout = () => {
+    console.log('Logging out, removing username and role');
+    localStorage.clear();
+    window.location.href = '/login';
+  };
 
   return (
     <div className="flex">
@@ -29,7 +46,8 @@ const AdminLayout = ({ children }) => {
             <a href="#">Quản lý feedback</a>
           </nav>
         </div>
-        <button className="admin-logout">↩ Logout</button>
+
+        <button className="admin-logout" onClick={handleLogout} style={{ cursor: 'pointer' }}>↩ Logout</button>
       </aside>
 
       <main className="admin-main">
