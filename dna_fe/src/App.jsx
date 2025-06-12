@@ -7,6 +7,7 @@ import Register from './pages/auth/Register';
 import Home from './pages/Home';
 import DichVu from './pages/DichVu';
 import BangGia from './pages/BangGia';
+import TienTrinh from './pages/TienTrinh';
 import './styles/global.css';
 
 function App() {
