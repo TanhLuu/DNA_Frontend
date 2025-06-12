@@ -1,56 +1,19 @@
-/* Sidebar */
-.admin-sidebar {
-  width: 16rem; /* 64 */
-  background-color: #1c1c1e;
-  color: white;
+.admin-layout {
   display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  padding: 1rem;
-  height: 100vh; /* Thêm dòng này */
+  height: 100vh;
+
 }
 
+.sidebar {
 
-/* User info */
-.admin-user {
-  font-weight: bold;
-  margin-bottom: 1rem;
-}
-.admin-role {
-  font-size: 0.85rem;
-  color: #ccc;
+  background-color: #1e1e2f;
+  color: #fff;
+  min-height: 100vh;
 }
 
-/* Nav links */
-.admin-nav a {
-  display: block;
-  padding: 0.5rem;
-  border-radius: 0.375rem;
-  color: white;
-  text-decoration: none;
-  transition: background 0.2s;
-}
-.admin-nav a:hover {
-  background-color: #333;
-}
-
-/* Logout */
-.admin-logout {
-  margin-top: 1rem;
-  text-align: left;
-  color: white;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-}
-.admin-logout:hover {
-  text-decoration: underline;
-}
-
-/* Content */
-.admin-main {
+.admin-content {
   flex: 1;
-  background-color: #f3f4f6;
-  overflow: auto;
+  background-color: #f5f6fa;
+  padding: 0 10px;
+  overflow-y: auto;
 }

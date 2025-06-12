@@ -128,7 +128,7 @@ const Login = () => {
       window.dispatchEvent(new Event('storage'));
 
       if (user.role === 'staff') {
-        navigate('/'); // hoặc sau này navigate('/staff/dashboard');
+        navigate('/ordersPageAdmin'); // hoặc sau này navigate('/staff/dashboard');
       } else {
         navigate('/');
       }

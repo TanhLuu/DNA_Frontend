@@ -1,0 +1,92 @@
+.orders-container {
+  padding: 10px 0;
+  background-color: #f3f4f6;
+  min-height: 100vh;
+  font-family: Arial, sans-serif;
+}
+
+.orders-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 24px;
+  justify-content: center;
+}
+
+.btn {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.btn-red {
+  background-color: #e53935;
+}
+
+.btn-gray {
+  background-color: #9e9e9e;
+}
+
+.btn-yellow {
+  background-color: #fbc02d;
+}
+
+.btn-light-blue {
+  background-color: #4fc3f7;
+}
+
+.btn-blue {
+  background-color: #1e88e5;
+}
+
+.btn-green {
+  background-color: #43a047;
+}
+
+.btn-dark-blue {
+  background-color: #0d47a1;
+}
+
+.orders-table-wrapper {
+  background-color: white;
+  border-radius: 8px;
+  overflow-x: auto;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.orders-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  color: #333;
+}
+
+.orders-table th {
+  background-color: #1f2937;
+  color: white;
+  padding: 10px;
+}
+
+.orders-table td {
+  padding: 10px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.status {
+  font-weight: bold;
+}
+
+.action-btn {
+  background-color: #43a047;
+  color: white;
+  padding: 5px;
+  margin: 2px;
+  border: none;
+  border-radius: 4px;
+  font-size: 10px;
+  cursor: pointer;
+}

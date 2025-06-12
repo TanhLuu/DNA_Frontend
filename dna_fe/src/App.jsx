@@ -13,7 +13,7 @@
 //     <Router>
 //       <div className="app">
 //         <Header />
-        
+
 //         <main className="main-content">
 //           <Routes>
 //             <Route path="/" element={<Home />} />
@@ -21,10 +21,10 @@
 //             {/* <Route path="/admin" element={<AdminLayout />} /> */}
 //             <Route path="/login" element={<Login />} />
 //             <Route path="/register" element={<Register />} />
-            
+
 //           </Routes>
 //         </main>
-        
+
 //         <Footer />
 //       </div>
 //     </Router>
@@ -80,49 +80,68 @@ import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Header from './components/Shared/Header';
 import Footer from './components/Shared/Footer';
+import AdminLayout from './components/Shared/AdminLayout';
 import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
 import Home from './pages/Home';
-import AdminLayout from './components/Shared/AdminLayout';
+import OrdersPage from './pages/admin/OrdersPage';
+import Profile from './components/Shared/Profile';
+
+
+// Styles
 import './styles/global.css';
 
 function App() {
-  const [role, setRole] = useState(localStorage.getItem("role"));
+  const [role, setRole] = useState(localStorage.getItem('role'));
 
   useEffect(() => {
     const handleStorageChange = () => {
-      setRole(localStorage.getItem("role"));
+      setRole(localStorage.getItem('role'));
     };
-    window.addEventListener("storage", handleStorageChange);
-    return () => window.removeEventListener("storage", handleStorageChange);
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
   }, []);
 
   return (
     <Router>
       <div className="app">
-        {role !== "staff" && <Header />}
+        {role !== 'staff' && <Header />}
 
         <main className="main-content">
           <Routes>
-            {(!role || role === "customer") && <Route path="/" element={<Home />} />}
-
-            {role === "staff" && (
-              <Route
-                path="/"
-                element={
-                  <AdminLayout>
-                    
-                  </AdminLayout>
-                }
-              />
+            {(!role || role === 'customer') && (
+              <Route path="/" element={<Home />} />
             )}
+
+            {role === 'staff' && (
+              <>
+                <Route
+                  path="/ordersPageAdmin"
+                  element={
+                    <AdminLayout>
+                      <OrdersPage />
+                    </AdminLayout>
+                  }
+                />
+                <Route
+                  path="/profile"
+                  element={
+                    <AdminLayout>
+                      <Profile />
+                    </AdminLayout>
+                  }
+                />
+              </>
+            )}
+
+
 
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
           </Routes>
         </main>
 
-        {role !== "staff" && <Footer />}
+        {role !== 'staff' && <Footer />}
       </div>
     </Router>
   );

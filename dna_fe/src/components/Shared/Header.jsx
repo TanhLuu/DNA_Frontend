@@ -28,7 +28,7 @@ const Header = () => {
   const handleLogout = () => {
     console.log('Logging out, removing username and role');
     localStorage.clear();
-    window.location.href = '/login';
+    window.location.href = '/';
   };
 
   return (
