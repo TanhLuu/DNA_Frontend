@@ -86,6 +86,7 @@ import Register from './pages/auth/Register';
 import Home from './pages/Home';
 import OrdersPage from './pages/admin/OrdersPage';
 import Profile from './components/Shared/Profile';
+import ServiceManagement from './pages/admin/ServiceManagement';
 
 
 // Styles
@@ -128,6 +129,14 @@ function App() {
                   element={
                     <AdminLayout>
                       <Profile />
+                    </AdminLayout>
+                  }
+                />
+                <Route
+                  path="/serviceManagement"
+                  element={
+                    <AdminLayout>
+                      <ServiceManagement />
                     </AdminLayout>
                   }
                 />
