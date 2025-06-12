@@ -5,7 +5,7 @@ import Footer from './components/Shared/Footer';
 import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
 import Home from './pages/Home';
-
+import AdminLayout from './components/Shared/AdminLayout';
 import './styles/global.css';
 
 function App() {
@@ -17,8 +17,8 @@ function App() {
         <main className="main-content">
           <Routes>
             <Route path="/" element={<Home />} />
-            
-            <Route path="/admin" element={<h2>Trang admin</h2>} />
+
+            {/* <Route path="/admin" element={<AdminLayout />} /> */}
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             
