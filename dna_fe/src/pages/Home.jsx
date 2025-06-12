@@ -188,7 +188,7 @@ const Home = () => {
 
             <div className='news-container'>
                 <h2 className='news-title'>TIN TỨC</h2>
-                    {/* viết phần này sau */}
+                {/* viết phần này sau */}
 
 
 

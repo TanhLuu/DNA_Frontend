@@ -3,20 +3,34 @@ import '../../styles/components/header.css';
 import logo from '../../assets/logo.jpg';
 import { Link } from 'react-router-dom';
 
+
 const Header = () => {
-  const [username, setUsername] = useState('');
+  const [fullName, setFullName] = useState('');
 
   useEffect(() => {
-    const savedUsername = localStorage.getItem('username');
-    if (savedUsername) {
-      setUsername(savedUsername);
+    const savedFullName = localStorage.getItem('fullName');
+    if (savedFullName) {
+      setFullName(savedFullName);
     }
+
+    //  sự kiện storage để phát hiện thay đổi localStorage
+    const handleStorageChange = () => {
+      const updatedFullName = localStorage.getItem('fullName');
+      console.log('Storage changed, fullName:', updatedFullName);
+      setFullName(updatedFullName || '');
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem('username');
-    localStorage.removeItem('role');
-    window.location.href = '/login'; // hoặc dùng navigate nếu có hook
+    console.log('Logging out, removing username and role');
+    localStorage.clear();
+    window.location.href = '/login';
   };
 
   return (
@@ -28,9 +42,12 @@ const Header = () => {
           <span>📍 123 Đường ABC, Q.1, TP.HCM</span>
         </div>
         <div className="auth-links">
-          {username ? (
+          {fullName ? (
             <>
-              <span>👤 {username}</span> | <a onClick={handleLogout} style={{ cursor: 'pointer' }}>Đăng xuất</a>
+              <span>👤 {fullName}</span> |{' '}
+              <a onClick={handleLogout} style={{ cursor: 'pointer' }}>
+                Đăng xuất
+              </a>
             </>
           ) : (
             <>
@@ -52,11 +69,12 @@ const Header = () => {
           <a href="/"><strong>Trang chủ</strong></a>
           <a href="/services"><strong>Dịch vụ</strong></a>
           <a href="/pricing"><strong>Bảng giá</strong></a>
-          <Link to="/payment/123" className="nav-link">Test Payment</Link>
+           <Link to="/payment/123" className="nav-link">Test Payment</Link>
+
           <a href="/guide"><strong>Hướng dẫn</strong></a>
-         <Link to="/news"><strong>Tin tức</strong></Link>
+           <Link to="/news"><strong>Tin tức</strong></Link>
         </nav>
-        <div className="search-box">
+               <div className="search-box">
           <input type="text" placeholder="Tìm kiếm..." />
           <button>🔍</button>
         </div>

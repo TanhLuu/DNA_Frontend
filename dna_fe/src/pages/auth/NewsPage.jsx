@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import '../../styles/auth/NewsPage.css';
 import tet2024 from '../../assets/NghiTet.jpg';
 import bongda from '../../assets/BongDa.jpg';
@@ -8,6 +8,8 @@ import khoahoc from '../../assets/KhoaHoc.jpg';
 import hoinghi from '../../assets/HoiNghi.jpg';
 
 const NewsPage = () => {
+  console.log('NewsPage is rendering');
+  
   const newsItems = [
     {
       id: 1,
@@ -46,6 +48,11 @@ const NewsPage = () => {
       description: 'Hội nghị khoa học lần thứ III ASRM được diễn ra tại thành phố New...'
     }
   ];
+
+  useEffect(() => {
+    console.log('NewsPage mounted');
+    console.log('News items:', newsItems);
+  }, []);
 
   return (
     <div className="news-container">
