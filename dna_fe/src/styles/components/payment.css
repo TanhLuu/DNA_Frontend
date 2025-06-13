@@ -1,0 +1,140 @@
+.payment-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 200px);
+  padding: 20px;
+}
+
+.payment-card {
+  background: white;
+  border-radius: 15px;
+  padding: 30px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.loading {
+  text-align: center;
+  padding: 20px;
+  font-size: 18px;
+  color: #666;
+}
+
+.qr-section {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.qr-code {
+  width: 200px;
+  height: 200px;
+  margin-bottom: 10px;
+  background: #f0f0f0;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+.qr-number {
+  font-size: 16px;
+  color: #333;
+  margin-bottom: 5px;
+}
+
+.payment-details {
+  text-align: center;
+}
+
+.payment-info {
+  background: rgba(108, 92, 231, 0.1);
+  padding: 15px;
+  border-radius: 8px;
+  margin: 15px 0;
+}
+
+.amount-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 20px 0;
+  padding: 10px;
+  background: rgba(108, 92, 231, 0.05);
+  border-radius: 8px;
+}
+
+.amount {
+  font-weight: bold;
+  color: #6c5ce7;
+  font-size: 18px;
+}
+
+button {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  margin: 10px 0;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+button:hover {
+  transform: translateY(-2px);
+}
+
+.pay-button {
+  background-color: #6c5ce7;
+  color: white;
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.pay-button:hover {
+  background-color: #5b4bc4;
+}
+
+.note {
+  font-size: 12px;
+  color: #666;
+  margin-top: 15px;
+}
+
+.success-content {
+  text-align: center;
+}
+
+.success-icon {
+  font-size: 48px;
+  color: #00b894;
+  margin-bottom: 20px;
+}
+
+.success-details {
+  background: rgba(108, 92, 231, 0.1);
+  padding: 15px;
+  border-radius: 8px;
+  margin: 20px 0;
+  text-align: left;
+}
+
+.success-details p {
+  margin: 8px 0;
+  color: #333;
+}
+
+.pdf-button {
+  background-color: #00b894;
+  color: white;
+}
+
+.home-button {
+  background-color: #6c5ce7;
+  color: white;
+}

@@ -2,7 +2,11 @@ import React, { useEffect, useState } from 'react';
 import '../../styles/components/header.css';
 import logo from '../../assets/logo.jpg';
 
+import { Link ,useNavigate} from 'react-router-dom';
+
+
 const Header = () => {
+ const navigate = useNavigate(); 
   const [fullName, setFullName] = useState('');
 
   useEffect(() => {
@@ -41,8 +45,15 @@ const Header = () => {
         </div>
         <div className="auth-links">
           {fullName ? (
-            <>
-              <span>👤 {fullName}</span> |{' '}
+
+             <>
+              <span 
+                onClick={() => navigate('/profile')} 
+                style={{ cursor: 'pointer' }}
+              >
+                👤 {fullName}
+              </span> |{' '}
+
               <a onClick={handleLogout} style={{ cursor: 'pointer' }}>
                 Đăng xuất
               </a>
@@ -67,8 +78,13 @@ const Header = () => {
           <a href="/"><strong>Trang chủ</strong></a>
           <a href="/services"><strong>Dịch vụ</strong></a>
           <a href="/pricing"><strong>Bảng giá</strong></a>
+
+         <Link to="/history" className="nav-link">Lịch sử xét nghiệm</Link>
+          <a href="/guide"><strong>Hướng dẫn</strong></a>
+           <Link to="/news"><strong>Tin tức</strong></Link>
           <a href="/guide"><strong>Hướng dẫn</strong></a>
           <a href="/news"><strong>Tin tức</strong></a>
+
         </nav>
                <div className="search-box">
           <input type="text" placeholder="Tìm kiếm..." />
