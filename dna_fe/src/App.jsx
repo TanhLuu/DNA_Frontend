@@ -7,6 +7,7 @@ import Register from './pages/auth/Register';
 import Home from './pages/Home';
 import DichVu from './pages/DichVu';
 import BangGia from './pages/BangGia';
+import TienTrinh from './pages/TienTrinh';
 import './styles/global.css';
 
 function App() {
@@ -26,8 +27,9 @@ function App() {
             <Route path="/bang-gia" element={<BangGia />} />
           </Routes>
         </main>
-
+        <TienTrinh />
         <Footer />
+
       </div>
     </Router>
   );

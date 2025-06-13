@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../../styles/auth/login.css';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
@@ -12,15 +14,45 @@ const Login = () => {
     e.preventDefault();
     setError('');
 
-    const users = JSON.parse(localStorage.getItem('users')) || [];
-    const foundUser = users.find(user => user.username === username && user.password === password);
+    // Giả lập người dùng
+    const mockUsers = [
+      {
+        username: 'customer1',
+        password: '123456',
+        role: 'customer',
+        fullName: 'Nguyễn Văn A',
+        email: 'customer1@example.com',
+        phone: '0123456789'
+      },
+      {
+        username: 'staff1',
+        password: '123456',
+        role: 'staff',
+        fullName: 'Trần Thị B',
+        email: 'staff1@example.com',
+        phone: '0987654321'
+      }
+    ];
 
-    if (foundUser) {
-      localStorage.setItem('username', foundUser.username);
-      localStorage.setItem('role', 'customer');
-      navigate('/');
+    const user = mockUsers.find(
+      (u) => u.username === username && u.password === password
+    );
+
+    if (user) {
+      localStorage.setItem('username', user.username);
+      localStorage.setItem('role', user.role);
+      localStorage.setItem('fullName', user.fullName);
+      localStorage.setItem('email', user.email);
+      localStorage.setItem('phone', user.phone);
+      window.dispatchEvent(new Event('storage'));
+
+      if (user.role === 'staff') {
+        navigate('/'); // hoặc sau này navigate('/staff/dashboard');
+      } else {
+        navigate('/');
+      }
     } else {
-      setError('Tên đăng nhập hoặc mật khẩu không đúng.');
+      setError('Tài khoản hoặc mật khẩu không đúng.');
     }
   };
 
@@ -37,52 +69,27 @@ const Login = () => {
           onChange={(e) => setUsername(e.target.value)}
         />
 
-        <input
-          type="password"
-          placeholder="Mật khẩu"
-          required
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
+        <div className="password-field">
+          <input
+            type={showPassword ? 'text' : 'password'}
+            placeholder="Mật khẩu"
+            required
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <span className="password-toggle" onClick={() => setShowPassword(!showPassword)}>
+            {showPassword ? <FaEyeSlash /> : <FaEye />}
+          </span>
+        </div>
 
         {error && <p className="error">{error}</p>}
-
         <button type="submit">Đăng nhập</button>
-        <p>Chưa có tài khoản? <a href="/register">Đăng ký</a></p>
+        <p>
+          Chưa có tài khoản? <a href="/register">Đăng ký</a>
+        </p>
       </form>
     </div>
   );
 };
 
 export default Login;
-
-
-
-    // const handleLogin = async (e) => {
-  //   e.preventDefault();
-  //   setError('');
-
-  //   try {
-  //     const response = await axios.post('http://localhost:8080/auth/login', {
-  //       username,
-  //       password,
-  //     });
-
-  //     const data = response.data;
-
-  //     // Lưu thông tin người dùng (nếu có token thì lưu token)
-  //     localStorage.setItem('token', data.token || '');
-  //     localStorage.setItem('username', data.username);
-  //     localStorage.setItem('role', data.role || 'customer');
-
-  //     data.role === 'admin'
-  //       ? navigate('/admin/dashboard')
-  //       :  navigate('/customer/home');
-  //   } catch (err) {
-  //     if (err.response && err.response.data && err.response.data.message) {
-  //       setError(err.response.data.message);
-  //     } else {
-  //       setError('Đăng nhập thất bại. Vui lòng thử lại.');
-  //     }
-  //   }
-  // };
