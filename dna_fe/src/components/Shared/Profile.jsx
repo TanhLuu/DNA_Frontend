@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import '../../styles/components/profile.css';
+import '../../styles/components/shared/profile.css';
 
 
 const Profile = () => {

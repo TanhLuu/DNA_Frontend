@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import '../../styles/components/header.css';
+import '../../styles/components/shared/header.css';
 import logo from '../../assets/logo.jpg';
 
 const Header = () => {

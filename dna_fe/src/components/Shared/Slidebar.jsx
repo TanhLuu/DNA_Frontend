@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import "../../styles/components/slidebar.css";
+import "../../styles/components/shared/slidebar.css";
 import { Link, useNavigate } from 'react-router-dom';
 
 const AdminLayout = ({ children }) => {
