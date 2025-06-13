@@ -69,8 +69,7 @@ const Header = () => {
           <a href="/"><strong>Trang chủ</strong></a>
           <a href="/services"><strong>Dịch vụ</strong></a>
           <a href="/pricing"><strong>Bảng giá</strong></a>
-           <Link to="/payment/123" className="nav-link">Test Payment</Link>
-
+         <Link to="/history" className="nav-link">Lịch sử xét nghiệm</Link>
           <a href="/guide"><strong>Hướng dẫn</strong></a>
            <Link to="/news"><strong>Tin tức</strong></Link>
         </nav>

@@ -88,6 +88,7 @@ import CivilPrice from './pages/CivilPrice';
 import LegalPrice from './pages/LegalPrice';
 import QRCode from './pages/auth/QRCode';
 import CompletePayment from './pages/auth/CompletePayment';
+import History from './pages/auth/History';
 import NewsPage from './pages/auth/NewsPage';
 import './styles/global.css';
 
@@ -113,6 +114,7 @@ function App() {
             <Route path="/legal-price" element={<LegalPrice />} />
             <Route path="/payment/:orderId" element={<QRCode />} />
              <Route path="/news" element={<NewsPage />} />
+             <Route path="/history" element={<History />} />
   <Route path="/payment/complete/:orderId" element={<CompletePayment />} />
             {(!role || role === "customer") && <Route path="/" element={<Home />} />}
 
