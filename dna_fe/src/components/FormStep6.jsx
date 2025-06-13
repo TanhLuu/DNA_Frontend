@@ -3,10 +3,13 @@ import { useNavigate } from "react-router-dom";
 
 export default function FormStep6({ data }) {
     const navigate = useNavigate();
+    const [showPdf, setShowPdf] = useState(false);
     if (!data) return <div>Loading...</div>;
+
+
     const handleViewResult = () => {
         //Di chuyển sang trang kết quả
-        navigate(`/result-detail/${data.maHoSo}`);
+        setShowPdf(true);
     };
 
     const handleReview = () => {
@@ -61,6 +64,26 @@ export default function FormStep6({ data }) {
                     <span>{data.ketQua || ""}</span>
                 </div>
             </div>
+            {showPdf && data.ketQuaFileUrl && (
+                <div className="pdf-container">
+                    <div className="pdf-header">
+                        <h3>Kết quả xét nghiệm</h3>
+                        <button
+                        className="close-button"
+                        onClick={()=> setShowPdf}>
+                            X
+                        </button>
+                    </div>
+                    <iframe
+                    src={Date.ketQuaFileUrl}
+                    title="Kết quả xét nghiệm"
+                    width="100%"
+                    height="600px"
+                    className="pdf-iframe"
+                    />
+                </div>
+
+            )}
             <div className="action-button">
                 <button
                     className="view-result-button"
