@@ -2,7 +2,7 @@ import React from "react";
 
 
 
-export default function FormStep3({ data }) {
+export default function FormStep4({ data }) {
     const formRef = useRef(null);
     if (!data) return <div>Loading...</div>;
 
@@ -50,23 +50,12 @@ export default function FormStep3({ data }) {
                     <span>{data.hinhThucMau || ""}</span>
                 </div>
                 <div className="info-row">
-                    <span className="label">Mã bộ kit:</span>
+                    <span className="label">Nhân viên gửi mẫu:</span>
+                    <span>{data.nhanVienGuiMau || ""}</span>
                 </div>
                 <div className="info-row">
-                    <span className="label">Tên bộ kit:</span>
-                    <span>{data.tenBoKit || ""}</span>
-                </div>
-                <div className="info-row">
-                    <span className="label">Ngày gửi bộ kit:</span>
-                    <span>{data.ngayguibokit || ""}</span>
-                </div>
-                <div className="info-row">
-                    <span className="label">Trạng thái:</span>
-                    <span>{data.trangThai || ""}</span>
-                </div>
-                <div className="info-row">
-                    <span className="label">Nhân viên tiếp nhận:</span>
-                    <span>{data.nhanVienTiepNhan || ""}</span>
+                    <span className="label">Thời gian chuyển mẫu:</span>
+                    <span>{data.thoiGianChuyenMau || ""}</span>
                 </div>
             </div>
         </div>
