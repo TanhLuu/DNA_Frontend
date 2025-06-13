@@ -1,6 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import ServiceFormModalManager from '../../components/Admin/ServiceFormModalManager';
 import ConfirmDeleteServiceModal from '../../components/Admin/ConfirmDeleteServiceModal';
+import {
+  getAllServices,
+  createService,
+  updateService,
+  deleteService
+} from '../../api/serviceApi';
 import '../../styles/admin/serviceManagement.css';
 
 const ServiceManagement = () => {
@@ -12,8 +18,9 @@ const ServiceManagement = () => {
     id: null,
     name: '',
     type: '',
-    time: '',
-    price: ''
+    testDuration: '',
+    price: '',
+    description: ''
   });
   const [selectedService, setSelectedService] = useState(null);
   const [searchKeyword, setSearchKeyword] = useState('');
@@ -25,8 +32,7 @@ const ServiceManagement = () => {
   const fetchServices = async () => {
     setLoading(true);
     try {
-      const res = await fetch('http://localhost:8080/api/services');
-      const data = await res.json();
+      const data = await getAllServices();
       setServices(data);
     } catch (err) {
       console.error('Lỗi khi lấy danh sách dịch vụ:', err);
@@ -36,12 +42,26 @@ const ServiceManagement = () => {
   };
 
   const openAddModal = () => {
-    setFormData({ id: null, name: '', type: '', time: '', price: '' });
+    setFormData({
+      id: null,
+      name: '',
+      type: '',
+      testDuration: '',
+      price: '',
+      description: ''
+    });
     setIsFormModalOpen(true);
   };
 
   const openEditModal = (service) => {
-    setFormData(service);
+    setFormData({
+      id: service.id,
+      name: service.name,
+      type: service.type,
+      testDuration: service.testDuration,
+      price: service.price,
+      description: service.description
+    });
     setIsFormModalOpen(true);
   };
 
@@ -51,38 +71,33 @@ const ServiceManagement = () => {
   };
 
   const handleSave = async () => {
-    const method = formData.id ? 'PUT' : 'POST';
-    const url = formData.id
-      ? `http://localhost:8080/api/services/${formData.id}`
-      : 'http://localhost:8080/api/services';
-
     try {
-      const res = await fetch(url, {
-        method,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
-      });
+      const payload = {
+        name: formData.name,
+        type: formData.type,
+        testDuration: Number(formData.testDuration),
+        price: Number(formData.price),
+        description: formData.description
+      };
 
-      if (res.ok) {
-        await fetchServices();
-        setIsFormModalOpen(false);
+      if (formData.id) {
+        await updateService(formData.id, payload);
       } else {
-        console.error('Lỗi khi lưu dịch vụ');
+        await createService(payload);
       }
+
+      await fetchServices();
+      setIsFormModalOpen(false);
     } catch (err) {
-      console.error('Lỗi khi gửi yêu cầu:', err);
+      console.error('Lỗi khi lưu dịch vụ:', err);
     }
   };
 
   const handleDelete = async (id) => {
     try {
-      const res = await fetch(`http://localhost:8080/api/services/${id}`, {
-        method: 'DELETE'
-      });
-      if (res.ok) {
-        await fetchServices();
-        setIsDeleteModalOpen(false);
-      }
+      await deleteService(id);
+      await fetchServices();
+      setIsDeleteModalOpen(false);
     } catch (err) {
       console.error('Lỗi khi xóa dịch vụ:', err);
     }
@@ -118,7 +133,7 @@ const ServiceManagement = () => {
               <tr>
                 <th>Tên</th>
                 <th>Loại</th>
-                <th>Thời gian</th>
+                <th>Thời gian (ngày)</th>
                 <th>Giá (VND)</th>
                 <th>Hành động</th>
               </tr>
@@ -129,7 +144,7 @@ const ServiceManagement = () => {
                   <tr key={service.id}>
                     <td>{service.name}</td>
                     <td>{service.type}</td>
-                    <td>{service.time}</td>
+                    <td>{service.testDuration}</td>
                     <td>{Number(service.price).toLocaleString('vi-VN')}</td>
                     <td>
                       <button className="edit-btn" onClick={() => openEditModal(service)}>Sửa</button>

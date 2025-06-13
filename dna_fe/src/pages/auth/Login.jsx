@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { loginUser } from '../../api/authApi';
 import '../../styles/auth/login.css';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import { getCustomerByAccountId } from '../../api/customerApi';
 
 const Login = () => {
   const [username, setUsername] = useState('');
@@ -12,33 +13,47 @@ const Login = () => {
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
-    e.preventDefault();
-    setError('');
+  e.preventDefault();
+  setError('');
 
-    try {
-      const data = await loginUser(username, password);
+  try {
+    const data = await loginUser(username, password);
 
-      const role = data.role?.toUpperCase(); // chuẩn hóa để so sánh dễ
-      localStorage.setItem('username', data.username);
-      localStorage.setItem('role', role);
-      localStorage.setItem('fullName', data.fullName || '');
-      localStorage.setItem('email', data.email || '');
-      localStorage.setItem('phone', data.phone || '');
-      window.dispatchEvent(new Event('storage'));
+    const role = data.role?.toUpperCase();
+    localStorage.setItem('username', data.username);
+    localStorage.setItem('role', role);
+    localStorage.setItem('fullName', data.fullName || '');
+    localStorage.setItem('email', data.email || '');
+    localStorage.setItem('phone', data.phone || '');
+    localStorage.setItem('accountId', data.accountId);
+    window.dispatchEvent(new Event('storage'));
 
-      if (role === 'STAFF' || role === 'ADMIN') {
-        navigate('/ordersPageAdmin');
-      } else if (role === 'CUSTOMER') {
-        navigate('/');
-      }
-    } catch (err) {
-      if (err.response && err.response.data) {
-        setError(err.response.data);
-      } else {
-        setError('Đăng nhập thất bại. Vui lòng thử lại.');
+    if (role === 'STAFF' || role === 'ADMIN') {
+      navigate('/ordersPageAdmin');
+    } else if (role === 'CUSTOMER') {
+      try {
+        const customer = await getCustomerByAccountId(data.accountId);
+
+        if (customer && customer.id) {
+          // Đã có hồ sơ
+          navigate('/');
+        } else {
+          // Chưa có hồ sơ
+          navigate('/profile');
+        }
+      } catch (e) {
+        // Lỗi gọi API hoặc chưa có hồ sơ
+        navigate('/profile');
       }
     }
-  };
+  } catch (err) {
+    if (err.response && err.response.data) {
+      setError(err.response.data);
+    } else {
+      setError('Đăng nhập thất bại. Vui lòng thử lại.');
+    }
+  }
+};
 
   return (
     <div className="auth-container">

@@ -15,6 +15,7 @@ const ConfirmDeleteServiceModal = ({ isOpen, service, onClose, onDelete }) => {
           <p><strong>Tên dịch vụ:</strong> {service.name}</p>
           <p><strong>Giá:</strong> {Number(service.price).toLocaleString('vi-VN')} ₫</p>
           <p><strong>Loại dịch vụ:</strong> {service.type}</p>
+          <p><strong>Thời gian xét nghiệm:</strong> {service.testDuration ? `${service.testDuration} ng` : 'Không có thông tin'}</p> 
         </div>
 
         <div className="modal-actions">

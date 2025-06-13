@@ -4,6 +4,7 @@ import logo from '../../assets/logo.jpg';
 
 const Header = () => {
   const [fullName, setFullName] = useState('');
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   useEffect(() => {
     const savedFullName = localStorage.getItem('fullName');
@@ -11,24 +12,22 @@ const Header = () => {
       setFullName(savedFullName);
     }
 
-    //  sự kiện storage để phát hiện thay đổi localStorage
     const handleStorageChange = () => {
       const updatedFullName = localStorage.getItem('fullName');
-      console.log('Storage changed, fullName:', updatedFullName);
       setFullName(updatedFullName || '');
     };
 
     window.addEventListener('storage', handleStorageChange);
-
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-    };
+    return () => window.removeEventListener('storage', handleStorageChange);
   }, []);
 
   const handleLogout = () => {
-    console.log('Logging out, removing username and role');
     localStorage.clear();
     window.location.href = '/';
+  };
+
+  const toggleDropdown = () => {
+    setIsDropdownOpen(!isDropdownOpen);
   };
 
   return (
@@ -41,15 +40,21 @@ const Header = () => {
         </div>
         <div className="auth-links">
           {fullName ? (
-            <>
-              <span>👤 {fullName}</span> |{' '}
-              <a onClick={handleLogout} style={{ cursor: 'pointer' }}>
-                Đăng xuất
-              </a>
-            </>
+            <div className="user-menu">
+              <span onClick={toggleDropdown} className="user-name">
+                👤 {fullName}
+              </span>
+              {isDropdownOpen && (
+                <div className="dropdown-menu">
+                  <a href="/orders">Đơn hàng</a>
+                  <a href="/profile">Hồ sơ</a>
+                  <span onClick={handleLogout} className="logout-btn">Đăng xuất</span>
+                </div>
+              )}
+            </div>
           ) : (
             <>
-              <a href="/register">Đăng ký</a> | <a href="/login">Đăng nhập</a>
+              <a className='register-link' href="/register">Đăng ký</a> | <a className='login-link' href="/login">Đăng nhập</a>
             </>
           )}
         </div>
@@ -70,7 +75,7 @@ const Header = () => {
           <a href="/guide"><strong>Hướng dẫn</strong></a>
           <a href="/news"><strong>Tin tức</strong></a>
         </nav>
-               <div className="search-box">
+        <div className="search-box">
           <input type="text" placeholder="Tìm kiếm..." />
           <button>🔍</button>
         </div>

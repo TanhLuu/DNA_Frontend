@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { registerUser } from '../../api/authApi';
 import '../../styles/auth/register.css';
+import { loginUser } from '../../api/authApi';
 
 const Register = () => {
   const [form, setForm] = useState({
@@ -20,24 +21,37 @@ const Register = () => {
   };
 
   const handleRegister = async (e) => {
-    e.preventDefault();
-    setError('');
-    setSuccess('');
+  e.preventDefault();
+  setError('');
+  setSuccess('');
 
-    try {
-      await registerUser(form); // Gọi API register
-      setSuccess('Đăng ký thành công! Đang chuyển hướng...');
-      setTimeout(() => {
-        navigate('/login');
-      }, 2000);
-    } catch (err) {
-      if (err.response && err.response.data) {
-        setError(err.response.data); // Thông báo lỗi từ backend
-      } else {
-        setError('Đăng ký thất bại. Vui lòng thử lại.');
-      }
+  try {
+    // Đăng ký tài khoản
+    await registerUser(form);
+
+    // Đăng nhập ngay
+    const loginData = await loginUser(form.username, form.password);
+
+    const role = loginData.role?.toUpperCase();
+    localStorage.setItem('username', loginData.username);
+    localStorage.setItem('role', role);
+    localStorage.setItem('fullName', loginData.fullName || '');
+    localStorage.setItem('email', loginData.email || '');
+    localStorage.setItem('phone', loginData.phone || '');
+    localStorage.setItem('accountId', loginData.accountId); // Lưu ID để tạo customer
+    window.dispatchEvent(new Event('storage'));
+
+    // Chuyển đến trang cập nhật hồ sơ
+    navigate('/profile');
+  } catch (err) {
+    if (err.response?.data) {
+      setError(err.response.data);
+    } else {
+      setError('Đăng ký hoặc đăng nhập thất bại. Vui lòng thử lại.');
     }
-  };
+  }
+};
+
 
   return (
     <div className="auth-container">

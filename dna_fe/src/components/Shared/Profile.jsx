@@ -1,88 +1,141 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../../styles/components/shared/profile.css';
-
+import { createCustomer } from '../../api/customerApi.jsx';
 
 const Profile = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
+    birthDate: '',
+    gender: '',
+    documentType: '',
+    idNumber: '',
+    issueDate: '',
+    issuePlace: '',
+  });
+
+  const [accountInfo, setAccountInfo] = useState({
     name: '',
     phone: '',
     email: '',
-    address: '',
   });
 
   useEffect(() => {
-    // Giả lập fetch dữ liệu từ DB
-    async function fetchData() {
-      const res = {
-        name: 'Nguyễn Văn An',
-        phone: '0945123456',
-        email: 'nguyenvan.an@example.com',
-        address: '123 Đường Lê Lợi, Quận 1, TP. HCM',
-      };
-      setFormData(res);
-    }
-
-    fetchData();
+    // Lấy thông tin từ localStorage sau khi đăng ký hoặc đăng nhập
+    const name = localStorage.getItem('fullName') || '';
+    const phone = localStorage.getItem('phone') || '';
+    const email = localStorage.getItem('email') || '';
+    setAccountInfo({ name, phone, email });
   }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleReset = () => {
-    // Bạn có thể reset về giá trị DB gốc nếu cần
-  };
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Submit data:', formData);
+
+    const requiredFields = ['birthDate', 'gender', 'documentType'];
+    if (formData.documentType) {
+      requiredFields.push('idNumber', 'issueDate', 'issuePlace');
+    }
+
+    const isValid = requiredFields.every((field) => formData[field]?.trim());
+    if (!isValid) {
+      alert('Vui lòng điền đầy đủ tất cả thông tin cần thiết.');
+      return;
+    }
+
+    try {
+      const accountId = localStorage.getItem('accountId');
+      if (!accountId) {
+        alert('Không tìm thấy ID tài khoản. Vui lòng đăng nhập lại.');
+        return;
+      }
+
+      await createCustomer(accountId, {
+        birthDate: formData.birthDate,
+        gender: formData.gender,
+        documentType: formData.documentType,
+        idNumber: formData.idNumber,
+        issueDate: formData.issueDate,
+        issuePlace: formData.issuePlace,
+      });
+
+      alert('Hồ sơ đã được cập nhật và lưu thành công!');
+      navigate('/');
+    } catch (err) {
+      console.error(err);
+      alert('Lỗi khi lưu hồ sơ. Vui lòng thử lại.');
+    }
   };
 
   return (
     <div className="profile-container">
       <div className="profile-card">
-        <div className="profile-header">
-          <div>
-            <h3 className="profile-name">{formData.name}</h3>
-            <p className="profile-sub">Số điện thoại: {formData.phone}</p>
-            <p className="profile-sub">Email: {formData.email}</p>
-          </div>
-        </div>
-
-        <h4 className="profile-section-title">Thông tin cá nhân</h4>
-        <div className="profile-info-grid">
-          <div className="label">Ngày sinh:</div>
-          <div>15/03/1980</div>
-          <div className="label">Giới tính:</div>
-          <div>Nam</div>
-          <div className="label">Số điện thoại:</div>
-          <div>0123456789</div>
-          <div className="label">Email:</div>
-          <div>abc@mail.com</div>
-        </div>
-
-        <h4 className="profile-section-title">Chỉnh sửa thông tin</h4>
+        <h2>Cập nhật hồ sơ cá nhân</h2>
         <form onSubmit={handleSubmit} className="profile-form">
           <div>
             <label>Họ tên</label>
-            <input type="text" name="name" value={formData.name} onChange={handleChange} />
+            <input type="text" value={accountInfo.name} disabled />
           </div>
+
           <div>
             <label>Số điện thoại</label>
-            <input type="text" name="phone" value={formData.phone} onChange={handleChange} />
+            <input type="text" value={accountInfo.phone} disabled />
           </div>
+
           <div>
-            <label>Địa chỉ email</label>
-            <input type="email" name="email" value={formData.email} onChange={handleChange} />
+            <label>Email</label>
+            <input type="email" value={accountInfo.email} disabled />
           </div>
+
           <div>
-            <label>Địa chỉ</label>
-            <input name="address" value={formData.address} onChange={handleChange}></input>
+            <label>Ngày sinh</label>
+            <input type="date" name="birthDate" value={formData.birthDate} onChange={handleChange} />
           </div>
+
+          <div>
+            <label className='label'>Giới tính</label>
+            <select className='select' name="gender" value={formData.gender} onChange={handleChange}>
+              <option value="">-- Chọn --</option>
+              <option value="Nam">Nam</option>
+              <option value="Nữ">Nữ</option>
+            </select>
+          </div>
+
+          <div>
+            <label className='label'>Loại giấy tờ</label>
+            <select className='select' name="documentType" value={formData.documentType} onChange={handleChange}>
+              <option value="">-- Chọn --</option>
+              <option value="CCCD">CCCD</option>
+              <option value="Hộ chiếu">Hộ chiếu</option>
+              <option value="Giấy khai sinh">Giấy khai sinh</option>
+            </select>
+          </div>
+
+          {formData.documentType && (
+            <>
+              <div>
+                <label>Số giấy tờ</label>
+                <input type="text" name="idNumber" value={formData.idNumber} onChange={handleChange} />
+              </div>
+
+              <div>
+                <label>Ngày cấp</label>
+                <input type="date" name="issueDate" value={formData.issueDate} onChange={handleChange} />
+              </div>
+
+              <div>
+                <label>Nơi cấp</label>
+                <input type="text" name="issuePlace" value={formData.issuePlace} onChange={handleChange} />
+              </div>
+            </>
+          )}
+
           <div className="profile-actions">
-            <button type="submit" className="btn-save">Lưu thay đổi</button>
-            <button type="button" onClick={handleReset} className="btn-reset">Đặt lại</button>
+            <button type="submit" className="btn-save">Lưu hồ sơ</button>
           </div>
         </form>
       </div>

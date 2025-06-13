@@ -10,6 +10,7 @@ const RegisterPopup = ({ onClose }) => {
     fullName: '',
     email: '',
     phone: '',
+    role: 'STAFF',
   });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -24,7 +25,7 @@ const RegisterPopup = ({ onClose }) => {
     setSuccess('');
 
     try {
-      await registerUser(form);
+      await registerUser({ ...form, role: 'STAFF' });
       setSuccess('Đăng ký thành công!');
       setTimeout(() => {
         onClose(); // đóng popup sau khi đăng ký thành công

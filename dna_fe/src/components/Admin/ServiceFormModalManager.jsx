@@ -30,6 +30,17 @@ const ServiceFormModalManager = ({ isOpen, onClose, onSave, formData, setFormDat
           <option value="Hành chính">Hành chính</option>
         </select>
 
+        <label>Thời gian xét nghiệm (ngày):</label>
+        <input
+          type="number"
+          name="testDuration"
+          placeholder="VD: 3"
+          min="1"
+          value={formData.testDuration || ''}
+          onChange={handleChange}
+        />
+
+
         <label>Giá dịch vụ (VND):</label>
         <input
           type="number"

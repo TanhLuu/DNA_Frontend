@@ -30,7 +30,6 @@ const AdminLayout = ({ children }) => {
           <div className="admin-role">{user.role}</div>
           <nav className="admin-nav">
             <Link to="/ordersPageAdmin">Đơn xét nghiệm</Link>
-            <Link to="/profile">Hồ sơ người dùng</Link>
             <Link to="/serviceManagement">Quản lý dịch vụ</Link>
             <Link to="/dashboard">Dashboard</Link>
             <Link to="#">Quản lý feedback</Link>
