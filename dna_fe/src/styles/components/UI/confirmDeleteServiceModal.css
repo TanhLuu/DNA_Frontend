@@ -1,0 +1,50 @@
+.delete-box {
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  width: 450px;
+  max-width: 90%;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+.delete-title {
+  color: #dc3545;
+  font-size: 20px;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.service-info {
+  background-color: #f8d7da;
+  color: #721c24;
+  border-radius: 6px;
+  padding: 15px;
+  margin: 15px 0;
+}
+
+.service-info p {
+  margin: 6px 0;
+}
+
+.modal-actions {
+  text-align: right;
+}
+
+.btn-delete {
+  background-color: #dc3545;
+  color: white;
+  padding: 8px 14px;
+  border: none;
+  border-radius: 6px;
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+.btn-cancel {
+  background-color: #6c757d;
+  color: white;
+  padding: 8px 14px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}

@@ -1,50 +1,112 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import ServiceFormModalManager from '../../components/UI/ServiceFormModalManager';
+import ConfirmDeleteServiceModal from '../../components/UI/ConfirmDeleteServiceModal';
 import '../../styles/admin/serviceManagement.css';
 
 const ServiceManagement = () => {
   const [services, setServices] = useState([]);
-  const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
+  const [isFormModalOpen, setIsFormModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [formData, setFormData] = useState({
+    id: null,
+    name: '',
+    type: '',
+    time: '',
+    price: ''
+  });
+  const [selectedService, setSelectedService] = useState(null);
+  const [searchKeyword, setSearchKeyword] = useState('');
 
-  // Fetch data from backend
   useEffect(() => {
-    const fetchServices = async () => {
-      try {
-        const response = await fetch('http://localhost:8080/api/services'); // <-- chỉnh lại URL theo backend bạn
-        if (!response.ok) {
-          throw new Error('Failed to fetch services');
-        }
-        const data = await response.json();
-        setServices(data);
-      } catch (error) {
-        console.error('Error fetching services:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchServices();
   }, []);
 
+  const fetchServices = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch('http://localhost:8080/api/services');
+      const data = await res.json();
+      setServices(data);
+    } catch (err) {
+      console.error('Lỗi khi lấy danh sách dịch vụ:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const openAddModal = () => {
+    setFormData({ id: null, name: '', type: '', time: '', price: '' });
+    setIsFormModalOpen(true);
+  };
+
+  const openEditModal = (service) => {
+    setFormData(service);
+    setIsFormModalOpen(true);
+  };
+
+  const openDeleteModal = (service) => {
+    setSelectedService(service);
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleSave = async () => {
+    const method = formData.id ? 'PUT' : 'POST';
+    const url = formData.id
+      ? `http://localhost:8080/api/services/${formData.id}`
+      : 'http://localhost:8080/api/services';
+
+    try {
+      const res = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      });
+
+      if (res.ok) {
+        await fetchServices();
+        setIsFormModalOpen(false);
+      } else {
+        console.error('Lỗi khi lưu dịch vụ');
+      }
+    } catch (err) {
+      console.error('Lỗi khi gửi yêu cầu:', err);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      const res = await fetch(`http://localhost:8080/api/services/${id}`, {
+        method: 'DELETE'
+      });
+      if (res.ok) {
+        await fetchServices();
+        setIsDeleteModalOpen(false);
+      }
+    } catch (err) {
+      console.error('Lỗi khi xóa dịch vụ:', err);
+    }
+  };
+
   const filteredServices = services.filter(service =>
-    service.name.toLowerCase().includes(search.toLowerCase())
+    service.name.toLowerCase().includes(searchKeyword.toLowerCase())
   );
 
   return (
     <div className="service-container">
       <div className="service-card">
         <div className="service-header">
-          <h3>Quản lý Dịch vụ</h3>
-          <button className="add-button">+ Thêm Dịch vụ</button>
+          <span>Quản lý dịch vụ</span>
+          <button className="add-button" onClick={openAddModal}>+ Thêm dịch vụ</button>
         </div>
 
         <div className="search-bar">
-          <i className="fas fa-search search-icon"></i>
+          🔍
           <input
             type="text"
-            placeholder="Nhập từ khóa..."
-            value={search}
-            onChange={e => setSearch(e.target.value)}
+            placeholder="Tìm kiếm theo tên dịch vụ"
+            value={searchKeyword}
+            onChange={(e) => setSearchKeyword(e.target.value)}
           />
         </div>
 
@@ -54,10 +116,11 @@ const ServiceManagement = () => {
           <table className="service-table">
             <thead>
               <tr>
-                <th>Tên dịch vụ</th>
+                <th>Tên</th>
                 <th>Loại</th>
+                <th>Thời gian</th>
                 <th>Giá (VND)</th>
-                <th>Thao tác</th>
+                <th>Hành động</th>
               </tr>
             </thead>
             <tbody>
@@ -66,16 +129,17 @@ const ServiceManagement = () => {
                   <tr key={service.id}>
                     <td>{service.name}</td>
                     <td>{service.type}</td>
+                    <td>{service.time}</td>
                     <td>{Number(service.price).toLocaleString('vi-VN')}</td>
                     <td>
-                      <button className="edit-btn">Sửa</button>
-                      <button className="delete-btn">Xóa</button>
+                      <button className="edit-btn" onClick={() => openEditModal(service)}>Sửa</button>
+                      <button className="delete-btn" onClick={() => openDeleteModal(service)}>Xóa</button>
                     </td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan="4" style={{ textAlign: 'center' }}>
+                  <td colSpan="5" style={{ textAlign: 'center' }}>
                     Không tìm thấy dịch vụ nào.
                   </td>
                 </tr>
@@ -84,6 +148,23 @@ const ServiceManagement = () => {
           </table>
         )}
       </div>
+
+      {/* Popup Tạo / Sửa */}
+      <ServiceFormModalManager
+        isOpen={isFormModalOpen}
+        onClose={() => setIsFormModalOpen(false)}
+        onSave={handleSave}
+        formData={formData}
+        setFormData={setFormData}
+      />
+
+      {/* Popup Xác nhận Xóa */}
+      <ConfirmDeleteServiceModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        service={selectedService}
+        onDelete={handleDelete}
+      />
     </div>
   );
 };
