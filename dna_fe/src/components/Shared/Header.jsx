@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import '../../styles/components/header.css';
 import logo from '../../assets/logo.jpg';
-import { Link } from 'react-router-dom';
+import { Link ,useNavigate} from 'react-router-dom';
 
 
 const Header = () => {
+ const navigate = useNavigate(); 
   const [fullName, setFullName] = useState('');
 
   useEffect(() => {
@@ -43,8 +44,13 @@ const Header = () => {
         </div>
         <div className="auth-links">
           {fullName ? (
-            <>
-              <span>👤 {fullName}</span> |{' '}
+             <>
+              <span 
+                onClick={() => navigate('/profile')} 
+                style={{ cursor: 'pointer' }}
+              >
+                👤 {fullName}
+              </span> |{' '}
               <a onClick={handleLogout} style={{ cursor: 'pointer' }}>
                 Đăng xuất
               </a>
