@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import ServiceFormModalManager from '../../components/UI/ServiceFormModalManager';
-import ConfirmDeleteServiceModal from '../../components/UI/ConfirmDeleteServiceModal';
+import ServiceFormModalManager from '../../components/Admin/ServiceFormModalManager';
+import ConfirmDeleteServiceModal from '../../components/Admin/ConfirmDeleteServiceModal';
 import '../../styles/admin/serviceManagement.css';
 
 const ServiceManagement = () => {
