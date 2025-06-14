@@ -1,15 +1,27 @@
 // src/pages/auth/ResetPasswordFromEmail.jsx
-import React, { useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
 import '../../styles/auth/AuthForm.css';
 
 const ResetPasswordFromEmail = () => {
-  const [searchParams] = useSearchParams();
-  const token = searchParams.get('token');
-
+  const [token, setToken] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
+
+  // ✅ useEffect để lấy token và ẩn khỏi URL
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const tokenFromUrl = params.get('token');
+
+    if (tokenFromUrl) {
+      localStorage.setItem('resetToken', tokenFromUrl);
+      setToken(tokenFromUrl);
+      window.history.replaceState({}, document.title, '/reset-password');
+    } else {
+      const savedToken = localStorage.getItem('resetToken');
+      if (savedToken) setToken(savedToken);
+    }
+  }, []);
 
   const handleReset = async (e) => {
     e.preventDefault();
@@ -31,6 +43,7 @@ const ResetPasswordFromEmail = () => {
 
       setMessage(data);
       setError('');
+      localStorage.removeItem('resetToken'); // ✅ Xóa token sau khi dùng
     } catch (err) {
       setError(err.message);
       setMessage('');
