@@ -1,35 +1,76 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 
-export default function FormStep2({ data }) {
+export default function FormStep2({ bookingId }) {
+    const [data, setData] = useState(null);
+    const [loading, setLoading] = useState(true);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [success, setSuccess] = useState(false);
     const [error, setError] = useState(null);
-    if (!data) return <div>Loading...</div>
+
+    useEffect(() => {
+        const fetchBookingData = async () => {
+            try {
+                setLoading(true);
+                // Replace with your actual API endpoint
+                const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/bookings/${bookingId}`);
+                setData(response.data);
+                
+                // If the booking already has ngayNhanBoKit, set success to true
+                if (response.data.ngayNhanBoKit) {
+                    setSuccess(true);
+                }
+                
+                setLoading(false);
+            } catch (err) {
+                console.error("Error fetching booking data:", err);
+                setError("Failed to load booking information");
+                setLoading(false);
+            }
+        };
+
+        if (bookingId) {
+            fetchBookingData();
+        } else {
+            setLoading(false);
+            setError("No booking ID provided");
+        }
+    }, [bookingId]);
+
     const handleKitReceived = async () => {
         try {
             setIsSubmitting(true);
             setError(null);
 
-            // Gửi request đến API backend
-            const response = await axios.post('api/confirm-kit-received', {
+            // Send request to backend API
+           const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/confirm-kit-received`, {
                 maHoSo: data.maHoSo,
                 ngayNhanBoKit: new Date().toISOString().split('T')[0]
             });
 
             if (response.status === 200) {
                 setSuccess(true);
+                // Update the local data with the confirmation date
+                setData({
+                    ...data,
+                    ngayNhanBoKit: new Date().toISOString().split('T')[0],
+                    trangThai: "Đã nhận bộ kit"
+                });
             }
         } catch (error) {
-            console.error("Lỗi khi xác nhận nhận bộ kit:", error);
-            setError("Có lỗi xảy ra khi xác nhận. Vui lòng thử lại sau.");
+            console.error("Error confirming kit receipt:", error);
+            setError(error.response?.data?.message || "An error occurred while confirming. Please try again later.");
         } finally {
             setIsSubmitting(false);
         }
     };
+
+    if (loading) return <div className="loading">Loading...</div>;
+    if (!data) return <div className="error-message">No booking data available</div>;
+
     return (
-        <div>
-            < div className="booking-info-form" >
+        <div className="form-step2-container">
+            <div className="booking-info-form">
                 <div className="info-row">
                     <span className="label">Mã hồ sơ:</span>
                     <span>{data.maHoSo || ""}</span>
@@ -72,6 +113,7 @@ export default function FormStep2({ data }) {
                 </div>
                 <div className="info-row">
                     <span className="label">Mã bộ kit:</span>
+                    <span>{data.maBoKit || ""}</span>
                 </div>
                 <div className="info-row">
                     <span className="label">Tên bộ kit:</span>
@@ -87,29 +129,42 @@ export default function FormStep2({ data }) {
                 </div>
                 <div className="info-row">
                     <span className="label">Trạng thái:</span>
-                    <span>{data.trangThai || ""}</span>
+                    <span className={`status ${data.trangThai === "Đã nhận bộ kit" ? "status-received" : ""}`}>
+                        {data.trangThai || ""}
+                    </span>
                 </div>
                 <div className="info-row">
                     <span className="label">Ngày nhận bộ kit:</span>
-                    <span>{data.ngayNhanBoKit || ""}</span>
+                    <span>{data.ngayNhanBoKit || "Chưa nhận"}</span>
                 </div>
             </div>
-            {success &&(
-                <div className="success-message">Xác nhận nhận bộ kit thành công!</div>
+            
+            {success && (
+                <div className="success-message">
+                    <i className="icon-check"></i> Xác nhận nhận bộ kit thành công!
+                </div>
             )}
+            
             {error && (
-                <div className="error-message">{error}</div>
+                <div className="error-message">
+                    <i className="icon-error"></i> {error}
+                </div>
             )}
 
             <div className="confirm-button-container">
                 <button 
-                className="confirm-button"
-                onClick={handleKitReceived}
-                disabled={isSubmitting || success || data.ngayNhanBoKit}>
-                    {isSubmitting ? "Đang xử lý..." : "Xác nhận đã nhận bộ kit"}
+                    className={`confirm-button ${data.ngayNhanBoKit ? "disabled" : ""}`}
+                    onClick={handleKitReceived}
+                    disabled={isSubmitting || success || data.ngayNhanBoKit}
+                >
+                    {isSubmitting ? "Đang xử lý..." : data.ngayNhanBoKit ? "Đã xác nhận nhận bộ kit" : "Xác nhận đã nhận bộ kit"}
                 </button>
                 
-
+                {data.ngayNhanBoKit && (
+                    <div className="confirmation-date">
+                        Đã xác nhận vào ngày: {data.ngayNhanBoKit}
+                    </div>
+                )}
             </div>
         </div>
     );

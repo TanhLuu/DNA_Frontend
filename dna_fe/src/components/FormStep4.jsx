@@ -1,14 +1,42 @@
-import React from "react";
+import React, { useState, useEffect, useRef } from "react";
+import axios from "axios";
 
-
-
-export default function FormStep4({ data }) {
+export default function FormStep4({ bookingId }) {
     const formRef = useRef(null);
-    if (!data) return <div>Loading...</div>;
+    const [data, setData] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        const fetchBookingData = async () => {
+            try {
+                setLoading(true);
+                // Replace with your actual API endpoint
+                const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/bookings/${bookingId}`);
+                setData(response.data);
+                setLoading(false);
+            } catch (err) {
+                console.error("Error fetching booking data:", err);
+                setError("Failed to load booking information");
+                setLoading(false);
+            }
+        };
+
+        if (bookingId) {
+            fetchBookingData();
+        } else {
+            setLoading(false);
+            setError("No booking ID provided");
+        }
+    }, [bookingId]);
+
+    if (loading) return <div className="loading-indicator">Loading...</div>;
+    if (error) return <div className="error-message">{error}</div>;
+    if (!data) return <div>No booking data available</div>;
 
     return (
         <div>
-            <div className="booking-info-form">
+            <div className="booking-info-form" ref={formRef}>
                 <div className="info-row">
                     <span className="label">Mã hồ sơ:</span>
                     <span>{data.maHoSo || ""}</span>

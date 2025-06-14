@@ -4,8 +4,31 @@ import { useNavigate } from "react-router-dom";
 export default function FormStep6({ data }) {
     const navigate = useNavigate();
     const [showPdf, setShowPdf] = useState(false);
-    if (!data) return <div>Loading...</div>;
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+    const [testResult, setTestResult] = useState(null);
+    
 
+    useEffect(() => {
+        // Fetch test result when component mounts if we have maHoSo
+        if (data && data.maHoSo) {
+            fetchTestResult(data.maHoSo);
+        }
+    }, [data]);
+
+    const fetchTestResult = async (maHoSo) => {
+        setLoading(true);
+        setError(null);
+        try {
+            const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/test-results/${maHoSo}`);
+            setTestResult(response.data);
+        } catch (err) {
+            console.error("Error fetching test result:", err);
+            setError("Không thể tải kết quả xét nghiệm. Vui lòng thử lại sau.");
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const handleViewResult = () => {
         //Di chuyển sang trang kết quả
@@ -16,6 +39,8 @@ export default function FormStep6({ data }) {
         // Di chuyển sang trang đánh giá
         navigate(`/review/${data.maHoSo}`);
     };
+
+    if (!data) return <div>Loading...</div>;
     return (
         <div>
             <div className="result-info-form">
@@ -69,17 +94,17 @@ export default function FormStep6({ data }) {
                     <div className="pdf-header">
                         <h3>Kết quả xét nghiệm</h3>
                         <button
-                        className="close-button"
-                        onClick={()=> setShowPdf}>
+                            className="close-button"
+                            onClick={() => setShowPdf}>
                             X
                         </button>
                     </div>
                     <iframe
-                    src={Date.ketQuaFileUrl}
-                    title="Kết quả xét nghiệm"
-                    width="100%"
-                    height="600px"
-                    className="pdf-iframe"
+                        src={Date.ketQuaFileUrl}
+                        title="Kết quả xét nghiệm"
+                        width="100%"
+                        height="600px"
+                        className="pdf-iframe"
                     />
                 </div>
 

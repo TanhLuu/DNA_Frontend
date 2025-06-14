@@ -1,11 +1,37 @@
-import React from "react";
+import React, { useEffect, useState, useRef } from "react";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
+import axios from "axios";
 
-
-export default function FormStep1({ data }) {
+export default function FormStep1({ bookingId }) {
     const formRef = useRef(null);
-    if (!data) return <div>Loading...</div>;
+    const [data, setData] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        const fetchBookingData = async () => {
+            try {
+                setLoading(true);
+                // Replace with your actual API endpoint
+               // const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/bookings/${bookingId}`);
+                setData(response.data);
+                setLoading(false);
+            } catch (err) {
+                console.error("Error fetching booking data:", err);
+                setError("Failed to load booking information");
+                setLoading(false);
+            }
+        };
+
+        if (bookingId) {
+            fetchBookingData();
+        } else {
+            setLoading(false);
+            setError("No booking ID provided");
+        }
+    }, [bookingId]);
+
     const downloadAsPDF = () => {
         const input = formRef.current;
         html2canvas(input).then((canvas) => {
@@ -23,9 +49,14 @@ export default function FormStep1({ data }) {
             pdf.save(`Booking_${data.maHoSo || 'Form'}.pdf`);
         });
     };
+
+    if (loading) return <div>Loading...</div>;
+    if (error) return <div>Error: {error}</div>;
+    if (!data) return <div>No data available</div>;
+
     return (
         <div>
-            <div className="booking-info-form">
+            <div ref={formRef} className="booking-info-form">
                 <div className="info-row">
                     <span className="label">Mã hồ sơ:</span>
                     <span>{data.maHoSo || ""}</span>
