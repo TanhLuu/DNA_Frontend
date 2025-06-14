@@ -1,9 +1,7 @@
-import React, { useEffect, useState, useRef } from "react";
-import html2canvas from "html2canvas";
-import jsPDF from "jspdf";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 
-export default function FormStep1({ bookingId }) {
+export default function FormStep3({ bookingId }) {
     const formRef = useRef(null);
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -32,31 +30,13 @@ export default function FormStep1({ bookingId }) {
         }
     }, [bookingId]);
 
-    const downloadAsPDF = () => {
-        const input = formRef.current;
-        html2canvas(input).then((canvas) => {
-            const imgData = canvas.toDataURL('image/png');
-            const pdf = new jsPDF('p', 'mm', 'a4');
-            const pdfWidth = pdf.internal.pageSize.getWidth();
-            const pdfHeight = pdf.internal.pageSize.getHeight();
-            const imgWidth = canvas.width;
-            const imgHeight = canvas.height;
-            const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
-            const imgX = (pdfWidth - imgWidth * ratio) / 2;
-            const imgY = 30;
-
-            pdf.addImage(imgData, 'PNG', imgX, imgY, imgWidth * ratio, imgHeight * ratio);
-            pdf.save(`Booking_${data.maHoSo || 'Form'}.pdf`);
-        });
-    };
-
-    if (loading) return <div>Loading...</div>;
-    if (error) return <div>Error: {error}</div>;
-    if (!data) return <div>No data available</div>;
+    if (loading) return <div className="loading-indicator">Loading...</div>;
+    if (error) return <div className="error-message">{error}</div>;
+    if (!data) return <div>No booking data available</div>;
 
     return (
         <div>
-            <div ref={formRef} className="booking-info-form">
+            <div className="booking-info-form" ref={formRef}>
                 <div className="info-row">
                     <span className="label">Mã hồ sơ:</span>
                     <span>{data.maHoSo || ""}</span>
@@ -97,22 +77,18 @@ export default function FormStep1({ bookingId }) {
                     <span className="label">Hình thức mẫu:</span>
                     <span>{data.hinhThucMau || ""}</span>
                 </div>
-                <div className="info-row">
-                    <span className="label">Lịch hẹn:</span>
-                    <span>{data.lichHen || ""}</span>
+                    <div className="info-row">
+                    <span className="label">Trạng thái:</span>
+                    <span>{data.trangThai || ""}</span>
                 </div>
                 <div className="info-row">
-                    <span className="label">Nhận kết quả:</span>
-                    <span>{data.nhanKetQua || ""}</span>
+                    <span className="label">Nhân viên lấy mẫu:</span>
+                    <span>{data.nhanVienLayMau || ""}</span>
                 </div>
-            </div>
-            <div className="download-button-container">
-                <button
-                    className="download-button"
-                    onClick={downloadAsPDF}
-                >
-                    Tải biểu mẫu
-                </button>
+                <div className="info-row">
+                    <span className="label">Thời gian lấy mẫu:</span>
+                    <span>{data.thoiGianLayMau || ""}</span>
+                </div>
             </div>
         </div>
     );

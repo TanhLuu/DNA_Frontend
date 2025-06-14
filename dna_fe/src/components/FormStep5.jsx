@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 
-export default function FormStep5({ data }) {
+export default function FormStep5({ bookingId }) {
     const formRef = useRef(null);
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);

@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 export default function FormStep6({ data }) {
     const navigate = useNavigate();
@@ -8,7 +9,6 @@ export default function FormStep6({ data }) {
     const [error, setError] = useState(null);
     const [testResult, setTestResult] = useState(null);
     
-
     useEffect(() => {
         // Fetch test result when component mounts if we have maHoSo
         if (data && data.maHoSo) {
@@ -37,10 +37,17 @@ export default function FormStep6({ data }) {
 
     const handleReview = () => {
         // Di chuyển sang trang đánh giá
-        navigate(`/review/${data.maHoSo}`);
+        if (data && data.maHoSo) {
+            navigate(`/review/${data.maHoSo}`);
+        } else {
+            alert("Không tìm thấy mã hồ sơ");
+        }
     };
 
-    if (!data) return <div>Loading...</div>;
+    if (loading) return <div>Loading...</div>;
+    if (error) return <div className="error-message">{error}</div>;
+    if (!data) return <div>Không có dữ liệu hồ sơ</div>;
+
     return (
         <div>
             <div className="result-info-form">
@@ -86,33 +93,36 @@ export default function FormStep6({ data }) {
                 </div>
                 <div className="info-row">
                     <span className="label">Kết quả:</span>
-                    <span>{data.ketQua || ""}</span>
+                    <span>{data.ketQua || testResult?.ketQua || ""}</span>
                 </div>
             </div>
-            {showPdf && data.ketQuaFileUrl && (
+            
+            {showPdf && (data.ketQuaFileUrl || testResult?.fileUrl) && (
                 <div className="pdf-container">
                     <div className="pdf-header">
                         <h3>Kết quả xét nghiệm</h3>
                         <button
                             className="close-button"
-                            onClick={() => setShowPdf}>
+                            onClick={() => setShowPdf(false)}>
                             X
                         </button>
                     </div>
                     <iframe
-                        src={Date.ketQuaFileUrl}
+                        src={data.ketQuaFileUrl || testResult?.fileUrl}
                         title="Kết quả xét nghiệm"
                         width="100%"
                         height="600px"
                         className="pdf-iframe"
                     />
                 </div>
-
             )}
-            <div className="action-button">
+            
+            <div className="action-buttons">
                 <button
                     className="view-result-button"
-                    onClick={handleViewResult}>Xem kết quả
+                    onClick={handleViewResult}
+                    disabled={!data.ketQuaFileUrl && !testResult?.fileUrl}>
+                    Xem kết quả
                 </button>
                 <button
                     className="review-button"
