@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Header from './components/Shared/Header';
 import Footer from './components/Shared/Footer';
 import AdminLayout from './components/Shared/AdminLayout';
 import Login from './pages/auth/Login';
+import ForgotPassword from './pages/auth/ForgotPassword';
+import ResetPasswordFromEmail from './pages/auth/ResetPasswordFromEmail';
+import ResetPassword from './pages/auth/ResetPassword';
 import Register from './pages/auth/Register';
 import Home from './pages/Home';
 import OrdersPage from './pages/admin/OrdersPage';
@@ -16,6 +19,20 @@ import './styles/global.css';
 function App() {
   const [role, setRole] = useState(localStorage.getItem('role')?.toLowerCase());
 
+  // Thêm cơ chế tự kiểm tra localStorage
+  useEffect(() => {
+    const checkRole = () => {
+      const currentRole = localStorage.getItem('role')?.toLowerCase();
+      if (currentRole !== role) {
+        setRole(currentRole);
+      }
+    };
+    
+    // Kiểm tra mỗi 100ms
+    const interval = setInterval(checkRole, 100);
+    return () => clearInterval(interval);
+  }, [role]);
+
   useEffect(() => {
     const handleStorageChange = () => {
       setRole(localStorage.getItem('role')?.toLowerCase());
@@ -24,21 +41,18 @@ function App() {
     return () => window.removeEventListener('storage', handleStorageChange);
   }, []);
 
-  return (
+    return (
     <Router>
       <div className="app">
         {role !== 'staff' && <Header />}
 
         <main className="main-content">
           <Routes>
-            {(!role || role === 'customer') && (
-              <Route path="/" element={<Home />} />
-            )}
-
-            {role === 'customer' && (
-              <Route path="/profile" element={<Profile />} />
-            )}
-
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/change-password" element={<ResetPassword />} />
+            <Route path="/reset-password" element={<ResetPasswordFromEmail />} />
             {role === 'staff' && (
               <>
                 <Route
@@ -49,7 +63,6 @@ function App() {
                     </AdminLayout>
                   }
                 />
-
                 <Route
                   path="/serviceManagement"
                   element={
@@ -68,9 +81,23 @@ function App() {
                 />
               </>
             )}
+ 
+            {(!role || role === 'customer') && (
+              <Route path="/" element={<Home />} />
+            )}
 
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
+            {role === 'customer' && (
+              <Route path="/profile" element={<Profile />} />
+            )}
+           
+
+            <Route path="*" element={
+              role === 'staff' ? (
+                <Navigate to="/ordersPageAdmin" replace />
+              ) : (
+                <Navigate to="/" replace />
+              )
+            } />
           </Routes>
         </main>
 

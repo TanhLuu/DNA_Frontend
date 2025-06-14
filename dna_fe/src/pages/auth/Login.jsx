@@ -13,52 +13,60 @@ const Login = () => {
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
-  e.preventDefault();
-  setError('');
+    e.preventDefault();
+    setError('');
 
-  try {
-    const data = await loginUser(username, password);
+    try {
+      const response = await loginUser(username, password);
+      const { account, token } = response.data;
 
-    const role = data.role?.toUpperCase();
-    localStorage.setItem('username', data.username);
-    localStorage.setItem('role', role);
-    localStorage.setItem('fullName', data.fullName || '');
-    localStorage.setItem('email', data.email || '');
-    localStorage.setItem('phone', data.phone || '');
-    localStorage.setItem('accountId', data.accountId);
-    window.dispatchEvent(new Event('storage'));
+      if (!token) {
+        throw new Error('Không nhận được token từ server');
+      }
 
-    if (role === 'STAFF' || role === 'ADMIN') {
-      navigate('/ordersPageAdmin');
-    } else if (role === 'CUSTOMER') {
-      try {
-        const customer = await getCustomerByAccountId(data.accountId);
+      // Lưu tất cả thông tin vào localStorage
+      localStorage.setItem('token', token);
+      localStorage.setItem('accountId', account.id);
+      localStorage.setItem('username', account.username);
+      
+      const role = account.role?.toUpperCase() || '';
+      localStorage.setItem('role', role);
+      
+      localStorage.setItem('fullName', account.fullName || '');
+      localStorage.setItem('email', account.email || '');
+      localStorage.setItem('phone', account.phone || '');
 
-        if (customer && customer.id) {
-          // Đã có hồ sơ
-          navigate('/');
-        } else {
-          // Chưa có hồ sơ
+      // Kích hoạt sự kiện để App.jsx cập nhật role ngay lập tức
+      window.dispatchEvent(new Event('storage'));
+
+      // Xử lý chuyển hướng theo role
+      if (role === 'STAFF' || role === 'ADMIN') {
+        navigate('/ordersPageAdmin', { replace: true });
+      } else if (role === 'CUSTOMER') {
+        try {
+          const customer = await getCustomerByAccountId(account.id);
+          navigate(customer?.id ? '/' : '/profile');
+        } catch (error) {
           navigate('/profile');
         }
-      } catch (e) {
-        // Lỗi gọi API hoặc chưa có hồ sơ
-        navigate('/profile');
+      } else {
+        navigate('/');
       }
+
+    } catch (err) {
+      console.error('Login error:', err);
+      setError(
+        err.response?.data?.message || 
+        err.message || 
+        'Đăng nhập thất bại. Vui lòng thử lại.'
+      );
     }
-  } catch (err) {
-    if (err.response && err.response.data) {
-      setError(err.response.data);
-    } else {
-      setError('Đăng nhập thất bại. Vui lòng thử lại.');
-    }
-  }
-};
+  };
 
   return (
-    <div className="auth-container">
-      <form className="auth-form" onSubmit={handleLogin}>
-        <h2>Đăng nhập</h2>
+      <div className="auth-container">
+    <form className="auth-form" onSubmit={handleLogin}>
+      <h2>Đăng nhập</h2>
 
         <input
           type="text"
@@ -76,20 +84,27 @@ const Login = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          <span className="password-toggle" onClick={() => setShowPassword(!showPassword)}>
+          <span 
+            className="password-toggle" 
+            onClick={() => setShowPassword(!showPassword)}
+          >
             {showPassword ? <FaEyeSlash /> : <FaEye />}
           </span>
         </div>
 
         {error && <p className="error">{error}</p>}
-        <button type="submit">Đăng nhập</button>
+      <button type="submit">Đăng nhập</button>
+        <div className="auth-links">
         <p>
           Chưa có tài khoản? <a href="/register">Đăng ký</a>
         </p>
+        <p>
+          <a href="/forgot-password">Quên mật khẩu?</a>
+        </p>
+      </div>
       </form>
     </div>
   );
 };
 
 export default Login;
-

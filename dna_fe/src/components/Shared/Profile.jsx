@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../../styles/components/shared/profile.css';
-import { createCustomer } from '../../api/customerApi.jsx';
+import { createCustomer, getCustomerByAccountId, saveCustomerProfile } from '../../api/customerApi.jsx';
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -9,9 +9,9 @@ const Profile = () => {
     birthDate: '',
     gender: '',
     documentType: '',
-    idNumber: '',
     issueDate: '',
     issuePlace: '',
+    address: '',
   });
 
   const [accountInfo, setAccountInfo] = useState({
@@ -21,7 +21,6 @@ const Profile = () => {
   });
 
   useEffect(() => {
-    // Lấy thông tin từ localStorage sau khi đăng ký hoặc đăng nhập
     const name = localStorage.getItem('fullName') || '';
     const phone = localStorage.getItem('phone') || '';
     const email = localStorage.getItem('email') || '';
@@ -34,42 +33,54 @@ const Profile = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    const requiredFields = ['birthDate', 'gender', 'documentType'];
-    if (formData.documentType) {
-      requiredFields.push('idNumber', 'issueDate', 'issuePlace');
-    }
+  const requiredFields = ['birthDate', 'gender', 'documentType', 'address'];
+  if (formData.documentType) {
+    requiredFields.push('issueDate', 'issuePlace');
+  }
 
-    const isValid = requiredFields.every((field) => formData[field]?.trim());
-    if (!isValid) {
-      alert('Vui lòng điền đầy đủ tất cả thông tin cần thiết.');
+  const isValid = requiredFields.every((field) => formData[field]?.trim());
+  if (!isValid) {
+    alert('Vui lòng điền đầy đủ tất cả thông tin cần thiết.');
+    return;
+  }
+
+  try {
+    const accountId = localStorage.getItem('accountId');
+    if (!accountId) {
+      alert('Không tìm thấy ID tài khoản. Vui lòng đăng nhập lại.');
       return;
     }
 
-    try {
-      const accountId = localStorage.getItem('accountId');
-      if (!accountId) {
-        alert('Không tìm thấy ID tài khoản. Vui lòng đăng nhập lại.');
-        return;
-      }
+    const payload = {
+      accountId: parseInt(accountId),
+      dateOfBirth: formData.birthDate,
+      gender: formData.gender,
+      documentType: formData.documentType,
+      address: formData.address,
+      dateOfIssue: formData.issueDate,
+      placeOfIssue: formData.issuePlace,
+    };
 
-      await createCustomer(accountId, {
-        birthDate: formData.birthDate,
-        gender: formData.gender,
-        documentType: formData.documentType,
-        idNumber: formData.idNumber,
-        issueDate: formData.issueDate,
-        issuePlace: formData.issuePlace,
-      });
+    // 🔍 Kiểm tra khách hàng đã tồn tại chưa
+    const existingCustomer = await getCustomerByAccountId(accountId);
 
-      alert('Hồ sơ đã được cập nhật và lưu thành công!');
-      navigate('/');
-    } catch (err) {
-      console.error(err);
-      alert('Lỗi khi lưu hồ sơ. Vui lòng thử lại.');
+    if (existingCustomer?.id) {
+      // ✅ Nếu đã có → gọi PUT để cập nhật
+      await saveCustomerProfile({ ...payload, id: existingCustomer.id });
+    } else {
+      // ✅ Nếu chưa có → gọi POST để tạo mới
+      await createCustomer(payload);
     }
-  };
+
+    alert('Hồ sơ đã được cập nhật thành công!');
+    navigate('/');
+  } catch (err) {
+    console.error(err);
+    alert('Lỗi khi lưu hồ sơ. Vui lòng thử lại.');
+  }
+};
 
   return (
     <div className="profile-container">
@@ -97,8 +108,8 @@ const Profile = () => {
           </div>
 
           <div>
-            <label className='label'>Giới tính</label>
-            <select className='select' name="gender" value={formData.gender} onChange={handleChange}>
+            <label>Giới tính</label>
+            <select name="gender" value={formData.gender} onChange={handleChange}>
               <option value="">-- Chọn --</option>
               <option value="Nam">Nam</option>
               <option value="Nữ">Nữ</option>
@@ -106,8 +117,13 @@ const Profile = () => {
           </div>
 
           <div>
-            <label className='label'>Loại giấy tờ</label>
-            <select className='select' name="documentType" value={formData.documentType} onChange={handleChange}>
+            <label>Địa chỉ</label>
+            <input type="text" name="address" value={formData.address} onChange={handleChange} />
+          </div>
+
+          <div>
+            <label>Loại giấy tờ</label>
+            <select name="documentType" value={formData.documentType} onChange={handleChange}>
               <option value="">-- Chọn --</option>
               <option value="CCCD">CCCD</option>
               <option value="Hộ chiếu">Hộ chiếu</option>
@@ -117,11 +133,6 @@ const Profile = () => {
 
           {formData.documentType && (
             <>
-              <div>
-                <label>Số giấy tờ</label>
-                <input type="text" name="idNumber" value={formData.idNumber} onChange={handleChange} />
-              </div>
-
               <div>
                 <label>Ngày cấp</label>
                 <input type="date" name="issueDate" value={formData.issueDate} onChange={handleChange} />

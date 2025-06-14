@@ -1,5 +1,5 @@
 import React from 'react';
-import '../../styles/components/UI/serviceFormModalManager.css';
+import '../../styles/admin/serviceFormModalManager.css';
 
 const ServiceFormModalManager = ({ isOpen, onClose, onSave, formData, setFormData }) => {
   if (!isOpen) return null;

@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../../styles/components/shared/header.css';
 import logo from '../../assets/logo.jpg';
 
 const Header = () => {
   const [fullName, setFullName] = useState('');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const savedFullName = localStorage.getItem('fullName');
@@ -24,6 +26,11 @@ const Header = () => {
   const handleLogout = () => {
     localStorage.clear();
     window.location.href = '/';
+  };
+
+  const handleChangePassword = () => {
+    navigate('/change-password');
+    setIsDropdownOpen(false);
   };
 
   const toggleDropdown = () => {
@@ -48,6 +55,7 @@ const Header = () => {
                 <div className="dropdown-menu">
                   <a href="/orders">Đơn hàng</a>
                   <a href="/profile">Hồ sơ</a>
+                  <span onClick={handleChangePassword} className="logout-btn">Đổi mật khẩu</span>
                   <span onClick={handleLogout} className="logout-btn">Đăng xuất</span>
                 </div>
               )}

@@ -1,4 +1,3 @@
-// src/components/admin/RegisterPopup.jsx
 import React, { useState } from 'react';
 import { registerUser } from '../../api/authApi';
 import '../../styles/auth/register.css';

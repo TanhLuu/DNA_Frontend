@@ -1,21 +1,34 @@
-import axios from 'axios';
+import axiosInstance from './axiosInstance';
 
-const BASE_URL = 'http://localhost:8080/auth';
+const BASE_URL = '/auth';
 
 export const loginUser = async (username, password) => {
-  try {
-    const response = await axios.post(`${BASE_URL}/login`, { username, password });
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
+  const response = await axiosInstance.post(`${BASE_URL}/login`, { username, password });
+  return response;
+
 };
 
 export const registerUser = async (userData) => {
-  try {
-    const response = await axios.post(`${BASE_URL}/register`, userData);
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
+  const response = await axiosInstance.post(`${BASE_URL}/register`, userData);
+  return response.data;
+};
+
+// Quên mật khẩu
+export const forgotPassword = async (email) => {
+  const response = await axiosInstance.post(`${BASE_URL}/forgot-password`, { email });
+  return response.data;
+};
+
+// Validate reset token
+export const validateResetToken = async (token) => {
+  const response = await axiosInstance.get(`${BASE_URL}/validate-reset-token`, { params: { token }});
+  return response.data;
+};
+
+
+export const changePassword = async (newPassword) => {
+  const response = await axiosInstance.post(`${BASE_URL}/reset-password`, { 
+    newPassword 
+  });
+  return response.data;
 };

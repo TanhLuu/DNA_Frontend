@@ -1,5 +1,5 @@
 import React from 'react';
-import '../../styles/components/UI/confirmDeleteServiceModal.css';
+import '../../styles/admin/confirmDeleteServiceModal.css';
 
 const ConfirmDeleteServiceModal = ({ isOpen, service, onClose, onDelete }) => {
   if (!isOpen || !service) return null;

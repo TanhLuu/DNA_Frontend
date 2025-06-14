@@ -11,6 +11,7 @@ const Register = () => {
     fullName: '',
     email: '',
     phone: '',
+    role: 'CUSTOMER',
   });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -21,37 +22,44 @@ const Register = () => {
   };
 
   const handleRegister = async (e) => {
-  e.preventDefault();
-  setError('');
-  setSuccess('');
+    e.preventDefault();
+    setError('');
+    setSuccess('');
 
-  try {
-    // Đăng ký tài khoản
-    await registerUser(form);
+    try {
+      await registerUser(form);
 
-    // Đăng nhập ngay
-    const loginData = await loginUser(form.username, form.password);
+      const loginResponse = await loginUser(form.username, form.password);
+      const { token, account } = loginResponse.data; 
 
-    const role = loginData.role?.toUpperCase();
-    localStorage.setItem('username', loginData.username);
-    localStorage.setItem('role', role);
-    localStorage.setItem('fullName', loginData.fullName || '');
-    localStorage.setItem('email', loginData.email || '');
-    localStorage.setItem('phone', loginData.phone || '');
-    localStorage.setItem('accountId', loginData.accountId); // Lưu ID để tạo customer
-    window.dispatchEvent(new Event('storage'));
+      if (!token) {
+        throw new Error('Không nhận được token từ server');
+      }
 
-    // Chuyển đến trang cập nhật hồ sơ
-    navigate('/profile');
-  } catch (err) {
-    if (err.response?.data) {
-      setError(err.response.data);
-    } else {
-      setError('Đăng ký hoặc đăng nhập thất bại. Vui lòng thử lại.');
+      localStorage.setItem('token', token); 
+      localStorage.setItem('accountId', account.id);
+      localStorage.setItem('username', account.username);
+      const role = account.role?.toUpperCase() || 'CUSTOMER';
+      localStorage.setItem('role', role);
+      localStorage.setItem('fullName', account.fullName || '');
+      localStorage.setItem('email', account.email || '');
+      localStorage.setItem('phone', account.phone || '');
+
+      window.dispatchEvent(new Event('storage'));
+
+      setSuccess('Đăng ký thành công! Đang chuyển hướng...');
+      setTimeout(() => {
+        navigate('/profile');
+      }, 1500);
+
+    } catch (err) {
+      console.error('Register error:', err);
+      setError(
+        err.response?.data?.message ||
+        'Đăng ký hoặc đăng nhập thất bại. Vui lòng thử lại.'
+      );
     }
-  }
-};
-
+  };
 
   return (
     <div className="auth-container">

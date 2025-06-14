@@ -62,7 +62,8 @@
 }
 
 .dropdown-menu a,
-.dropdown-menu .logout-btn {
+.dropdown-menu .logout-btn,
+.dropdown-menu .change-password {
   display: block;
   padding: 10px 16px;
   text-decoration: none;
