@@ -1,6 +1,6 @@
-import React, { use, useEffect, useState } from "react";
+import React, {useEffect, useState } from "react";
 import axios from "axios";
-import "../styles/tuthu&guimau.css"; // Import your CSS styles
+import "../styles/tuthu&guimau.css"; 
 
 const TuThuGuiMau = () => {
     const [customer, setCustomer] = useState(null);

@@ -9,6 +9,7 @@ import DichVu from './pages/DichVu';
 import BangGia from './pages/BangGia';
 import TienTrinh from './pages/TienTrinh';
 import TuThuGuiMau from './pages/TuThu&GuiMau';
+import TuThuGuiMauTT from './pages/TuThu&GuiMauTT';
 import './styles/global.css';
 
 function App() {
@@ -28,7 +29,7 @@ function App() {
             <Route path="/bang-gia" element={<BangGia />} />
           </Routes>
         </main>
-        <TuThuGuiMau />
+        
 
         <Footer />
 
