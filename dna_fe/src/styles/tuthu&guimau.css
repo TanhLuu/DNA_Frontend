@@ -7,7 +7,6 @@ body {
     justify-content: center;
     align-items: flex-start;
     gap: 48px;
-    /* Tăng khoảng cách giữa 2 khối */
     margin-top: 26px;
 }
 
@@ -71,9 +70,8 @@ body {
 .form-actions {
     display: flex;
     justify-content: center;
-    gap: 45%;
-    /* Tăng khoảng cách giữa 2 nút */
-    margin-top: 20px;
+    gap: 33%; /* Dùng px thay vì %, đảm bảo nút cách đều và đẹp */
+    margin-top: 24px;
     margin-bottom: 30px;
 }
 
@@ -86,6 +84,8 @@ body {
     cursor: pointer;
     box-shadow: 0 2px 8px #e6eaf5;
     transition: background 0.18s;
+    white-space: nowrap; /* Đảm bảo chữ luôn nằm 1 dòng */
+    min-width: 140px;    /* Đủ rộng cho chữ "Xác nhận gửi" */
 }
 
 .btn-primary {
@@ -105,4 +105,13 @@ body {
 .btn-cancel:hover {
     background: #d7d4fa;
     color: #1d3669;
+}
+
+/* Thêm cho thông báo xác nhận */
+.confirm-message {
+    margin-top: 12px;
+    text-align: center;
+    color: #1d3669;
+    font-size: 1.08rem;
+    font-weight: 500;
 }

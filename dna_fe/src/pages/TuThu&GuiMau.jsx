@@ -1,6 +1,6 @@
-import React, {useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
-import "../styles/tuthu&guimau.css"; 
+import "../styles/tuthu&guimau.css";
 
 const TuThuGuiMau = () => {
     const [customer, setCustomer] = useState(null);
@@ -9,10 +9,10 @@ const TuThuGuiMau = () => {
         maBoKit: "",
         tenKhachHang: "",
         soDienThoai: "",
-        diaChiNhanh: "",
+        diaChiNhan: "",
         ngayGui: "",
     });
-
+    const [confirmed, setConfirmed] = useState(false); // Thêm state này
     //Lấy dữ liệu từ DB 
     useEffect(() => {
         //Gọi API lấy dữ liệu khách hàng
@@ -40,10 +40,9 @@ const TuThuGuiMau = () => {
 
     //Xử lý submit form
     const handleSubmit = (e) => {
-        e.preventDefault();
-        //Gửi dữ liệu lên server
+        e.preventDefault(); // Quan trọng!
         axios.post("/api/send-sample", kitInfo)
-            .then(res => alert("Gửi thành công!"))
+            .then(res => setConfirmed(true))
             .catch(console.error);
     };
 
@@ -125,9 +124,23 @@ const TuThuGuiMau = () => {
                     />
                 </div>
                 <div className="form-actions">
-                    <button type="submit" className="btn btn-primary">Xác nhận</button>
-                    <button type="button" className="btn btn-cancel">Hủy</button>
+                    {!confirmed ? (
+                        <>
+                            <button type="submit" className="btn btn-primary">Xác nhận gửi</button>
+                            <button type="button" className="btn btn-cancel">Hủy</button>
+                        </>
+                    ) : (
+                        <button type="button" className="btn btn-primary">Xác nhận</button>
+                    )}
                 </div>
+                {confirmed && (
+                    <div className="confirm-message">
+                        <b>
+                            Xác nhận trung tâm đã nhận lại thành công bộ kit<br />
+                            có mẫu xét nghiệm của khách gửi lại
+                        </b>
+                    </div>
+                )}
             </form>
         </div>
     );
