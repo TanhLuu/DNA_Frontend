@@ -91,7 +91,8 @@ import CompletePayment from './pages/auth/CompletePayment';
 import History from './pages/auth/History';
 import NewsPage from './pages/auth/NewsPage';
 import Profile from './components/Profile';
-
+import OrderCivil from './pages/auth/OrderCivil';
+import OrderLegal from './pages/auth/OrderLegal';
 import './styles/global.css';
 
 function App() {
@@ -119,6 +120,8 @@ function App() {
              <Route path="/news" element={<NewsPage />} />
              <Route path="/history" element={<History />} />
             <Route path="/profile" element={<Profile />} />
+             <Route path="/order/civil" element={<OrderCivil />} />
+          <Route path="/order/legal" element={<OrderLegal />} />
              <Route path="/payment/complete/:orderId" element={<CompletePayment />} />
 
             {(!role || role === "customer") && <Route path="/" element={<Home />} />}

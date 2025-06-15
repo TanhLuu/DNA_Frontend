@@ -77,6 +77,7 @@ const Header = () => {
         <nav className="menu">
           <a href="/"><strong>Trang chủ</strong></a>
           <a href="/services"><strong>Dịch vụ</strong></a>
+          
           <a href="/pricing"><strong>Bảng giá</strong></a>
 
          <Link to="/history" className="nav-link">Lịch sử xét nghiệm</Link>
