@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import axiosInstance from '../../api/axiosInstance';
-import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, MenuItem } from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button } from '@mui/material';
+import { createService, updateService } from '../../api/serviceApi';
 
 const ServiceFormPopup = ({ open, onClose, serviceToEdit, onSuccess }) => {
   const [formData, setFormData] = useState({
@@ -39,7 +39,7 @@ const ServiceFormPopup = ({ open, onClose, serviceToEdit, onSuccess }) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: value
+      [name]: name === 'price' || name === 'timeTest' || name === 'numberOfSample' ? Number(value) : value
     }));
   };
 
@@ -50,7 +50,6 @@ const ServiceFormPopup = ({ open, onClose, serviceToEdit, onSuccess }) => {
     if (formData.price <= 0) newErrors.price = 'Giá phải lớn hơn 0';
     if (formData.timeTest <= 0) newErrors.timeTest = 'Thời gian xét nghiệm phải lớn hơn 0';
     if (formData.numberOfSample <= 0) newErrors.numberOfSample = 'Số mẫu phải lớn hơn 0';
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -61,9 +60,9 @@ const ServiceFormPopup = ({ open, onClose, serviceToEdit, onSuccess }) => {
 
     try {
       if (serviceToEdit) {
-        await axiosInstance.put(`/api/services/${serviceToEdit.serviceID}`, formData);
+        await updateService(serviceToEdit.serviceID, formData);
       } else {
-        await axiosInstance.post('/api/services', formData);
+        await createService(formData);
       }
       onSuccess();
       onClose();
@@ -77,99 +76,72 @@ const ServiceFormPopup = ({ open, onClose, serviceToEdit, onSuccess }) => {
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
       <DialogTitle>{serviceToEdit ? 'Chỉnh sửa Dịch Vụ' : 'Thêm Dịch Vụ Mới'}</DialogTitle>
       <DialogContent>
-        <form onSubmit={handleSubmit}>
-          <TextField
-            margin="dense"
-            name="serviceName"
-            label="Tên Dịch Vụ"
-            type="text"
-            fullWidth
-            variant="outlined"
-            value={formData.serviceName}
-            onChange={handleChange}
-            error={!!errors.serviceName}
-            helperText={errors.serviceName}
-            required
-          />
-          
-          <TextField
-            margin="dense"
-            name="servicePurpose"
-            label="Loại Dịch Vụ"
-            type="text"
-            fullWidth
-            variant="outlined"
-            value={formData.servicePurpose}
-            onChange={handleChange}
-            error={!!errors.servicePurpose}
-            helperText={errors.servicePurpose}
-            required
-          />
-          
-          <TextField
-            margin="dense"
-            name="price"
-            label="Giá Dịch Vụ (VND)"
-            type="number"
-            fullWidth
-            variant="outlined"
-            value={formData.price}
-            onChange={handleChange}
-            error={!!errors.price}
-            helperText={errors.price}
-            required
-            InputProps={{ inputProps: { min: 0 } }}
-          />
-          
-          <TextField
-            margin="dense"
-            name="timeTest"
-            label="Thời Gian Xét Nghiệm (ngày)"
-            type="number"
-            fullWidth
-            variant="outlined"
-            value={formData.timeTest}
-            onChange={handleChange}
-            error={!!errors.timeTest}
-            helperText={errors.timeTest}
-            required
-            InputProps={{ inputProps: { min: 1 } }}
-          />
-          
-          <TextField
-            margin="dense"
-            name="numberOfSample"
-            label="Số Mẫu"
-            type="number"
-            fullWidth
-            variant="outlined"
-            value={formData.numberOfSample}
-            onChange={handleChange}
-            error={!!errors.numberOfSample}
-            helperText={errors.numberOfSample}
-            required
-            InputProps={{ inputProps: { min: 1 } }}
-          />
-          
-          
-          <TextField
-            margin="dense"
-            name="serviceBlog"
-            label="Mô Tả Dịch Vụ (Không bắt buộc)"
-            type="text"
-            fullWidth
-            variant="outlined"
-            multiline
-            rows={3}
-            value={formData.serviceBlog}
-            onChange={handleChange}
-          />
-        </form>
+        <TextField
+          margin="dense"
+          name="serviceName"
+          label="Tên Dịch Vụ"
+          fullWidth
+          value={formData.serviceName}
+          onChange={handleChange}
+          error={!!errors.serviceName}
+          helperText={errors.serviceName}
+        />
+        <TextField
+          margin="dense"
+          name="servicePurpose"
+          label="Loại Dịch Vụ"
+          fullWidth
+          value={formData.servicePurpose}
+          onChange={handleChange}
+          error={!!errors.servicePurpose}
+          helperText={errors.servicePurpose}
+        />
+        <TextField
+          margin="dense"
+          name="timeTest"
+          label="Thời Gian Xét Nghiệm (ngày)"
+          type="number"
+          fullWidth
+          value={formData.timeTest}
+          onChange={handleChange}
+          error={!!errors.timeTest}
+          helperText={errors.timeTest}
+        />
+        <TextField
+          margin="dense"
+          name="price"
+          label="Giá (VND)"
+          type="number"
+          fullWidth
+          value={formData.price}
+          onChange={handleChange}
+          error={!!errors.price}
+          helperText={errors.price}
+        />
+        <TextField
+          margin="dense"
+          name="numberOfSample"
+          label="Số Mẫu"
+          type="number"
+          fullWidth
+          value={formData.numberOfSample}
+          onChange={handleChange}
+          error={!!errors.numberOfSample}
+          helperText={errors.numberOfSample}
+        />
+        <TextField
+          margin="dense"
+          name="serviceBlog"
+          label="Mô tả (Không bắt buộc)"
+          fullWidth
+          multiline
+          rows={3}
+          value={formData.serviceBlog}
+          onChange={handleChange}
+        />
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose} color="secondary">
-          Hủy
-        </Button>
+        <Button onClick={onClose} color="secondary">Hủy</Button>
         <Button onClick={handleSubmit} color="primary" variant="contained">
           {serviceToEdit ? 'Cập Nhật' : 'Thêm Mới'}
         </Button>
@@ -178,4 +150,4 @@ const ServiceFormPopup = ({ open, onClose, serviceToEdit, onSuccess }) => {
   );
 };
 
-export default ServiceFormPopup; 
+export default ServiceFormPopup;
