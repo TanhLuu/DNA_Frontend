@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button } from '@mui/material';
+import {
+  Dialog, DialogTitle, DialogContent, DialogActions,
+  TextField, Button, FormControl, InputLabel, Select, MenuItem
+} from '@mui/material';
 import { createService, updateService } from '../../api/serviceApi';
 
 const ServiceFormPopup = ({ open, onClose, serviceToEdit, onSuccess }) => {
@@ -9,8 +12,9 @@ const ServiceFormPopup = ({ open, onClose, serviceToEdit, onSuccess }) => {
     timeTest: 0,
     serviceBlog: '',
     price: 0,
-    numberOfSample: 0
+    numberOfSample: 2
   });
+
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
@@ -27,10 +31,10 @@ const ServiceFormPopup = ({ open, onClose, serviceToEdit, onSuccess }) => {
       setFormData({
         serviceName: '',
         servicePurpose: '',
-        timeTest: 0,
+        timeTest: '',
         serviceBlog: '',
-        price: 0,
-        numberOfSample: 0
+        price: '',
+        numberOfSample: 2
       });
     }
   }, [serviceToEdit]);
@@ -86,16 +90,24 @@ const ServiceFormPopup = ({ open, onClose, serviceToEdit, onSuccess }) => {
           error={!!errors.serviceName}
           helperText={errors.serviceName}
         />
-        <TextField
-          margin="dense"
-          name="servicePurpose"
-          label="Loại Dịch Vụ"
-          fullWidth
-          value={formData.servicePurpose}
-          onChange={handleChange}
-          error={!!errors.servicePurpose}
-          helperText={errors.servicePurpose}
-        />
+
+        <FormControl fullWidth margin="dense" error={!!errors.servicePurpose}>
+          <InputLabel id="servicePurpose-label">Loại Dịch Vụ</InputLabel>
+          <Select
+            labelId="servicePurpose-label"
+            name="servicePurpose"
+            value={formData.servicePurpose}
+            onChange={handleChange}
+            label="Loại Dịch Vụ"
+          >
+            <MenuItem value="Dân sự">Dân sự</MenuItem>
+            <MenuItem value="Hành chính">Hành chính</MenuItem>
+          </Select>
+        </FormControl>
+        {errors.servicePurpose && (
+          <span style={{ color: 'red', fontSize: 12 }}>{errors.servicePurpose}</span>
+        )}
+
         <TextField
           margin="dense"
           name="timeTest"

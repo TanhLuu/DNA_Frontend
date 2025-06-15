@@ -10,7 +10,7 @@ import ResetPassword from './pages/auth/ResetPassword';
 import Register from './pages/auth/Register';
 import Home from './pages/Home';
 import OrdersPage from './pages/admin/OrdersPage';
-import Profile from './components/Shared/Profile';
+import Profile from './components/Profile';
 import ServiceManagement from './pages/admin/ServiceManagement';
 import Dashboard from './pages/admin/Dashboard';
 import './styles/global.css';

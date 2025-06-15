@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import RegisterPopup from '../../components/Admin/RegisterPopup';
+import CreateStaff from '../../components/Admin/CreateStaff';
 import {
     BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
     PieChart, Pie, Cell, ResponsiveContainer
@@ -112,7 +112,7 @@ const Dashboard = () => {
                     {/* Bạn sẽ fetch và render table sau */}
                 </div>
             </div>
-            {showPopup && <RegisterPopup onClose={() => setShowPopup(false)} />}
+            {showPopup && <CreateStaff onClose={() => setShowPopup(false)} />}
         </div>
     );
 };

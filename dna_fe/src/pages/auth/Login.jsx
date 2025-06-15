@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { loginUser } from '../../api/authApi';
 import '../../styles/auth/login.css';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
-import { getCustomerByAccountId } from '../../api/customerApi';
+import { getCustomerByAccountId } from '../../api/accountApi';
 
 const Login = () => {
   const [username, setUsername] = useState('');
