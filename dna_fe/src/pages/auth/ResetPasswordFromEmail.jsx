@@ -1,5 +1,5 @@
-// src/pages/auth/ResetPasswordFromEmail.jsx
 import React, { useState, useEffect } from 'react';
+import { resetPasswordWithToken } from '../../api/authApi';
 import '../../styles/auth/AuthForm.css';
 
 const ResetPasswordFromEmail = () => {
@@ -8,7 +8,6 @@ const ResetPasswordFromEmail = () => {
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
 
-  // ✅ useEffect để lấy token và ẩn khỏi URL
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const tokenFromUrl = params.get('token');
@@ -27,25 +26,12 @@ const ResetPasswordFromEmail = () => {
     e.preventDefault();
 
     try {
-      const response = await fetch('http://localhost:8080/auth/reset-password', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ token, newPassword }),
-      });
-
-      const data = await response.text();
-
-      if (!response.ok) {
-        throw new Error(data);
-      }
-
-      setMessage(data);
+      const res = await resetPasswordWithToken(token, newPassword);
+      setMessage(res);
       setError('');
-      localStorage.removeItem('resetToken'); // ✅ Xóa token sau khi dùng
+      localStorage.removeItem('resetToken');
     } catch (err) {
-      setError(err.message);
+      setError(err.response?.data || err.message || 'Something went wrong.');
       setMessage('');
     }
   };
@@ -66,7 +52,6 @@ const ResetPasswordFromEmail = () => {
         />
         <button type="submit" className="auth-button">Reset Password</button>
       </form>
-
       {message && <p className="auth-message success">{message}</p>}
       {error && <p className="auth-message error">{error}</p>}
     </div>

@@ -1,6 +1,5 @@
-// src/pages/auth/ResetPassword.jsx
 import React, { useState } from 'react';
-import axiosInstance from '../../api/axiosInstance';
+import { resetPasswordAuthenticated } from '../../api/authApi';
 import '../../styles/auth/AuthForm.css';
 
 const ResetPassword = () => {
@@ -20,12 +19,8 @@ const ResetPassword = () => {
     }
 
     try {
-      const token = localStorage.getItem('token');
-      const res = await axiosInstance.post('/auth/reset-password', {
-        token,
-        newPassword,
-      });
-      setMessage(res.data);
+      const res = await resetPasswordAuthenticated(newPassword);
+      setMessage(res);
     } catch (err) {
       setError(err.response?.data || 'Error resetting password');
     }
