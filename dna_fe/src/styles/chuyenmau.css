@@ -1,0 +1,138 @@
+body {
+  background: #f5f7fa;
+  margin: 0;
+  font-family: "Segoe UI", Arial, sans-serif;
+}
+
+/* Main container */
+.chuyenmau-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
+  gap: 60px;
+  padding-top: 44px;
+}
+
+/* Customer info card */
+.customer-info {
+  background: #fff;
+  padding: 26px 24px 26px 28px;
+  border-radius: 10px;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.07);
+  min-width: 270px;
+  max-width: 290px;
+  min-height: 335px;
+  font-size: 17px;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.customer-info h3 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 15px;
+  color: #1a2344;
+  letter-spacing: 0.5px;
+}
+
+/* Right section */
+.chuyenmau-form-section {
+  min-width: 428px;
+  max-width: 470px;
+  width: 100%;
+  background: transparent;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Title */
+.form-title {
+  text-align: center;
+  color: #2366c7;
+  margin-bottom: 32px;
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+}
+
+/* Table styling */
+.chuyenmau-table {
+  width: 100%;
+  background: #fff;
+  border-radius: 9px;
+  border-collapse: separate;
+  border-spacing: 0 8px;
+  margin-bottom: 38px;
+  box-shadow: 0 2px 9px #e9eaf4;
+}
+
+.chuyenmau-table td {
+  padding: 13px 8px;
+  font-size: 1.09rem;
+  color: #1a2344;
+}
+
+.chuyenmau-table .label {
+  font-weight: 600;
+  color: #2366c7;
+  width: 185px;
+  white-space: nowrap;
+  vertical-align: top;
+}
+
+.chuyenmau-table .highlight {
+  font-weight: 700;
+  border: 2px solid #2366c7;
+  border-radius: 6px;
+  background: #fafdff;
+  color: #2366c7;
+  padding-left: 12px;
+  padding-right: 9px;
+}
+
+.chuyenmau-table .highlight-value {
+  border: 2px solid #2366c7;
+  border-radius: 6px;
+  background: #fafdff;
+  font-weight: 600;
+  color: #2366c7;
+  padding-left: 19px;
+  padding-right: 9px;
+}
+
+/* Button section */
+.chuyenmau-actions {
+  margin-top: 28px;
+  text-align: center;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.btn {
+  padding: 13px 60px;
+  border-radius: 8px;
+  border: none;
+  font-weight: 600;
+  font-size: 1.17rem;
+  cursor: pointer;
+  box-shadow: 0 2px 8px #e6eaf5;
+  background: #2366c7;
+  color: #fff;
+  transition: background 0.18s;
+  white-space: nowrap;
+  min-width: 160px;
+  outline: none;
+}
+
+.btn:active,
+.btn:focus {
+  background: #174e97;
+}
+
+.btn-primary:hover {
+  background: #174e97;
+}

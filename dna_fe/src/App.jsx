@@ -10,6 +10,7 @@ import BangGia from './pages/BangGia';
 import TienTrinh from './pages/TienTrinh';
 import TuThuGuiMau from './pages/TuThu&GuiMau';
 import TuThuGuiMauTT from './pages/TuThu&GuiMauTT';
+import ChuyenMau from './pages/ChuyenMau';
 import './styles/global.css';
 
 function App() {
