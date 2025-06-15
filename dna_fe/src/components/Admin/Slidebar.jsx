@@ -15,6 +15,7 @@ const AdminLayout = ({ children }) => {
 
   const handleLogout = () => {
     localStorage.clear();
+
     window.location.href = '/';
   };
 

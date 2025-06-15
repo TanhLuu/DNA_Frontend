@@ -16,6 +16,7 @@ import Dashboard from './pages/admin/Dashboard';
 import './styles/global.css';
 
 
+
 function App() {
   const [role, setRole] = useState(localStorage.getItem('role')?.toLowerCase());
 
@@ -44,7 +45,7 @@ function App() {
     return (
     <Router>
       <div className="app">
-        {role !== 'staff' && <Header />}
+        {(role !== 'staff' && role !== 'manager') && <Header />}
 
         <main className="main-content">
           <Routes>
@@ -53,7 +54,7 @@ function App() {
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/change-password" element={<ResetPassword />} />
             <Route path="/reset-password" element={<ResetPasswordFromEmail />} />
-            {role === 'staff' && (
+            {(role === 'staff' || role === 'manager') && (
               <>
                 <Route
                   path="/ordersPageAdmin"
@@ -79,6 +80,7 @@ function App() {
                     </AdminLayout>
                   }
                 />
+                
               </>
             )}
  
@@ -92,7 +94,7 @@ function App() {
            
 
             <Route path="*" element={
-              role === 'staff' ? (
+              (role === 'staff' || role === 'manager') ? (
                 <Navigate to="/ordersPageAdmin" replace />
               ) : (
                 <Navigate to="/" replace />
@@ -101,7 +103,7 @@ function App() {
           </Routes>
         </main>
 
-        {role !== 'staff' && <Footer />}
+        {(role !== 'staff' && role !== 'manager') && <Footer />}
       </div>
     </Router>
   );

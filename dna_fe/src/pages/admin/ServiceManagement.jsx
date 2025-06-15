@@ -1,28 +1,53 @@
 import React, { useState, useEffect } from 'react';
-import ServiceFormModalManager from '../../components/Admin/ServiceFormModalManager';
-import ConfirmDeleteServiceModal from '../../components/Admin/ConfirmDeleteServiceModal';
 import {
-  getAllServices,
-  createService,
-  updateService,
-  deleteService
-} from '../../api/serviceApi';
+  Dialog, DialogTitle, DialogContent, DialogActions,
+  TextField, Button
+} from '@mui/material';
+import axios from 'axios';
 import '../../styles/admin/serviceManagement.css';
 
+// === API SETUP ===
+const axiosInstance = axios.create({
+  baseURL: 'http://localhost:8080',
+});
+axiosInstance.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+const getAllServices = async () => {
+  const res = await axiosInstance.get('/api/services');
+  return res.data;
+};
+const createService = async (data) => {
+  const res = await axiosInstance.post('/api/services', data);
+  return res.data;
+};
+const updateService = async (id, data) => {
+  const res = await axiosInstance.put(`/api/services/${id}`, data);
+  return res.data;
+};
+const deleteService = async (id) => {
+  const res = await axiosInstance.delete(`/api/services/${id}`);
+  return res.data;
+};
+
+// === MAIN COMPONENT ===
 const ServiceManagement = () => {
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isFormModalOpen, setIsFormModalOpen] = useState(false);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [formData, setFormData] = useState({
-    id: null,
-    name: '',
-    type: '',
-    testDuration: '',
-    price: '',
-    description: ''
+    serviceID: null,
+    serviceName: '',
+    servicePurpose: '',
+    timeTest: 0,
+    serviceBlog: '',
+    price: 0,
+    numberOfSample: 1
   });
-  const [selectedService, setSelectedService] = useState(null);
   const [searchKeyword, setSearchKeyword] = useState('');
 
   useEffect(() => {
@@ -43,68 +68,56 @@ const ServiceManagement = () => {
 
   const openAddModal = () => {
     setFormData({
-      id: null,
-      name: '',
-      type: '',
-      testDuration: '',
-      price: '',
-      description: ''
+      serviceID: null,
+      serviceName: '',
+      servicePurpose: '',
+      timeTest: 0,
+      serviceBlog: '',
+      price: 0,
+      numberOfSample: 1
     });
     setIsFormModalOpen(true);
   };
 
   const openEditModal = (service) => {
-    setFormData({
-      id: service.id,
-      name: service.name,
-      type: service.type,
-      testDuration: service.testDuration,
-      price: service.price,
-      description: service.description
-    });
+    setFormData({ ...service });
     setIsFormModalOpen(true);
   };
 
-  const openDeleteModal = (service) => {
-    setSelectedService(service);
-    setIsDeleteModalOpen(true);
-  };
+  const handleDelete = async (id) => {
+  const confirmed = window.confirm('Bạn có chắc chắn muốn xóa dịch vụ này?');
+  if (!confirmed) return;
 
-  const handleSave = async () => {
+  try {
+    await deleteService(id);
+    await fetchServices();
+  } catch (err) {
+    console.error('Lỗi khi xóa dịch vụ:', err);
+    alert('Đã xảy ra lỗi khi xóa dịch vụ.');
+  }
+};
+
+
+  const handleSubmit = async () => {
     try {
-      const payload = {
-        name: formData.name,
-        type: formData.type,
-        testDuration: Number(formData.testDuration),
-        price: Number(formData.price),
-        description: formData.description
-      };
+      const payload = { ...formData };
 
-      if (formData.id) {
-        await updateService(formData.id, payload);
+      if (formData.serviceID) {
+        await updateService(formData.serviceID, payload);
       } else {
         await createService(payload);
       }
 
       await fetchServices();
       setIsFormModalOpen(false);
-    } catch (err) {
-      console.error('Lỗi khi lưu dịch vụ:', err);
-    }
-  };
-
-  const handleDelete = async (id) => {
-    try {
-      await deleteService(id);
-      await fetchServices();
-      setIsDeleteModalOpen(false);
-    } catch (err) {
-      console.error('Lỗi khi xóa dịch vụ:', err);
+    } catch (error) {
+      console.error('Lỗi khi lưu dịch vụ:', error);
+      alert('Có lỗi xảy ra khi lưu dịch vụ');
     }
   };
 
   const filteredServices = services.filter(service =>
-    service.name.toLowerCase().includes(searchKeyword.toLowerCase())
+    service.serviceName.toLowerCase().includes(searchKeyword.toLowerCase())
   );
 
   return (
@@ -141,14 +154,14 @@ const ServiceManagement = () => {
             <tbody>
               {filteredServices.length > 0 ? (
                 filteredServices.map(service => (
-                  <tr key={service.id}>
-                    <td>{service.name}</td>
-                    <td>{service.type}</td>
-                    <td>{service.testDuration}</td>
+                  <tr key={service.serviceID}>
+                    <td>{service.serviceName}</td>
+                    <td>{service.servicePurpose}</td>
+                    <td>{service.timeTest}</td>
                     <td>{Number(service.price).toLocaleString('vi-VN')}</td>
                     <td>
                       <button className="edit-btn" onClick={() => openEditModal(service)}>Sửa</button>
-                      <button className="delete-btn" onClick={() => openDeleteModal(service)}>Xóa</button>
+                      <button className="delete-btn" onClick={() => handleDelete(service.serviceID)}>Xóa</button>
                     </td>
                   </tr>
                 ))
@@ -164,22 +177,76 @@ const ServiceManagement = () => {
         )}
       </div>
 
-      {/* Popup Tạo / Sửa */}
-      <ServiceFormModalManager
-        isOpen={isFormModalOpen}
-        onClose={() => setIsFormModalOpen(false)}
-        onSave={handleSave}
-        formData={formData}
-        setFormData={setFormData}
-      />
-
-      {/* Popup Xác nhận Xóa */}
-      <ConfirmDeleteServiceModal
-        isOpen={isDeleteModalOpen}
-        onClose={() => setIsDeleteModalOpen(false)}
-        service={selectedService}
-        onDelete={handleDelete}
-      />
+      {/* Form Popup */}
+      <Dialog open={isFormModalOpen} onClose={() => setIsFormModalOpen(false)} maxWidth="sm" fullWidth>
+        <DialogTitle>{formData.serviceID ? 'Chỉnh sửa Dịch Vụ' : 'Thêm Dịch Vụ Mới'}</DialogTitle>
+        <DialogContent>
+          <TextField
+            margin="dense"
+            name="serviceName"
+            label="Tên Dịch Vụ"
+            type="text"
+            fullWidth
+            value={formData.serviceName}
+            onChange={(e) => setFormData({ ...formData, serviceName: e.target.value })}
+          />
+          <TextField
+            margin="dense"
+            name="servicePurpose"
+            label="Loại Dịch Vụ"
+            type="text"
+            fullWidth
+            value={formData.servicePurpose}
+            onChange={(e) => setFormData({ ...formData, servicePurpose: e.target.value })}
+          />
+          <TextField
+            margin="dense"
+            name="timeTest"
+            label="Thời Gian Xét Nghiệm (ngày)"
+            type="number"
+            fullWidth
+            value={formData.timeTest}
+            onChange={(e) => setFormData({ ...formData, timeTest: Number(e.target.value) })}
+          />
+          <TextField
+            margin="dense"
+            name="price"
+            label="Giá (VND)"
+            type="number"
+            fullWidth
+            value={formData.price}
+            onChange={(e) => setFormData({ ...formData, price: Number(e.target.value) })}
+          />
+          <TextField
+            margin="dense"
+            name="numberOfSample"
+            label="Số Mẫu"
+            type="number"
+            fullWidth
+            value={formData.numberOfSample}
+            onChange={(e) => setFormData({ ...formData, numberOfSample: Number(e.target.value) })}
+          />
+          <TextField
+            margin="dense"
+            name="serviceBlog"
+            label="Mô tả (Không bắt buộc)"
+            type="text"
+            fullWidth
+            multiline
+            rows={3}
+            value={formData.serviceBlog}
+            onChange={(e) => setFormData({ ...formData, serviceBlog: e.target.value })}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setIsFormModalOpen(false)} color="secondary">
+            Hủy
+          </Button>
+          <Button onClick={handleSubmit} color="primary" variant="contained">
+            {formData.serviceID ? 'Cập Nhật' : 'Thêm Mới'}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };

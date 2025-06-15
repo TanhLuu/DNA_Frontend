@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../../styles/components/shared/profile.css';
-import { createCustomer, getCustomerByAccountId, saveCustomerProfile } from '../../api/customerApi.jsx';
+import { createCustomer, getCustomerByAccountId, saveCustomerProfile } from '../../api/customerApi';
 
 const Profile = () => {
   const navigate = useNavigate();
