@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "../../styles/components/shared/slidebar.css";
 import { Link, useNavigate } from 'react-router-dom';
-import { getStaffByAccountId } from '../../api/accountApi'; // Hoặc từ staffApi nếu đã tách
+import { getStaffByAccountId } from '../../api/accountApi';
 
 const AdminLayout = ({ children }) => {
   const [user, setUser] = useState({ name: "", role: "" });
@@ -9,19 +9,18 @@ const AdminLayout = ({ children }) => {
 
   useEffect(() => {
     const fullName = localStorage.getItem('fullName');
-    const role = localStorage.getItem('role'); // STAFF hoặc MANAGER
+    const role = localStorage.getItem('role'); // STAFF, MANAGER
     const accountId = localStorage.getItem('accountId');
 
     if (role === 'STAFF') {
-      // Nếu là STAFF → gọi API lấy staffType từ bảng Staff
+      // Gọi API lấy vai trò trong bảng Staff
       getStaffByAccountId(accountId)
         .then((staff) => {
-          const translatedRole =
-            staff.staffType === 0
-              ? 'Nhân viên thường'
-              : staff.staffType === 1
-              ? 'Nhân viên xét nghiệm'
-              : 'Nhân viên';
+          const translatedRole = staff.role === 'NORMAL_STAFF'
+            ? 'NORMAL STAFF'
+            : staff.role === 'LAB_STAFF'
+            ? 'LAB STAFF'
+            : 'Nhân viên';
           setUser({ name: fullName, role: translatedRole });
         })
         .catch(() => {
@@ -29,8 +28,6 @@ const AdminLayout = ({ children }) => {
         });
     } else if (role === 'MANAGER') {
       setUser({ name: fullName, role: 'Quản lý' });
-    } else {
-      setUser({ name: fullName, role: role }); // fallback
     }
   }, []);
 
