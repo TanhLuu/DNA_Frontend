@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import '../../styles/auth/OrderForm.css';
+import '../styles/components/OrderForm.css';
 
 function OrderLegal() {
   const [formData, setFormData] = useState({

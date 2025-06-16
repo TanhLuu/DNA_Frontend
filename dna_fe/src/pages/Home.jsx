@@ -88,7 +88,7 @@ const Home = () => {
                                         <li>✔ Không yêu cầu giấy tờ pháp lý</li>
                                         <li>✔ Thông tin được bảo mật</li>
                                     </ul>
-                                    <a href="/"><button>Đặt lịch</button></a>
+                                    <a href="/order-civil"><button>Đặt lịch</button></a>
                                 </div>
                                 <div class="adn-card">
                                     <h3>Xét nghiệm ADN Hành chính</h3>
@@ -97,7 +97,7 @@ const Home = () => {
                                         <li>✔ Yêu cầu CMND/Khai sinh</li>
                                         <li>✔ Có giá trị pháp lý</li>
                                     </ul>
-                                    <a href="/"><button>Đặt lịch</button></a>
+                                    <a href="/order-paternity"><button>Đặt lịch</button></a>
                                 </div>
                             </div>
                         </div>

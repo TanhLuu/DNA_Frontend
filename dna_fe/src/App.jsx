@@ -14,6 +14,8 @@ import Profile from './components/Profile';
 import ServiceManagement from './pages/admin/ServiceManagement';
 import Dashboard from './pages/admin/Dashboard';
 import './styles/global.css';
+import OrderCivil from './components/OrderCivil';
+import OrderPaternity from './components/OrderLegal';
 
 
 
@@ -54,6 +56,8 @@ function App() {
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/change-password" element={<ResetPassword />} />
             <Route path="/reset-password" element={<ResetPasswordFromEmail />} />
+            <Route path="/order-civil" element={<OrderCivil />} />
+            <Route path="/order-paternity" element={<OrderPaternity />} />
             {(role === 'staff' || role === 'manager') && (
               <>
                 <Route
