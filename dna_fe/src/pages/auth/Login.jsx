@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { loginUser } from '../../api/authApi';
+import { getCustomerByAccountId } from '../../api/accountApi';
 import '../../styles/auth/login.css';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
-import { getCustomerByAccountId } from '../../api/accountApi';
 
 const Login = () => {
   const [username, setUsername] = useState('');
@@ -24,30 +24,37 @@ const Login = () => {
         throw new Error('Không nhận được token từ server');
       }
 
-      // Lưu tất cả thông tin vào localStorage
+      // Lưu thông tin vào localStorage
       localStorage.setItem('token', token);
       localStorage.setItem('accountId', account.id);
       localStorage.setItem('username', account.username);
-      
-      const role = account.role?.toUpperCase() || '';
-      localStorage.setItem('role', role);
-      
+      localStorage.setItem('role', account.role?.toUpperCase() || '');
       localStorage.setItem('fullName', account.fullName || '');
       localStorage.setItem('email', account.email || '');
       localStorage.setItem('phone', account.phone || '');
 
-      // Kích hoạt sự kiện để App.jsx cập nhật role ngay lập tức
+      // Cập nhật trạng thái App.jsx (nếu có)
       window.dispatchEvent(new Event('storage'));
 
-      // Xử lý chuyển hướng theo role
+      // Điều hướng theo vai trò
+      const role = account.role?.toUpperCase() || '';
+
       if (role === 'STAFF' || role === 'ADMIN') {
         navigate('/ordersPageAdmin', { replace: true });
       } else if (role === 'CUSTOMER') {
         try {
-          const customer = await getCustomerByAccountId(account.id);
-          navigate(customer?.id ? '/' : '/profile');
+          const customerRes = await getCustomerByAccountId(account.id);
+          const customer = customerRes?.data;
+
+          if (customer?.id) {
+            navigate('/', { replace: true }); // Hồ sơ tồn tại
+          } else {
+            navigate('/profile', { replace: true }); // Không có hồ sơ
+          }
         } catch (error) {
-          navigate('/profile');
+          // Dù lỗi gì cũng buộc chuyển đến /profile
+          console.error('Lỗi khi kiểm tra hồ sơ customer:', error);
+          navigate('/profile', { replace: true });
         }
       } else {
         navigate('/');
@@ -56,17 +63,17 @@ const Login = () => {
     } catch (err) {
       console.error('Login error:', err);
       setError(
-        err.response?.data?.message || 
-        err.message || 
+        err.response?.data?.message ||
+        err.message ||
         'Đăng nhập thất bại. Vui lòng thử lại.'
       );
     }
   };
 
   return (
-      <div className="auth-container">
-    <form className="auth-form" onSubmit={handleLogin}>
-      <h2>Đăng nhập</h2>
+    <div className="auth-container">
+      <form className="auth-form" onSubmit={handleLogin}>
+        <h2>Đăng nhập</h2>
 
         <input
           type="text"
@@ -84,8 +91,8 @@ const Login = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          <span 
-            className="password-toggle" 
+          <span
+            className="password-toggle"
             onClick={() => setShowPassword(!showPassword)}
           >
             {showPassword ? <FaEyeSlash /> : <FaEye />}
@@ -93,15 +100,17 @@ const Login = () => {
         </div>
 
         {error && <p className="error">{error}</p>}
-      <button type="submit">Đăng nhập</button>
+
+        <button type="submit">Đăng nhập</button>
+
         <div className="auth-links">
-        <p>
-          Chưa có tài khoản? <a href="/register">Đăng ký</a>
-        </p>
-        <p>
-          <a href="/forgot-password">Quên mật khẩu?</a>
-        </p>
-      </div>
+          <p>
+            Chưa có tài khoản? <a href="/register">Đăng ký</a>
+          </p>
+          <p>
+            <a href="/forgot-password">Quên mật khẩu?</a>
+          </p>
+        </div>
       </form>
     </div>
   );
