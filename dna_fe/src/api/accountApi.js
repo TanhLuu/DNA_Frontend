@@ -42,3 +42,9 @@ export const saveCustomerProfile = async (data) => {
   const response = await axios.put(`${BASE_URL}/customers/${data.id}`, data);
   return response.data;
 };
+
+
+export const getStaffByAccountId = async (accountId) => {
+  const response = await axiosInstance.get(`/api/staff/account/${accountId}`);
+  return response.data; // StaffDTO
+};

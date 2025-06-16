@@ -39,4 +39,7 @@ export const resetPasswordAuthenticated = async (newPassword) => {
   return response.data;
 };
 
-
+export const createStaff = async (staffData) => {
+  const response = await axiosInstance.post('/auth/create-staff', staffData);
+  return response.data;
+};

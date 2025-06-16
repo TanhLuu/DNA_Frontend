@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { registerUser } from '../../api/authApi';
+import { createStaff } from '../../api/authApi';
 import '../../styles/auth/register.css';
 
-const RegisterPopup = ({ onClose }) => {
+const CreateStaff = ({ onClose }) => {
   const [form, setForm] = useState({
     username: '',
     password: '',
@@ -10,7 +10,9 @@ const RegisterPopup = ({ onClose }) => {
     email: '',
     phone: '',
     role: 'STAFF',
+    staffType: 'NORMAL_STAFF', // Default
   });
+
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
@@ -19,30 +21,30 @@ const RegisterPopup = ({ onClose }) => {
   };
 
   const handleRegister = async (e) => {
-    e.preventDefault();
-    setError('');
-    setSuccess('');
+  e.preventDefault();
+  setError('');
+  setSuccess('');
 
-    try {
-      await registerUser({ ...form, role: 'STAFF' });
-      setSuccess('Đăng ký thành công!');
-      setTimeout(() => {
-        onClose(); // đóng popup sau khi đăng ký thành công
-      }, 2000);
-    } catch (err) {
-      if (err.response && err.response.data) {
-        setError(err.response.data);
-      } else {
-        setError('Đăng ký thất bại. Vui lòng thử lại.');
-      }
+  try {
+    await createStaff({ ...form, role: 'STAFF', staffType: form.staffType });
+    setSuccess('Tạo tài khoản nhân viên thành công!');
+    setTimeout(() => {
+      onClose();
+    }, 2000);
+  } catch (err) {
+    if (err.response && err.response.data) {
+      setError(err.response.data);
+    } else {
+      setError('Tạo tài khoản thất bại. Vui lòng thử lại.');
     }
+  }
   };
 
   return (
     <div className="popup-overlay">
       <div className="popup-content">
         <form className="auth-form" onSubmit={handleRegister}>
-          <h2>Đăng ký</h2>
+          <h2>Tạo tài khoản nhân viên</h2>
 
           <input
             type="text"
@@ -85,11 +87,20 @@ const RegisterPopup = ({ onClose }) => {
             onChange={handleChange}
           />
 
+          <select
+            name="staffType"
+            value={form.staffType}
+            onChange={handleChange}
+          >
+            <option value="NORMAL_STAFF">Nhân viên thường (NORMAL_STAFF)</option>
+            <option value="LAB_STAFF">Nhân viên xét nghiệm (LAB_STAFF)</option>
+          </select>
+
           {error && <p className="error">{error}</p>}
           {success && <p className="success">{success}</p>}
 
           <div className="popup-buttons">
-            <button type="submit">Đăng ký</button>
+            <button type="submit">Tạo tài khoản</button>
             <button type="button" onClick={onClose}>Hủy</button>
           </div>
         </form>
@@ -98,4 +109,4 @@ const RegisterPopup = ({ onClose }) => {
   );
 };
 
-export default RegisterPopup;
+export default CreateStaff;

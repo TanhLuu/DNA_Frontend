@@ -1,16 +1,37 @@
 import React, { useEffect, useState } from "react";
 import "../../styles/components/shared/slidebar.css";
 import { Link, useNavigate } from 'react-router-dom';
+import { getStaffByAccountId } from '../../api/accountApi'; // Hoặc từ staffApi nếu đã tách
 
 const AdminLayout = ({ children }) => {
   const [user, setUser] = useState({ name: "", role: "" });
   const navigate = useNavigate();
 
   useEffect(() => {
-    setUser({
-      name: localStorage.getItem('fullName'),
-      role: localStorage.getItem('role')
-    });
+    const fullName = localStorage.getItem('fullName');
+    const role = localStorage.getItem('role'); // STAFF hoặc MANAGER
+    const accountId = localStorage.getItem('accountId');
+
+    if (role === 'STAFF') {
+      // Nếu là STAFF → gọi API lấy staffType từ bảng Staff
+      getStaffByAccountId(accountId)
+        .then((staff) => {
+          const translatedRole =
+            staff.staffType === 0
+              ? 'Nhân viên thường'
+              : staff.staffType === 1
+              ? 'Nhân viên xét nghiệm'
+              : 'Nhân viên';
+          setUser({ name: fullName, role: translatedRole });
+        })
+        .catch(() => {
+          setUser({ name: fullName, role: 'Nhân viên' });
+        });
+    } else if (role === 'MANAGER') {
+      setUser({ name: fullName, role: 'Quản lý' });
+    } else {
+      setUser({ name: fullName, role: role }); // fallback
+    }
   }, []);
 
   const handleLogout = () => {
