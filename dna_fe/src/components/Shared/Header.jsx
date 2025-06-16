@@ -81,6 +81,12 @@ const Header = () => {
           <a href="/pricing"><strong>Bảng giá</strong></a>
 
          <Link to="/history" className="nav-link">Lịch sử xét nghiệm</Link>
+         <Link to="civil-price" className="nav-link">Bảng giá dân sự</Link>
+          <Link to="legal-price" className="nav-link">Bảng giá pháp lý</Link>
+          <Link to="/payment/:orderId" className="nav-link">Thanh toán</Link>
+          <Link to="/order/civil" classname="nav-link">đơn dân sự</Link>
+          <Link to="/order/legal" className="nav-link">đơn pháp lý</Link>
+      
           <a href="/guide"><strong>Hướng dẫn</strong></a>
            <Link to="/news"><strong>Tin tức</strong></Link>
           <a href="/guide"><strong>Hướng dẫn</strong></a>
