@@ -1,54 +1,68 @@
-/* Sidebar */
 .admin-sidebar {
-  width: 16rem; /* 64 */
+  width: 130px;
   background-color: #1c1c1e;
   color: white;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 1rem;
-  height: 100vh; /* Thêm dòng này */
+  padding: 20px 10px;
+  height: 100vh;
+}
+
+.admin-main {
+  flex-grow: 1;
+  background-color: #f3f4f6;
+  overflow: auto;
 }
 
 
 /* User info */
 .admin-user {
-  font-weight: bold;
-  margin-bottom: 1rem;
+  margin-bottom: 20px;
+  font-size: 14px;
 }
+
 .admin-role {
-  font-size: 0.85rem;
+  font-size: 12px;
   color: #ccc;
+  margin-bottom: 1rem;
 }
 
 /* Nav links */
 .admin-nav a {
   display: block;
-  padding: 0.5rem;
-  border-radius: 0.375rem;
+  padding: 15px 0;
   color: white;
   text-decoration: none;
-  transition: background 0.2s;
+  font-size: 10px;
 }
+
 .admin-nav a:hover {
   background-color: #333;
 }
 
-/* Logout */
-.admin-logout {
-  margin-top: 1rem;
-  text-align: left;
+.admin-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.admin-logout,
+.admin-back {
   color: white;
   background: none;
   border: none;
   cursor: pointer;
-  padding: 0;
+  text-align: left;
+  font-size: 12px;
 }
-.admin-logout:hover {
+
+.admin-logout:hover,
+.admin-back:hover {
   text-decoration: underline;
 }
 
-/* Content */
+/* Main content */
 .admin-main {
   flex: 1;
   background-color: #f3f4f6;

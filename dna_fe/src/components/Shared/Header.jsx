@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import '../../styles/components/header.css';
+import { useNavigate } from 'react-router-dom';
+import '../../styles/components/shared/header.css';
 import logo from '../../assets/logo.jpg';
 
-import { Link ,useNavigate} from 'react-router-dom';
-
-
 const Header = () => {
- const navigate = useNavigate(); 
   const [fullName, setFullName] = useState('');
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const savedFullName = localStorage.getItem('fullName');
@@ -15,24 +14,27 @@ const Header = () => {
       setFullName(savedFullName);
     }
 
-    //  sự kiện storage để phát hiện thay đổi localStorage
     const handleStorageChange = () => {
       const updatedFullName = localStorage.getItem('fullName');
-      console.log('Storage changed, fullName:', updatedFullName);
       setFullName(updatedFullName || '');
     };
 
     window.addEventListener('storage', handleStorageChange);
-
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-    };
+    return () => window.removeEventListener('storage', handleStorageChange);
   }, []);
 
   const handleLogout = () => {
-    console.log('Logging out, removing username and role');
     localStorage.clear();
-    window.location.href = '/login';
+    window.location.href = '/';
+  };
+
+  const handleChangePassword = () => {
+    navigate('/change-password');
+    setIsDropdownOpen(false);
+  };
+
+  const toggleDropdown = () => {
+    setIsDropdownOpen(!isDropdownOpen);
   };
 
   return (
@@ -45,22 +47,22 @@ const Header = () => {
         </div>
         <div className="auth-links">
           {fullName ? (
-
-             <>
-              <span 
-                onClick={() => navigate('/profile')} 
-                style={{ cursor: 'pointer' }}
-              >
+            <div className="user-menu">
+              <span onClick={toggleDropdown} className="user-name">
                 👤 {fullName}
-              </span> |{' '}
-
-              <a onClick={handleLogout} style={{ cursor: 'pointer' }}>
-                Đăng xuất
-              </a>
-            </>
+              </span>
+              {isDropdownOpen && (
+                <div className="dropdown-menu">
+                  <a href="/orders">Đơn hàng</a>
+                  <a href="/profile">Hồ sơ</a>
+                  <span onClick={handleChangePassword} className="logout-btn">Đổi mật khẩu</span>
+                  <span onClick={handleLogout} className="logout-btn">Đăng xuất</span>
+                </div>
+              )}
+            </div>
           ) : (
             <>
-              <a href="/register">Đăng ký</a> | <a href="/login">Đăng nhập</a>
+              <a className='register-link' href="/register">Đăng ký</a> | <a className='login-link' href="/login">Đăng nhập</a>
             </>
           )}
         </div>
@@ -78,15 +80,10 @@ const Header = () => {
           <a href="/"><strong>Trang chủ</strong></a>
           <a href="/services"><strong>Dịch vụ</strong></a>
           <a href="/pricing"><strong>Bảng giá</strong></a>
-
-         <Link to="/history" className="nav-link">Lịch sử xét nghiệm</Link>
-          <a href="/guide"><strong>Hướng dẫn</strong></a>
-           <Link to="/news"><strong>Tin tức</strong></Link>
           <a href="/guide"><strong>Hướng dẫn</strong></a>
           <a href="/news"><strong>Tin tức</strong></a>
-
         </nav>
-               <div className="search-box">
+        <div className="search-box">
           <input type="text" placeholder="Tìm kiếm..." />
           <button>🔍</button>
         </div>

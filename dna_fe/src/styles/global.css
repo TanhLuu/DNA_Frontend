@@ -14,6 +14,12 @@ a {
   text-decoration: none;
 }
 
+.admin-main {
+  flex-grow: 1;
+  background-color: #f3f4f6;
+  overflow: auto;
+}
+
 .main-content {
   min-height: 100vh;
 

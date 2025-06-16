@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { registerUser } from '../../api/authApi';
 import '../../styles/auth/register.css';
+import { loginUser } from '../../api/authApi';
 
 const Register = () => {
   const [form, setForm] = useState({
@@ -10,6 +11,7 @@ const Register = () => {
     fullName: '',
     email: '',
     phone: '',
+    role: 'CUSTOMER',
   });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -25,17 +27,37 @@ const Register = () => {
     setSuccess('');
 
     try {
-      await registerUser(form); // Gọi API register
+      await registerUser(form);
+
+      const loginResponse = await loginUser(form.username, form.password);
+      const { token, account } = loginResponse.data; 
+
+      if (!token) {
+        throw new Error('Không nhận được token từ server');
+      }
+
+      localStorage.setItem('token', token); 
+      localStorage.setItem('accountId', account.id);
+      localStorage.setItem('username', account.username);
+      const role = account.role?.toUpperCase() || 'CUSTOMER';
+      localStorage.setItem('role', role);
+      localStorage.setItem('fullName', account.fullName || '');
+      localStorage.setItem('email', account.email || '');
+      localStorage.setItem('phone', account.phone || '');
+
+      window.dispatchEvent(new Event('storage'));
+
       setSuccess('Đăng ký thành công! Đang chuyển hướng...');
       setTimeout(() => {
-        navigate('/login');
-      }, 2000);
+        navigate('/profile');
+      }, 1500);
+
     } catch (err) {
-      if (err.response && err.response.data) {
-        setError(err.response.data); // Thông báo lỗi từ backend
-      } else {
-        setError('Đăng ký thất bại. Vui lòng thử lại.');
-      }
+      console.error('Register error:', err);
+      setError(
+        err.response?.data?.message ||
+        'Đăng ký hoặc đăng nhập thất bại. Vui lòng thử lại.'
+      );
     }
   };
 

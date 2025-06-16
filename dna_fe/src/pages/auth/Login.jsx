@@ -1,86 +1,7 @@
-// import React, { useState } from 'react';
-// import { useNavigate } from 'react-router-dom';
-// import { loginUser } from '../../api/authApi';
-// import '../../styles/auth/login.css';
-// import { FaEye, FaEyeSlash } from 'react-icons/fa'; // Icon mắt
-
-// const Login = () => {
-//   const [username, setUsername] = useState('');
-//   const [password, setPassword] = useState('');
-//   const [showPassword, setShowPassword] = useState(false);
-//   const [error, setError] = useState('');
-//   const navigate = useNavigate();
-
-//   const handleLogin = async (e) => {
-//     e.preventDefault();
-//     setError('');
-
-//     try {
-//       const data = await loginUser(username, password);
-//       console.log('Login successful:', data);
-
-//       localStorage.setItem('username', data.username);
-//       localStorage.setItem('role', data.role);
-//       localStorage.setItem('fullName', data.fullName || '');
-//       localStorage.setItem('email', data.email || '');
-//       localStorage.setItem('phone', data.phone || '');
-//       window.dispatchEvent(new Event('storage'));
-
-//       if (data.role === 'ADMIN') {
-//         navigate('/admin/dashboard');
-//       } else {
-//         navigate('/');
-//       }
-//     } catch (err) {
-//       if (err.response && err.response.data) {
-//         setError(err.response.data);
-//       } else {
-//         setError('Đăng nhập thất bại. Vui lòng thử lại.');
-//       }
-//     }
-//   };
-
-//   return (
-//     <div className="auth-container">
-//       <form className="auth-form" onSubmit={handleLogin}>
-//         <h2>Đăng nhập</h2>
-
-//         <input
-//           type="text"
-//           placeholder="Tài khoản"
-//           required
-//           value={username}
-//           onChange={(e) => setUsername(e.target.value)}
-//         />
-
-//         <div className="password-field">
-//           <input
-//             type={showPassword ? 'text' : 'password'}
-//             placeholder="Mật khẩu"
-//             required
-//             value={password}
-//             onChange={(e) => setPassword(e.target.value)}
-//           />
-//           <span className="password-toggle" onClick={() => setShowPassword(!showPassword)}>
-//             {showPassword ? <FaEyeSlash /> : <FaEye />}
-//           </span>
-//         </div>
-
-//         {error && <p className="error">{error}</p>}
-//         <button type="submit">Đăng nhập</button>
-//         <p>
-//           Chưa có tài khoản? <a href="/register">Đăng ký</a>
-//         </p>
-//       </form>
-//     </div>
-//   );
-// };
-
-// export default Login;
-
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { loginUser } from '../../api/authApi';
+import { getCustomerByAccountId } from '../../api/accountApi';
 import '../../styles/auth/login.css';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
@@ -91,49 +12,61 @@ const Login = () => {
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     setError('');
 
-    // Giả lập người dùng
-    const mockUsers = [
-      {
-        username: 'customer1',
-        password: '123456',
-        role: 'customer',
-        fullName: 'Nguyễn Văn A',
-        email: 'customer1@example.com',
-        phone: '0123456789'
-      },
-      {
-        username: 'staff1',
-        password: '123456',
-        role: 'staff',
-        fullName: 'Trần Thị B',
-        email: 'staff1@example.com',
-        phone: '0987654321'
+    try {
+      const response = await loginUser(username, password);
+      const { account, token } = response.data;
+
+      if (!token) {
+        throw new Error('Không nhận được token từ server');
       }
-    ];
 
-    const user = mockUsers.find(
-      (u) => u.username === username && u.password === password
-    );
+      // Lưu thông tin vào localStorage
+      localStorage.setItem('token', token);
+      localStorage.setItem('accountId', account.id);
+      localStorage.setItem('username', account.username);
+      localStorage.setItem('role', account.role?.toUpperCase() || '');
+      localStorage.setItem('fullName', account.fullName || '');
+      localStorage.setItem('email', account.email || '');
+      localStorage.setItem('phone', account.phone || '');
 
-    if (user) {
-      localStorage.setItem('username', user.username);
-      localStorage.setItem('role', user.role);
-      localStorage.setItem('fullName', user.fullName);
-      localStorage.setItem('email', user.email);
-      localStorage.setItem('phone', user.phone);
+      // Cập nhật trạng thái App.jsx (nếu có)
       window.dispatchEvent(new Event('storage'));
 
-      if (user.role === 'staff') {
-        navigate('/'); // hoặc sau này navigate('/staff/dashboard');
+      // Điều hướng theo vai trò
+      const role = account.role?.toUpperCase() || '';
+
+      if (role === 'STAFF' || role === 'ADMIN') {
+        navigate('/ordersPageAdmin', { replace: true });
+      } else if (role === 'CUSTOMER') {
+        try {
+          const customerRes = await getCustomerByAccountId(account.id);
+          const customer = customerRes?.data;
+
+          if (customer?.id) {
+            navigate('/', { replace: true }); // Hồ sơ tồn tại
+          } else {
+            navigate('/profile', { replace: true }); // Không có hồ sơ
+          }
+        } catch (error) {
+          // Dù lỗi gì cũng buộc chuyển đến /profile
+          console.error('Lỗi khi kiểm tra hồ sơ customer:', error);
+          navigate('/profile', { replace: true });
+        }
       } else {
         navigate('/');
       }
-    } else {
-      setError('Tài khoản hoặc mật khẩu không đúng.');
+
+    } catch (err) {
+      console.error('Login error:', err);
+      setError(
+        err.response?.data?.message ||
+        err.message ||
+        'Đăng nhập thất bại. Vui lòng thử lại.'
+      );
     }
   };
 
@@ -158,16 +91,26 @@ const Login = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          <span className="password-toggle" onClick={() => setShowPassword(!showPassword)}>
+          <span
+            className="password-toggle"
+            onClick={() => setShowPassword(!showPassword)}
+          >
             {showPassword ? <FaEyeSlash /> : <FaEye />}
           </span>
         </div>
 
         {error && <p className="error">{error}</p>}
+
         <button type="submit">Đăng nhập</button>
-        <p>
-          Chưa có tài khoản? <a href="/register">Đăng ký</a>
-        </p>
+
+        <div className="auth-links">
+          <p>
+            Chưa có tài khoản? <a href="/register">Đăng ký</a>
+          </p>
+          <p>
+            <a href="/forgot-password">Quên mật khẩu?</a>
+          </p>
+        </div>
       </form>
     </div>
   );
