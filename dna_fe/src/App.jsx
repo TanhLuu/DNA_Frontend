@@ -46,7 +46,7 @@ function App() {
   }, []);
 
     return (
-      
+     /* 
     <Router>
       <div className="app">
         {(role !== 'staff' && role !== 'manager') && <Header />}
@@ -112,6 +112,8 @@ function App() {
         {(role !== 'staff' && role !== 'manager') && <Footer />}
       </div>
     </Router>
+    */
+   <TuThuGuiMau />
     
    
   );
