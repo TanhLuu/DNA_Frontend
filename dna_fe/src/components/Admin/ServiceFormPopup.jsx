@@ -11,8 +11,7 @@ const ServiceFormPopup = ({ open, onClose, serviceToEdit, onSuccess }) => {
     servicePurpose: '',
     timeTest: 0,
     serviceBlog: '',
-    price: 0,
-    numberOfSample: 2
+    price: 0
   });
 
   const [errors, setErrors] = useState({});
@@ -24,8 +23,7 @@ const ServiceFormPopup = ({ open, onClose, serviceToEdit, onSuccess }) => {
         servicePurpose: serviceToEdit.servicePurpose,
         timeTest: serviceToEdit.timeTest,
         serviceBlog: serviceToEdit.serviceBlog || '',
-        price: serviceToEdit.price,
-        numberOfSample: serviceToEdit.numberOfSample
+        price: serviceToEdit.price
       });
     } else {
       setFormData({
@@ -33,8 +31,7 @@ const ServiceFormPopup = ({ open, onClose, serviceToEdit, onSuccess }) => {
         servicePurpose: '',
         timeTest: '',
         serviceBlog: '',
-        price: '',
-        numberOfSample: 2
+        price: ''
       });
     }
   }, [serviceToEdit]);
@@ -43,7 +40,7 @@ const ServiceFormPopup = ({ open, onClose, serviceToEdit, onSuccess }) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: name === 'price' || name === 'timeTest' || name === 'numberOfSample' ? Number(value) : value
+      [name]: name === 'price' || name === 'timeTest' ? Number(value) : value
     }));
   };
 
@@ -53,7 +50,6 @@ const ServiceFormPopup = ({ open, onClose, serviceToEdit, onSuccess }) => {
     if (!formData.servicePurpose.trim()) newErrors.servicePurpose = 'Loại dịch vụ là bắt buộc';
     if (formData.price <= 0) newErrors.price = 'Giá phải lớn hơn 0';
     if (formData.timeTest <= 0) newErrors.timeTest = 'Thời gian xét nghiệm phải lớn hơn 0';
-    if (formData.numberOfSample <= 0) newErrors.numberOfSample = 'Số mẫu phải lớn hơn 0';
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -129,17 +125,6 @@ const ServiceFormPopup = ({ open, onClose, serviceToEdit, onSuccess }) => {
           onChange={handleChange}
           error={!!errors.price}
           helperText={errors.price}
-        />
-        <TextField
-          margin="dense"
-          name="numberOfSample"
-          label="Số Mẫu"
-          type="number"
-          fullWidth
-          value={formData.numberOfSample}
-          onChange={handleChange}
-          error={!!errors.numberOfSample}
-          helperText={errors.numberOfSample}
         />
         <TextField
           margin="dense"

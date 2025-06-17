@@ -39,7 +39,7 @@ const Profile = () => {
           setCustomerId(cus.id);
           setCustomer({
             dateOfBirth: formatDate(cus.dateOfBirth),
-            gender: cus.gender || 'Nam',
+            gender: cus.gender || '',
             address: cus.address || '',
             documentType: cus.documentType || 'CCCD',
             cccd: cus.cccd || '',
