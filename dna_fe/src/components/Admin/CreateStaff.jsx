@@ -92,8 +92,8 @@ const CreateStaff = ({ onClose }) => {
             value={form.staffType}
             onChange={handleChange}
           >
-            <option value="NORMAL_STAFF">Nhân viên thường (NORMAL_STAFF)</option>
-            <option value="LAB_STAFF">Nhân viên xét nghiệm (LAB_STAFF)</option>
+            <option value="NORMAL_STAFF">Nhân viên thường</option>
+            <option value="LAB_STAFF">Nhân viên xét nghiệm </option>
           </select>
 
           {error && <p className="error">{error}</p>}
