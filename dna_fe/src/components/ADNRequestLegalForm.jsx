@@ -1,11 +1,20 @@
 import React, { useEffect, useState } from 'react';
-import { fetchAccountInfo, getCustomerByAccountId } from '../api/accountApi';
+import {
+  fetchAccountInfo,
+  getCustomerByAccountId
+} from '../api/accountApi';
 import '../styles/components/ADNRequestForm.css';
 
 const ADNRequestLegalForm = () => {
   const [customer, setCustomer] = useState({
-    requesterName: '', gender: '', idCard: '', issueDate: '',
-    issuePlace: '', address: '', phone: '', email: ''
+    requesterName: '',
+    gender: 'Nam',
+    idCard: '',
+    issueDate: '',
+    issuePlace: '',
+    address: '',
+    phone: '',
+    email: ''
   });
   const [sampleCount, setSampleCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
@@ -15,11 +24,14 @@ const ADNRequestLegalForm = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const { data: acc } = await fetchAccountInfo();
-        const { data: cus } = await getCustomerByAccountId(acc.id);
+        const accRes = await fetchAccountInfo();
+        const acc = accRes.data;
+        const cusRes = await getCustomerByAccountId(acc.id);
+        const cus = cusRes.data;
+
         setCustomer({
           requesterName: acc.fullName || '',
-          gender: cus.gender || 'Nam',
+          gender: cus.gender || '',
           idCard: cus.cccd || '',
           issueDate: formatDate(cus.dateOfIssue),
           issuePlace: cus.placeOfIssue || '',
@@ -36,143 +48,172 @@ const ADNRequestLegalForm = () => {
     fetchData();
   }, []);
 
-  const handleSampleChange = (e) => setSampleCount(+e.target.value || 0);
+  const handleSampleChange = (e) => {
+    setSampleCount(parseInt(e.target.value));
+  };
 
-  const renderSampleFields = () => Array.from({ length: sampleCount }, (_, i) => (
-    <div className="adn-sample-block" key={i + 1}>
-      <h4 className="adn-sample-title">Người cần phân tích mẫu {i + 1}</h4>
-      {[
-        ['Họ và tên:', 'text', 'Name'],
-        ['Ngày sinh:', 'date', 'Dob'],
-        ['Giới tính:', 'select', 'Gender', ['Nam', 'Nữ', 'Khác']],
-        ['Địa chỉ:', 'text', 'Address'],
-        ['Loại giấy tờ:', 'select', 'DocumentType', ['CCCD', 'Hộ chiếu', 'Giấy khai sinh']],
-        ['Số/quyển số:', 'text', 'DocumentNumber'],
-        ['Ngày cấp:', 'date', 'IssueDate'],
-        ['Ngày hết hạn:', 'date', 'ExpiryDate'],
-        ['Nơi cấp:', 'text', 'IssuePlace'],
-        ['Quốc tịch:', 'text', 'Nationality']
-      ].map(([label, type, name, options]) => (
-        <div key={name}>
-          <label>{label}</label>
-          {type === 'select' ? (
-            <select name={`person${i + 1}${name}`}>
-              {options.map(opt => <option key={opt}>{opt}</option>)}
-            </select>
-          ) : (
-            <input type={type} name={`person${i + 1}${name}`} />
-          )}
+  const renderSampleFields = () => {
+  const fields = [];
+  for (let i = 2; i <= sampleCount + 1; i++) {
+    const index = i - 1;
+    fields.push(
+      <div className="adn-sample-block" key={index}>
+        <h4 className="adn-sample-title">Người cần phân tích mẫu {index}</h4>
+
+        <label>Họ và tên:</label>
+        <input type="text" name={`person${index}Name`} />
+
+        <label>Ngày sinh:</label>
+        <input type="date" name={`person${index}Dob`} />
+
+        <label>Giới tính:</label>
+        <select name={`person${index}Gender`}>
+          <option>Nam</option>
+          <option>Nữ</option>
+        </select>
+
+        <label>Địa chỉ:</label>
+        <input type="text" name={`person${index}Address`} placeholder="Nhập địa chỉ" />
+
+        <label>Loại giấy tờ:</label>
+        <select name={`person${index}DocumentType`}>
+          <option>CCCD</option>
+          <option>Hộ chiếu</option>
+          <option>Giấy khai sinh</option>
+        </select>
+
+        <label>Số / Quyển số:</label>
+        <input type="text" name={`person${index}DocumentNumber`} />
+
+        <div className="adn-flex-row">
+          <div>
+            <label>Ngày cấp:</label>
+            <input type="date" name={`person${index}IssueDate`} />
+          </div>
+          <div>
+            <label>Ngày hết hạn:</label>
+            <input type="date" name={`person${index}ExpiryDate`} />
+          </div>
         </div>
-      ))}
-    </div>
-  ));
+
+        <label>Nơi cấp:</label>
+        <input type="text" name={`person${index}IssuePlace`} />
+
+        <label>Mối quan hệ:</label>
+        <input type="text" name={`person${index}Relationship`} placeholder="Nhập mối quan hệ" />
+
+        <label>Mẫu xét nghiệm:</label>
+        <select name={`person${index}SampleType`}>
+          <option>Tóc</option>
+          <option>Móng tay/chân</option>
+          <option>Máu</option>
+          <option>Cuống rốn</option>
+        </select>
+
+        <label>Số mẫu xét nghiệm:</label>
+        <input type="number" name={`person${index}SampleAmount`} placeholder="Nhập số mẫu xét nghiệm" />
+
+        <label>Có tiền sử bệnh về máu hoặc cấy ghép tủy và nhận máu trong 6 tháng gần đây?</label>
+        <div className="adn-radio-group">
+          <label>
+            <input type="radio" name={`person${index}BloodHistory`} value="yes" /> Có
+          </label>
+          <label>
+            <input type="radio" name={`person${index}BloodHistory`} value="no" /> Không
+          </label>
+        </div>
+      </div>
+    );
+  }
+  return fields;
+};
+
+
 
   if (isLoading) return <div className="adn-loading">Đang tải thông tin...</div>;
 
   return (
     <div className="adn-form-wrapper">
-      <h2 className="adn-form-title">ĐƠN YÊU CẦU PHÂN TÍCH ADN HÀNH CHÍNH</h2>
+      <h2 className="adn-form-title">ĐƠN YÊU CẦU PHÂN TÍCH ADN DÂN SỰ</h2>
       <form className="adn-form">
-        {[
-          ['Họ tên người yêu cầu:', 'requesterName'],
-          ['Giới tính:', 'gender'],
-          ['Nơi cấp:', 'issuePlace'],
-          ['Địa chỉ:', 'address']
-        ].map(([label, name]) => (
-          <div key={name}>
-            <label>{label}</label>
-            <input type="text" name={name} value={customer[name]} disabled />
-          </div>
-        ))}
+
+        <label>Họ tên người yêu cầu:</label>
+        <input type="text" name="requesterName" value={customer.requesterName} disabled />
+
+        <label>Giới tính:</label>
+        <input type="text" name="gender" value={customer.gender} disabled />
+
 
         <div className="adn-flex-row">
-          {[
-            ['Số CMND/CCCD:', 'idCard', 'text'],
-            ['Ngày cấp:', 'issueDate', 'date']
-          ].map(([label, name, type]) => (
-            <div key={name}>
-              <label>{label}</label>
-              <input type={type} name={name} value={customer[name]} disabled />
-            </div>
-          ))}
+          <div>
+            <label>Số CMND/CCCD:</label>
+            <input type="text" name="idCard" value={customer.idCard} disabled />
+          </div>
+          <div>
+            <label>Ngày cấp:</label>
+            <input type="date" name="issueDate" value={customer.issueDate} disabled />
+          </div>
         </div>
 
+        <label>Nơi cấp:</label>
+        <input type="text" name="issuePlace" value={customer.issuePlace} disabled />
+
+        <label>Địa chỉ:</label>
+        <input type="text" name="address" value={customer.address} disabled />
+
         <div className="adn-flex-row">
-          {[
-            ['Số điện thoại:', 'phone', 'tel'],
-            ['Email:', 'email', 'email']
-          ].map(([label, name, type]) => (
-            <div key={name}>
-              <label>{label}</label>
-              <input type={type} name={name} value={customer[name]} disabled />
-            </div>
-          ))}
+          <div>
+            <label>Số điện thoại:</label>
+            <input type="tel" name="phone" value={customer.phone} disabled />
+          </div>
+          <div>
+            <label>Email:</label>
+            <input type="email" name="email" value={customer.email} disabled />
+          </div>
         </div>
 
         <div className="adn-section-heading">Thông tin xét nghiệm</div>
 
         <label>Phương thức lấy mẫu:</label>
-        <div className="adn-radio-group">
-          {['Tại trung tâm', 'Tự lấy tại nhà'].map((label, i) => (
-            <label key={i}><input type="radio" name="method" value={i === 0 ? 'center' : 'home'} /> {label}</label>
-          ))}
-        </div>
+        <select name="method" defaultValue="">
+          <option value="">-- Chọn phương thức lấy mẫu --</option>
+          <option value="center">Tại trung tâm</option>
+          <option value="home">Tự lấy tại nhà</option>
+        </select>
 
-        <label>Loại xét nghiệm:</label>
-        <input type="text" name="testType" value="Dân sự" disabled />
+        <label>Hình thức nhận kết quả:</label>
+        <select name="receiveAt" defaultValue="">
+          <option value="">-- Chọn hình thức nhận kết quả --</option>
+          <option value="office">Tại văn phòng</option>
+          <option value="home">Tại nhà</option>
+          <option value="email">Qua Email</option>
+        </select>
 
-        <label>Mối quan hệ:</label>
-        <select name="relationship">
-          {['Cha - Con', 'Mẹ - Con', 'Ông/Bà - Cháu', 'Khác'].map(opt => <option key={opt}>{opt}</option>)}
+        <label>Địa chỉ nhận kết quả:</label>
+        <input type="text" name="resultAddress" />
+
+        <label>Tên xét nghiệm:</label>
+        <select name="testType">
+          <option value="">-- Chọn--</option>
+          <option>Xét nghiệm ADN Mẹ-Con</option>
+          <option>Xét nghiệm ADN Cha-Con</option>
         </select>
 
         <label>Thời gian nhận kết quả:</label>
-        <select name="testDuration">
-          <option value="">-- Thời gian --</option>
-          {['3 ngày', '6 ngày'].map(day => <option key={day}>{day}</option>)}
-        </select>
+        <input type="text" name="resultTime" />
 
-        <label>Số mẫu cần phân tích:</label>
+        <label>Số người cần phân tích:</label>
         <select onChange={handleSampleChange} name="sampleCount">
           <option value="">-- Chọn số mẫu --</option>
-          {[1, 2, 3, 4, 5].map(num => (
-            <option key={num} value={num}>{num} người</option>
+          {[2, 3, 4, 5].map((num) => (
+            <option value={num} key={num}>{num} người</option>
           ))}
         </select>
 
         {renderSampleFields()}
 
-        <label>Mẫu xét nghiệm:</label>
-        <select name="sampleType">
-          {['Tóc', 'Móng tay/chân', 'Máu', 'Cuống rốn'].map(type => <option key={type}>{type}</option>)}
-        </select>
-
-        {[
-          ['Có tiền sử bệnh về máu hoặc cấy ghép tủy?', 'bloodHistory'],
-          ['Có nhận máu trong 6 tháng gần đây?', 'recentTransfusion']
-        ].map(([label, name]) => (
-          <div key={name}>
-            <label>{label}</label>
-            <div className="adn-radio-group">
-              <label><input type="radio" name={name} value="yes" /> Có</label>
-              <label><input type="radio" name={name} value="no" /> Không</label>
-            </div>
-          </div>
-        ))}
-
-        <label>Hình thức nhận kết quả:</label>
-        <div className="adn-checkbox-group">
-          {['office', 'home', 'email'].map((val, i) => (
-            <label key={val}>
-              <input type="checkbox" name="receiveAt" value={val} /> {['Tại văn phòng', 'Tại nhà', 'Qua Email'][i]}
-            </label>
-          ))}
-        </div>
-
-        <label>Địa chỉ nhận kết quả:</label>
-        <input type="text" name="resultAddress" />
-
         <div className="adn-total-cost">TỔNG CHI PHÍ: ............. VNĐ</div>
+
         <button type="submit" className="adn-submit-btn">Gửi Yêu Cầu</button>
       </form>
     </div>

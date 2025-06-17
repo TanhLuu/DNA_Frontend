@@ -54,26 +54,47 @@ const ADNRequestCivilForm = () => {
 
   const renderSampleFields = () => {
     const fields = [];
-    for (let i = 1; i <= sampleCount; i++) {
+    for (let i = 2; i <= sampleCount + 1; i++) {
+      const index = i - 1;
       fields.push(
-        <div className="adn-sample-block" key={i}>
-          <h4 className="adn-sample-title">Người cần phân tích mẫu {i}</h4>
+        <div className="adn-sample-block" key={index}>
+          <h4 className="adn-sample-title">Người thứ {index} cần phân tích </h4>
+
           <label>Họ và tên:</label>
-          <input type="text" name={`person${i}Name`} />
+          <input type="text" name={`person${index}Name`} />
+
           <label>Ngày sinh:</label>
-          <input type="date" name={`person${i}Dob`} />
+          <input type="date" name={`person${index}Dob`} />
+
           <label>Giới tính:</label>
-          <select name={`person${i}Gender`}>
+          <select name={`person${index}Gender`}>
             <option>Nam</option>
             <option>Nữ</option>
-            <option>Khác</option>
           </select>
-          
+
+          <label>Mối quan hệ:</label>
+          <input type="text" name={`person${index}Relationship`} placeholder="Nhập mối quan hệ" />
+
+
+          <label>Mẫu xét nghiệm:</label>
+          <select name={`person${index}SampleType`}>
+            <option>Tóc</option>
+            <option>Móng tay/chân</option>
+            <option>Máu</option>
+            <option>Cuống rốn</option>
+          </select>
+
+          <label>Có tiền sử bệnh về máu hoặc cấy ghép tủy và nhận máu trong 6 tháng gần đây?</label>
+          <div className="adn-radio-group">
+            <label><input type="radio" name={`person${index}BloodHistory`} value="yes" /> Có</label>
+            <label><input type="radio" name={`person${index}BloodHistory`} value="no" /> Không</label>
+          </div>
         </div>
       );
     }
     return fields;
   };
+
 
   if (isLoading) return <div className="adn-loading">Đang tải thông tin...</div>;
 
@@ -86,11 +107,8 @@ const ADNRequestCivilForm = () => {
         <input type="text" name="requesterName" value={customer.requesterName} disabled />
 
         <label>Giới tính:</label>
-        <select name="gender" value={customer.gender} disabled>
-          <option>Nam</option>
-          <option>Nữ</option>
-          <option>Khác</option>
-        </select>
+        <input type="text" name="gender" value={customer.gender} disabled />
+
 
         <div className="adn-flex-row">
           <div>
@@ -123,68 +141,47 @@ const ADNRequestCivilForm = () => {
         <div className="adn-section-heading">Thông tin xét nghiệm</div>
 
         <label>Phương thức lấy mẫu:</label>
-        <div className="adn-radio-group">
-          <label><input type="radio" name="method" value="center" /> Tại trung tâm</label>
-          <label><input type="radio" name="method" value="home" /> Tự lấy tại nhà</label>
-        </div>
-
-        <label>Loại xét nghiệm:</label>
-        <select name="testType">
-          <option value="">-- Chọn loại xét nghiệm --</option>
-          <option>Dân sự</option>
-          <option>Hành chính</option>
+        <select name="method" defaultValue="">
+          <option value="">-- Chọn phương thức lấy mẫu --</option>
+          <option value="center">Tại trung tâm</option>
+          <option value="home">Tự lấy tại nhà</option>
         </select>
 
-        <label>Mối quan hệ:</label>
-        <select name="relationship">
-          <option>Cha - Con</option>
-          <option>Mẹ - Con</option>
-          <option>Ông/Bà - Cháu</option>
-          <option>Khác</option>
+        <label>Hình thức nhận kết quả:</label>
+        <select name="receiveAt" defaultValue="">
+          <option value="">-- Chọn hình thức nhận kết quả --</option>
+          <option value="office">Tại văn phòng</option>
+          <option value="home">Tại nhà</option>
+          <option value="email">Qua Email</option>
+        </select>
+
+        <label>Địa chỉ nhận kết quả:</label>
+        <input type="text" name="resultAddress" />
+
+
+        <label>Tên xét nghiệm:</label>
+        <select name="testType">
+          <option value="">-- Chọn--</option>
+          <option>Xét nghiệm ADN Mẹ-Con</option>
+          <option>Xét nghiệm ADN Cha-Con</option>
         </select>
 
         <label>Thời gian nhận kết quả:</label>
         <input type="text" name="resultTime" />
 
-        <label>Số mẫu cần phân tích:</label>
+        <label>Số người cần phân tích:</label>
         <select onChange={handleSampleChange} name="sampleCount">
           <option value="">-- Chọn số mẫu --</option>
-          {[1, 2, 3, 4, 5].map((num) => (
+          {[2, 3, 4, 5].map((num) => (
             <option value={num} key={num}>{num} người</option>
           ))}
         </select>
 
         {renderSampleFields()}
 
-        <label>Mẫu xét nghiệm:</label>
-        <select name="sampleType">
-          <option>Tóc</option>
-          <option>Móng tay/chân</option>
-          <option>Máu</option>
-          <option>Cuống rốn</option>
-        </select>
 
-        <label>Có tiền sử bệnh về máu hoặc cấy ghép tủy?</label>
-        <div className="adn-radio-group">
-          <label><input type="radio" name="bloodHistory" value="yes" /> Có</label>
-          <label><input type="radio" name="bloodHistory" value="no" /> Không</label>
-        </div>
 
-        <label>Có nhận máu trong 6 tháng gần đây?</label>
-        <div className="adn-radio-group">
-          <label><input type="radio" name="recentTransfusion" value="yes" /> Có</label>
-          <label><input type="radio" name="recentTransfusion" value="no" /> Không</label>
-        </div>
 
-        <label>Hình thức nhận kết quả:</label>
-        <div className="adn-checkbox-group">
-          <label><input type="checkbox" name="receiveAt" value="office" /> Tại văn phòng</label>
-          <label><input type="checkbox" name="receiveAt" value="home" /> Tại nhà</label>
-          <label><input type="checkbox" name="receiveAt" value="email" /> Qua Email</label>
-        </div>
-
-        <label>Địa chỉ nhận kết quả:</label>
-        <input type="text" name="resultAddress" />
 
         <div className="adn-total-cost">TỔNG CHI PHÍ: ............. VNĐ</div>
 
