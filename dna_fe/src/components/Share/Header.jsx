@@ -86,7 +86,7 @@ const Header = () => {
               <a href="/legal-price">Pháp lý</a>
             </div>
           </div>
-          <a href="/guide"><strong>Hướng dẫn</strong></a>
+          <a href="/A"><strong>Hướng dẫn</strong></a>
           <a href="/news"><strong>Tin tức</strong></a>
         </nav>
         <div className="search-box">

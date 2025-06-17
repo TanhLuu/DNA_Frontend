@@ -23,7 +23,7 @@ const AdnBooking = () => {
           <li>✔ Yêu cầu CMND/Khai sinh</li>
           <li>✔ Có giá trị pháp lý</li>
         </ul>
-        <Link to="/requestFormLegal">
+        <Link to="/requesFormtLegal">
           <button>Đặt lịch</button>
         </Link>
       </div>
