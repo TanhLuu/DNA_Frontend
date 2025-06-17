@@ -1,57 +1,26 @@
 import React, { useState } from 'react';
-import { resetPasswordAuthenticated } from '../../api/authApi';
+import { useAuth } from '../../hooks/useAuth';
 import '../../styles/auth/AuthForm.css';
 
 const ResetPassword = () => {
+  const { resetPassword, success, error } = useAuth();
   const [newPassword, setNewPassword] = useState('');
   const [confirm, setConfirm] = useState('');
-  const [message, setMessage] = useState('');
-  const [error, setError] = useState('');
 
-  const handleReset = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    setMessage('');
-    setError('');
-
-    if (newPassword !== confirm) {
-      setError('Passwords do not match');
-      return;
-    }
-
-    try {
-      const res = await resetPasswordAuthenticated(newPassword);
-      setMessage(res);
-    } catch (err) {
-      setError(err.response?.data || 'Error resetting password');
-    }
+    if (newPassword !== confirm) return alert('Mật khẩu không khớp');
+    resetPassword(newPassword);
   };
 
   return (
     <div className="auth-form-container">
       <h2 className="auth-form-title">Change Password</h2>
-      <form onSubmit={handleReset} className="auth-form">
-        <label htmlFor="newPassword">New Password</label>
-        <input
-          id="newPassword"
-          className="auth-input"
-          type="password"
-          placeholder="Enter new password"
-          value={newPassword}
-          onChange={(e) => setNewPassword(e.target.value)}
-          required
-        />
-        <label htmlFor="confirmPassword">Confirm Password</label>
-        <input
-          id="confirmPassword"
-          className="auth-input"
-          type="password"
-          placeholder="Confirm new password"
-          value={confirm}
-          onChange={(e) => setConfirm(e.target.value)}
-          required
-        />
+      <form onSubmit={handleSubmit} className="auth-form">
+        <input type="password" placeholder="New Password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} required />
+        <input type="password" placeholder="Confirm Password" value={confirm} onChange={(e) => setConfirm(e.target.value)} required />
         <button className="auth-button" type="submit">Update Password</button>
-        {message && <p className="auth-message success">{message}</p>}
+        {success && <p className="auth-message success">{success}</p>}
         {error && <p className="auth-message error">{error}</p>}
       </form>
     </div>

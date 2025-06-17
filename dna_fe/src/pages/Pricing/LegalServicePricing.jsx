@@ -1,41 +1,17 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { getAllLegalServices } from '../../api/serviceApi';
-import ServiceFilterBar from '../../components/Share/ServiceFilterBar';
+import useFilteredServices from '../../hooks/useFilteredServices';
+import ServiceFilterBar from '../../components/UI/ServiceFilterBar';
 import '../../styles/components/ServicePricing.css';
 
 const LegalServicePricing = () => {
-  const [services, setServices] = useState([]);
-  const [filteredServices, setFilteredServices] = useState([]);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [sortOption, setSortOption] = useState('');
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const result = await getAllLegalServices();
-        setServices(result);
-        setFilteredServices(result);
-      } catch (error) {
-        console.error('Lỗi khi lấy dịch vụ hành chính:', error);
-      }
-    };
-    fetchData();
-  }, []);
-
-  useEffect(() => {
-    let result = [...services];
-    if (searchTerm.trim()) {
-      result = result.filter(service =>
-        service.serviceName.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
-    if (sortOption === 'name') {
-      result.sort((a, b) => a.serviceName.localeCompare(b.serviceName));
-    } else if (sortOption === 'timeTest') {
-      result.sort((a, b) => a.timeTest - b.timeTest);
-    }
-    setFilteredServices(result);
-  }, [searchTerm, sortOption, services]);
+  const {
+    filteredServices,
+    searchTerm,
+    setSearchTerm,
+    sortOption,
+    setSortOption
+  } = useFilteredServices(getAllLegalServices);
 
   return (
     <div className="civil-pricing-container">
@@ -44,9 +20,9 @@ const LegalServicePricing = () => {
 
       <ServiceFilterBar
         searchTerm={searchTerm}
-        onSearchChange={setSearchTerm}
+        setSearchTerm={setSearchTerm}
         sortOption={sortOption}
-        onSortChange={setSortOption}
+        setSortOption={setSortOption}
       />
 
       <div className="service-grid">

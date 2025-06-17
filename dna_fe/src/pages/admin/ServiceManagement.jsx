@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import ServiceFormPopup from '../../components/Admin/ServiceFormPopup';
+import ServiceFormPopup from './ServiceFormPopup';
 import { getAllServices, deleteService } from '../../api/serviceApi';
 import '../../styles/admin/serviceManagement.css';
 

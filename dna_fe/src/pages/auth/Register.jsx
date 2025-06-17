@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { registerUser } from '../../api/authApi';
+import { useAuth } from '../../hooks/useAuth';
 import '../../styles/auth/register.css';
-import { loginUser } from '../../api/authApi';
 
 const Register = () => {
+  const { register, error, success } = useAuth();
   const [form, setForm] = useState({
     username: '',
     password: '',
@@ -13,104 +12,20 @@ const Register = () => {
     phone: '',
     role: 'CUSTOMER',
   });
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
-  const navigate = useNavigate();
 
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
-  const handleRegister = async (e) => {
-    e.preventDefault();
-    setError('');
-    setSuccess('');
-
-    try {
-      await registerUser(form);
-
-      const loginResponse = await loginUser(form.username, form.password);
-      const { token, account } = loginResponse.data; 
-
-      if (!token) {
-        throw new Error('Không nhận được token từ server');
-      }
-
-      localStorage.setItem('token', token); 
-      localStorage.setItem('accountId', account.id);
-      localStorage.setItem('username', account.username);
-      const role = account.role?.toUpperCase() || 'CUSTOMER';
-      localStorage.setItem('role', role);
-      localStorage.setItem('fullName', account.fullName || '');
-      localStorage.setItem('email', account.email || '');
-      localStorage.setItem('phone', account.phone || '');
-
-      window.dispatchEvent(new Event('storage'));
-
-      setSuccess('Đăng ký thành công! Đang chuyển hướng...');
-      setTimeout(() => {
-        navigate('/profile');
-      }, 1500);
-
-    } catch (err) {
-      console.error('Register error:', err);
-      setError(
-        err.response?.data?.message ||
-        'Đăng ký hoặc đăng nhập thất bại. Vui lòng thử lại.'
-      );
-    }
-  };
+  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
   return (
     <div className="auth-container">
-      <form className="auth-form" onSubmit={handleRegister}>
+      <form className="auth-form" onSubmit={(e) => { e.preventDefault(); register(form); }}>
         <h2>Đăng ký</h2>
-        <input
-          type="text"
-          name="username"
-          placeholder="Tên đăng nhập"
-          required
-          value={form.username}
-          onChange={handleChange}
-        />
-        <input
-          type="password"
-          name="password"
-          placeholder="Mật khẩu"
-          required
-          value={form.password}
-          onChange={handleChange}
-        />
-        <input
-          type="text"
-          name="fullName"
-          placeholder="Họ và tên"
-          required
-          value={form.fullName}
-          onChange={handleChange}
-        />
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          required
-          value={form.email}
-          onChange={handleChange}
-        />
-        <input
-          type="text"
-          name="phone"
-          placeholder="Số điện thoại"
-          required
-          value={form.phone}
-          onChange={handleChange}
-        />
+        {['username', 'password', 'fullName', 'email', 'phone'].map((field) => (
+          <input key={field} type={field === 'password' ? 'password' : 'text'} name={field} placeholder={field.charAt(0).toUpperCase() + field.slice(1)} required value={form[field]} onChange={handleChange} />
+        ))}
         {error && <p className="error">{error}</p>}
         {success && <p className="success">{success}</p>}
         <button type="submit">Đăng ký</button>
-        <p>
-          Đã có tài khoản? <a href="/login">Đăng nhập</a>
-        </p>
+        <p>Đã có tài khoản? <a href="/login">Đăng nhập</a></p>
       </form>
     </div>
   );

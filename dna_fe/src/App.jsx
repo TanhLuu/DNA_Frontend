@@ -19,7 +19,7 @@ import ADNRequestLegalForm from './components/ADNRequestLegalForm';
 import CivilServicePricing from './pages/Pricing/CivilServicePricing';
 import LegalServicePricing from './pages/Pricing/LegalServicePricing';
 import AllServicePricing from './pages/Pricing/AllServicePricing';
-import FormTestOrderSample from './pages/FormTestOrderSample';
+
 
 function App() {
   const [role, setRole] = useState(localStorage.getItem('role')?.toLowerCase());
@@ -50,7 +50,7 @@ function App() {
 
         <main className="main-content">
           <Routes>
-            <Route path="/A" element={<FormTestOrderSample />} />
+            
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
