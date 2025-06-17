@@ -93,6 +93,12 @@ import NewsPage from './pages/auth/NewsPage';
 import Profile from './components/Profile';
 import OrderCivil from './pages/auth/OrderCivil';
 import OrderLegal from './pages/auth/OrderLegal';
+import CivilADNGuide from './pages/auth/CivilADNGuide';
+import LegalADNGuide from './pages/auth/LegalADNGuide';
+import ADNft from './pages/auth/ADNfather';
+import ADNgrandparent from './pages/auth/ADNgrandft';
+import ADNmother from './pages/auth/ADNmother';
+import ADNsibling from './pages/auth/ADNbrosis';
 import './styles/global.css';
 
 function App() {
@@ -117,12 +123,18 @@ function App() {
             <Route path="/civil-price" element={<CivilPrice />} />
             <Route path="/legal-price" element={<LegalPrice />} />
             <Route path="/payment/:orderId" element={<QRCode />} />
-             <Route path="/news" element={<NewsPage />} />
-             <Route path="/history" element={<History />} />
+            <Route path="/news" element={<NewsPage />} />
+            <Route path="/history" element={<History />} />
             <Route path="/profile" element={<Profile />} />
-             <Route path="/order/civil" element={<OrderCivil />} />
-          <Route path="/order/legal" element={<OrderLegal />} />
-             <Route path="/payment/complete/:orderId" element={<CompletePayment />} />
+            <Route path="/order/civil" element={<OrderCivil />} />
+            <Route path="/order/legal" element={<OrderLegal />} />
+             <Route path="/civil" element={<CivilADNGuide />} />
+              <Route path="/legal" element={<LegalADNGuide />} />
+              <Route path="/adn-father" element={<ADNft />} />
+              <Route path="/grandparent" element={<ADNgrandparent />} />
+               <Route path="/guide/mother" element={<ADNmother />} />
+               <Route path="/guide/sibling" element={<ADNsibling />} />
+          <Route path="/payment/complete/:orderId" element={<CompletePayment />} />
 
             {(!role || role === "customer") && <Route path="/" element={<Home />} />}
 

@@ -80,13 +80,13 @@ const Header = () => {
           
           <a href="/pricing"><strong>Bảng giá</strong></a>
 
-         <Link to="/history" className="nav-link">Lịch sử xét nghiệm</Link>
-         <Link to="civil-price" className="nav-link">Bảng giá dân sự</Link>
-          <Link to="legal-price" className="nav-link">Bảng giá pháp lý</Link>
-          <Link to="/payment/:orderId" className="nav-link">Thanh toán</Link>
-          <Link to="/order/civil" className="nav-link">đơn dân sự</Link>
-          <Link to="/order/legal" className="nav-link">đơn pháp lý</Link>
-      
+        
+          <Link to="/legal" className="nav-link">Hướng Dẫn Hành Chính</Link>
+          <Link to="/civil" className="nav-link">Hướng Dẫn Dân Sự</Link>
+          <Link to="/adn-father" className="nav-link">Hướng Dẫn ADN Cha Con</Link>
+            <Link to="/guide/mother">Xét nghiệm ADN Mẹ Con</Link>
+          <Link to="/grandparent">Xét nghiệm ADN Ông Bà Cháu</Link>
+          <Link to="/guide/sibling">Xét nghiệm ADN Anh Chị Em</Link>
           <a href="/guide"><strong>Hướng dẫn</strong></a>
            <Link to="/news"><strong>Tin tức</strong></Link>
           <a href="/guide"><strong>Hướng dẫn</strong></a>
