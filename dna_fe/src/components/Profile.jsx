@@ -6,7 +6,7 @@ import {
   createCustomer,
   updateCustomer
 } from '../api/accountApi';
-import '../styles/components/profile.css';
+
 
 const genderOptions = ['Nam', 'Nữ', 'Khác'];
 const documentOptions = ['CCCD', 'Giấy khai sinh', 'Hộ chiếu'];

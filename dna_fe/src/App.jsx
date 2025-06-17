@@ -16,6 +16,7 @@ import Dashboard from './pages/admin/Dashboard';
 import './styles/global.css';
 import OrderCivil from './components/OrderCivil';
 import OrderPaternity from './components/OrderLegal';
+import TuThuGuiMau from './pages/TuThu&GuiMau';
 
 
 
@@ -45,6 +46,7 @@ function App() {
   }, []);
 
     return (
+      
     <Router>
       <div className="app">
         {(role !== 'staff' && role !== 'manager') && <Header />}
@@ -110,6 +112,8 @@ function App() {
         {(role !== 'staff' && role !== 'manager') && <Footer />}
       </div>
     </Router>
+    
+   
   );
 }
 
