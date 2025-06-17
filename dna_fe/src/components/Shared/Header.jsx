@@ -84,7 +84,7 @@ const Header = () => {
          <Link to="civil-price" className="nav-link">Bảng giá dân sự</Link>
           <Link to="legal-price" className="nav-link">Bảng giá pháp lý</Link>
           <Link to="/payment/:orderId" className="nav-link">Thanh toán</Link>
-          <Link to="/order/civil" classname="nav-link">đơn dân sự</Link>
+          <Link to="/order/civil" className="nav-link">đơn dân sự</Link>
           <Link to="/order/legal" className="nav-link">đơn pháp lý</Link>
       
           <a href="/guide"><strong>Hướng dẫn</strong></a>
