@@ -79,7 +79,13 @@ const Header = () => {
         <nav className="menu">
           <a href="/"><strong>Trang chủ</strong></a>
           <a href="/services"><strong>Dịch vụ</strong></a>
-          <a href="/pricing"><strong>Bảng giá</strong></a>
+          <div className="price-dropdown">
+            <a href="/all-price"><strong>Bảng giá</strong></a>
+            <div className="price-dropdown-menu">
+              <a href="/civil-price">Dân sự</a>
+              <a href="/legal-price">Pháp lý</a>
+            </div>
+          </div>
           <a href="/guide"><strong>Hướng dẫn</strong></a>
           <a href="/news"><strong>Tin tức</strong></a>
         </nav>

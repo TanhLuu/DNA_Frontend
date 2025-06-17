@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import Header from './components/Shared/Header';
-import Footer from './components/Shared/Footer';
-import AdminLayout from './components/Shared/AdminLayout';
+import Header from './components/Share/Header';
+import Footer from './components/Share/Footer';
+import AdminLayout from './components/Share/AdminLayout';
 import Login from './pages/auth/Login';
 import ForgotPassword from './pages/auth/ForgotPassword';
 import ResetPasswordFromEmail from './pages/auth/ResetPasswordFromEmail';
@@ -16,13 +16,12 @@ import Dashboard from './pages/admin/Dashboard';
 import './styles/global.css';
 import ADNRequestFormCivil from './components/ADNRequestFormCivil';
 import ADNRequestLegalForm from './components/ADNRequestLegalForm';
-
-
+import CivilServicePricing from './pages/Pricing/CivilServicePricing';
+import LegalServicePricing from './pages/Pricing/LegalServicePricing';
+import AllServicePricing from './pages/Pricing/AllServicePricing';
 
 function App() {
   const [role, setRole] = useState(localStorage.getItem('role')?.toLowerCase());
-
-  // Thêm cơ chế tự kiểm tra localStorage
   useEffect(() => {
     const checkRole = () => {
       const currentRole = localStorage.getItem('role')?.toLowerCase();
@@ -30,8 +29,7 @@ function App() {
         setRole(currentRole);
       }
     };
-    
-    // Kiểm tra mỗi 100ms
+
     const interval = setInterval(checkRole, 100);
     return () => clearInterval(interval);
   }, [role]);
@@ -44,7 +42,7 @@ function App() {
     return () => window.removeEventListener('storage', handleStorageChange);
   }, []);
 
-    return (
+  return (
     <Router>
       <div className="app">
         {(role !== 'staff' && role !== 'manager') && <Header />}
@@ -58,36 +56,18 @@ function App() {
             <Route path="/reset-password" element={<ResetPasswordFromEmail />} />
             <Route path="/requestFormCivil" element={<ADNRequestFormCivil />} />
             <Route path="/requesFormtLegal" element={<ADNRequestLegalForm />} />
+            <Route path="/civil-price" element={<CivilServicePricing />} />
+            <Route path="/legal-price" element={<LegalServicePricing />} />
+            <Route path="/all-price" element={<AllServicePricing />} />
+
             {(role === 'staff' || role === 'manager') && (
               <>
-                <Route
-                  path="/ordersPageAdmin"
-                  element={
-                    <AdminLayout>
-                      <OrdersPage />
-                    </AdminLayout>
-                  }
-                />
-                <Route
-                  path="/serviceManagement"
-                  element={
-                    <AdminLayout>
-                      <ServiceManagement />
-                    </AdminLayout>
-                  }
-                />
-                <Route
-                  path="/dashboard"
-                  element={
-                    <AdminLayout>
-                      <Dashboard />
-                    </AdminLayout>
-                  }
-                />
-                
+                <Route path="/ordersPageAdmin" element={<AdminLayout> <OrdersPage /> </AdminLayout>} />
+                <Route path="/serviceManagement" element={<AdminLayout> <ServiceManagement /> </AdminLayout>}/>
+                <Route path="/dashboard" element={<AdminLayout><Dashboard /></AdminLayout>}/>
               </>
             )}
- 
+
             {(!role || role === 'customer') && (
               <Route path="/" element={<Home />} />
             )}
@@ -95,7 +75,6 @@ function App() {
             {role === 'customer' && (
               <Route path="/profile" element={<Profile />} />
             )}
-           
 
             <Route path="*" element={
               (role === 'staff' || role === 'manager') ? (

@@ -139,3 +139,35 @@
   padding: 6px 12px;
   cursor: pointer;
 }
+
+.price-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.price-dropdown-menu {
+  display: none;
+  position: absolute;
+  background-color: white;
+  min-width: 180px;
+  max-height: 200px;
+  overflow-y: auto;
+  box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
+  z-index: 999;
+}
+
+.price-dropdown:hover .price-dropdown-menu {
+  display: block;
+}
+
+.price-dropdown-menu a {
+  display: block;
+  padding: 10px;
+  color: black;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.price-dropdown-menu a:hover {
+  background-color: #f1f1f1;
+}

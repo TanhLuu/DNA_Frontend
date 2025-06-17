@@ -107,52 +107,6 @@
     background-color: #003f7d;
 }
 
-.adn-booking {
-    display: flex;
-    flex: 1 1 100%;
-    justify-content: center;
-    gap: 20px;
-    margin-top: 30px;
-    flex-wrap: wrap;
-}
-
-.adn-card {
-    background: #fff;
-    border-radius: 10px;
-    padding: 20px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-    width: 250px;
-    text-align: left;
-}
-
-.adn-card h3 {
-    color: #005eb8;
-    font-size: 15px;
-    margin-bottom: 10px;
-    text-align: center;
-}
-
-.adn-card ul {
-    font-size: 14px;
-    padding-left: 20px;
-    margin-bottom: 15px;
-}
-
-.adn-card button {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 8px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    display: block;
-    margin: 0 auto;
-}
-
-.adn-card button:hover {
-    background-color: #0056b3;
-}
-
 .doctor-container {
     margin: 30px 50px;
     padding: 20px 0;
@@ -307,3 +261,5 @@
     gap: 20px;
     margin-top: 30px;
 }
+
+

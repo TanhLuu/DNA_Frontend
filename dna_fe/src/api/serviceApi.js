@@ -30,3 +30,4 @@ export const getAllLegalServices = async () => {
   const res = await axiosInstance.get('/api/services');
   return res.data.filter(service => service.servicePurpose === "Hành chính");
 };
+
