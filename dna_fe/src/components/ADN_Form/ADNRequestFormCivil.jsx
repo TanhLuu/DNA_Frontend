@@ -72,7 +72,7 @@ const ADNRequestCivilForm = () => {
             <option value="Tóc">Tóc</option>
             <option value="Móng tay/chân">Móng tay/chân</option>
             <option value="Máu">Máu</option>
-            <option value="Cuống rốn">Cuống rốn</option>
+            <option value="Niêm mạc">Niêm mạc</option>
           </select>
 
           <label>Có tiền sử bệnh về máu hoặc cấy ghép tủy và nhận máu trong 6 tháng gần đây?</label>

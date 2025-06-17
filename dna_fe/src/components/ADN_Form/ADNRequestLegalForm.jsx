@@ -1,9 +1,9 @@
 import React from 'react';
-import { getAllCivilServices } from '../../api/serviceApi';
+import { getAllLegalServices } from '../../api/serviceApi';
 import useADNRequestForm from '../../hooks/useADNForm';
 import '../../styles/components/ADNRequestForm.css';
 
-const ADNRequestCivilForm = () => {
+const ADNRequestLegalForm = () => {
   const {
     customer,
     sampleCount,
@@ -18,7 +18,7 @@ const ADNRequestCivilForm = () => {
     handleInputChange,
     handleSubmit,
     calculateTotalPrice,
-  } = useADNRequestForm(getAllCivilServices);
+  } = useADNRequestForm(getAllLegalServices);
 
   const renderSampleFields = () => {
     const fields = [];
@@ -29,69 +29,78 @@ const ADNRequestCivilForm = () => {
           <h4 className="adn-sample-title">Người cần phân tích mẫu {index}</h4>
 
           <label>Họ và tên:</label>
-          <input
-            type="text"
-            name={`person${index}Name`}
-            onChange={handleInputChange}
-            required
-          />
+          <input type="text" name={`person${index}Name`} onChange={handleInputChange} required />
 
           <label>Ngày sinh:</label>
-          <input
-            type="date"
-            name={`person${index}Dob`}
-            onChange={handleInputChange}
-          />
+          <input type="date" name={`person${index}Dob`} onChange={handleInputChange} />
 
           <label>Giới tính:</label>
-          <select
-            name={`person${index}Gender`}
-            onChange={handleInputChange}
-            required
-          >
+          <select name={`person${index}Gender`} onChange={handleInputChange} required>
             <option value="">Chọn giới tính</option>
             <option value="Nam">Nam</option>
             <option value="Nữ">Nữ</option>
           </select>
 
+          <label>Địa chỉ:</label>
+          <input type="text" name={`person${index}Address`} placeholder="Nhập địa chỉ" onChange={handleInputChange} />
+
+          <label>Quốc tịch:</label>
+          <input type="text" name={`person${index}Nationality`} onChange={handleInputChange} />
+
+          <label>Loại giấy tờ:</label>
+          <select name={`person${index}DocumentType`} onChange={handleInputChange}>
+            <option value="">Chọn loại giấy tờ</option>
+            <option value="CCCD">CCCD</option>
+            <option value="Hộ chiếu">Hộ chiếu</option>
+            <option value="Giấy khai sinh">Giấy khai sinh</option>
+          </select>
+
+          <label>Số / Quyển số:</label>
+          <input type="text" name={`person${index}DocumentNumber`} onChange={handleInputChange} />
+
+          <div className="adn-flex-row">
+            <div>
+              <label>Ngày cấp:</label>
+              <input type="date" name={`person${index}IssueDate`} onChange={handleInputChange} />
+            </div>
+            <div>
+              <label>Ngày hết hạn:</label>
+              <input type="date" name={`person${index}ExpiryDate`} onChange={handleInputChange} />
+            </div>
+          </div>
+
+          <label>Nơi cấp:</label>
+          <input type="text" name={`person${index}IssuePlace`} onChange={handleInputChange} />
+
           <label>Mối quan hệ:</label>
-          <input
-            type="text"
-            name={`person${index}Relationship`}
-            placeholder="Nhập mối quan hệ"
-            onChange={handleInputChange}
-          />
+          <input type="text" name={`person${index}Relationship`} placeholder="Nhập mối quan hệ" onChange={handleInputChange} />
 
           <label>Mẫu xét nghiệm:</label>
-          <select
-            name={`person${index}SampleType`}
-            onChange={handleInputChange}
-            required
-          >
+          <select name={`person${index}SampleType`} onChange={handleInputChange} required>
             <option value="">Chọn loại mẫu</option>
             <option value="Tóc">Tóc</option>
             <option value="Móng tay/chân">Móng tay/chân</option>
             <option value="Máu">Máu</option>
-            <option value="Cuống rốn">Cuống rốn</option>
+            <option value="Niêm mạc">Niêm mạc</option>
           </select>
+
+          <label>Số mẫu xét nghiệm:</label>
+          <input
+            type="number"
+            name={`person${index}SampleAmount`}
+            placeholder="Nhập số mẫu xét nghiệm"
+            onChange={handleInputChange}
+            min="1"
+            required
+          />
 
           <label>Có tiền sử bệnh về máu hoặc cấy ghép tủy và nhận máu trong 6 tháng gần đây?</label>
           <div className="adn-radio-group">
             <label>
-              <input
-                type="radio"
-                name={`person${index}BloodHistory`}
-                value="yes"
-                onChange={handleInputChange}
-              /> Có
+              <input type="radio" name={`person${index}BloodHistory`} value="yes" onChange={handleInputChange} /> Có
             </label>
             <label>
-              <input
-                type="radio"
-                name={`person${index}BloodHistory`}
-                value="no"
-                onChange={handleInputChange}
-              /> Không
+              <input type="radio" name={`person${index}BloodHistory`} value="no" onChange={handleInputChange} /> Không
             </label>
           </div>
         </div>
@@ -100,16 +109,16 @@ const ADNRequestCivilForm = () => {
     return fields;
   };
 
-  const totalPrice = calculateTotalPrice(true);
+  const totalPrice = calculateTotalPrice(false);
 
   if (isLoading) return <div className="adn-loading">Đang tải thông tin...</div>;
 
   return (
     <div className="adn-form-wrapper">
-      <h2 className="adn-form-title">ĐƠN YÊU CẦU PHÂN TÍCH ADN DÂN SỰ</h2>
+      <h2 className="adn-form-title">ĐƠN YÊU CẦU PHÂN TÍCH ADN HÀNH CHÍNH</h2>
       {error && <div className="text-red-500 mb-4">{error}</div>}
       {success && <div className="text-green-500 mb-4">{success}</div>}
-      <form className="adn-form" onSubmit={(e) => handleSubmit(e, true)}>
+      <form className="adn-form" onSubmit={(e) => handleSubmit(e, false)}>
         <label>Họ tên người yêu cầu:</label>
         <input type="text" name="requesterName" value={customer.requesterName} disabled />
 
@@ -147,10 +156,9 @@ const ADNRequestCivilForm = () => {
         <div className="adn-section-heading">Thông tin xét nghiệm</div>
 
         <label>Phương thức lấy mẫu:</label>
-        <select name="method" onChange={handleInputChange} required>
-          <option value="">-- Chọn phương thức lấy mẫu --</option>
+        <input type="hidden" name="method" value="center" />
+        <select value="center" disabled>
           <option value="center">Tại trung tâm</option>
-          <option value="home">Tự lấy tại nhà</option>
         </select>
 
         <label>Hình thức nhận kết quả:</label>
@@ -211,4 +219,4 @@ const ADNRequestCivilForm = () => {
   );
 };
 
-export default ADNRequestCivilForm;
+export default ADNRequestLegalForm;
