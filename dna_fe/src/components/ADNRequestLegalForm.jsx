@@ -3,6 +3,7 @@ import {
   fetchAccountInfo,
   getCustomerByAccountId
 } from '../api/accountApi';
+import { getAllLegalServices } from '../api/serviceApi';
 import '../styles/components/ADNRequestForm.css';
 
 const ADNRequestLegalForm = () => {
@@ -16,8 +17,11 @@ const ADNRequestLegalForm = () => {
     phone: '',
     email: ''
   });
-  const [sampleCount, setSampleCount] = useState(0);
+
+  const [sampleCount, setSampleCount] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  const [services, setServices] = useState([]);
+  const [selectedService, setSelectedService] = useState(null);
 
   const formatDate = (iso) => iso?.split('T')[0] || '';
 
@@ -39,8 +43,11 @@ const ADNRequestLegalForm = () => {
           phone: acc.phone || '',
           email: acc.email || ''
         });
+
+        const legalServices = await getAllLegalServices();
+        setServices(legalServices);
       } catch (err) {
-        console.error('Error fetching customer info:', err);
+        console.error('Error fetching info:', err);
       } finally {
         setIsLoading(false);
       }
@@ -49,100 +56,105 @@ const ADNRequestLegalForm = () => {
   }, []);
 
   const handleSampleChange = (e) => {
-    setSampleCount(parseInt(e.target.value));
+    const value = e.target.value;
+    setSampleCount(value ? parseInt(value) : "");
   };
 
   const renderSampleFields = () => {
-  const fields = [];
-  for (let i = 2; i <= sampleCount + 1; i++) {
-    const index = i - 1;
-    fields.push(
-      <div className="adn-sample-block" key={index}>
-        <h4 className="adn-sample-title">Người cần phân tích mẫu {index}</h4>
+    const fields = [];
+    for (let i = 2; i <= sampleCount + 1; i++) {
+      const index = i - 1;
+      fields.push(
+        <div className="adn-sample-block" key={index}>
+          <h4 className="adn-sample-title">Người cần phân tích mẫu {index}</h4>
 
-        <label>Họ và tên:</label>
-        <input type="text" name={`person${index}Name`} />
+          <label>Họ và tên:</label>
+          <input type="text" name={`person${index}Name`} />
 
-        <label>Ngày sinh:</label>
-        <input type="date" name={`person${index}Dob`} />
+          <label>Ngày sinh:</label>
+          <input type="date" name={`person${index}Dob`} />
 
-        <label>Giới tính:</label>
-        <select name={`person${index}Gender`}>
-          <option>Nam</option>
-          <option>Nữ</option>
-        </select>
+          <label>Giới tính:</label>
+          <select name={`person${index}Gender`}>
+            <option>Nam</option>
+            <option>Nữ</option>
+          </select>
 
-        <label>Địa chỉ:</label>
-        <input type="text" name={`person${index}Address`} placeholder="Nhập địa chỉ" />
+          <label>Địa chỉ:</label>
+          <input type="text" name={`person${index}Address`} placeholder="Nhập địa chỉ" />
 
-        <label>Loại giấy tờ:</label>
-        <select name={`person${index}DocumentType`}>
-          <option>CCCD</option>
-          <option>Hộ chiếu</option>
-          <option>Giấy khai sinh</option>
-        </select>
+          <label>Loại giấy tờ:</label>
+          <select name={`person${index}DocumentType`}>
+            <option>CCCD</option>
+            <option>Hộ chiếu</option>
+            <option>Giấy khai sinh</option>
+          </select>
 
-        <label>Số / Quyển số:</label>
-        <input type="text" name={`person${index}DocumentNumber`} />
+          <label>Số / Quyển số:</label>
+          <input type="text" name={`person${index}DocumentNumber`} />
 
-        <div className="adn-flex-row">
-          <div>
-            <label>Ngày cấp:</label>
-            <input type="date" name={`person${index}IssueDate`} />
+          <div className="adn-flex-row">
+            <div>
+              <label>Ngày cấp:</label>
+              <input type="date" name={`person${index}IssueDate`} />
+            </div>
+            <div>
+              <label>Ngày hết hạn:</label>
+              <input type="date" name={`person${index}ExpiryDate`} />
+            </div>
           </div>
-          <div>
-            <label>Ngày hết hạn:</label>
-            <input type="date" name={`person${index}ExpiryDate`} />
+
+          <label>Nơi cấp:</label>
+          <input type="text" name={`person${index}IssuePlace`} />
+
+          <label>Mối quan hệ:</label>
+          <input type="text" name={`person${index}Relationship`} placeholder="Nhập mối quan hệ" />
+
+          <label>Mẫu xét nghiệm:</label>
+          <select name={`person${index}SampleType`}>
+            <option>Tóc</option>
+            <option>Móng tay/chân</option>
+            <option>Máu</option>
+            <option>Cuống rốn</option>
+          </select>
+
+          <label>Số mẫu xét nghiệm:</label>
+          <input type="number" name={`person${index}SampleAmount`} placeholder="Nhập số mẫu xét nghiệm" />
+
+          <label>Có tiền sử bệnh về máu hoặc cấy ghép tủy và nhận máu trong 6 tháng gần đây?</label>
+          <div className="adn-radio-group">
+            <label>
+              <input type="radio" name={`person${index}BloodHistory`} value="yes" /> Có
+            </label>
+            <label>
+              <input type="radio" name={`person${index}BloodHistory`} value="no" /> Không
+            </label>
           </div>
         </div>
+      );
+    }
+    return fields;
+  };
 
-        <label>Nơi cấp:</label>
-        <input type="text" name={`person${index}IssuePlace`} />
+  const calculateTotalPrice = () => {
+    if (!selectedService || !sampleCount || isNaN(sampleCount)) return null;
+    const additionalCost = (sampleCount - 2) * 2000000;
+    return selectedService.price + (additionalCost > 0 ? additionalCost : 0);
+  };
 
-        <label>Mối quan hệ:</label>
-        <input type="text" name={`person${index}Relationship`} placeholder="Nhập mối quan hệ" />
-
-        <label>Mẫu xét nghiệm:</label>
-        <select name={`person${index}SampleType`}>
-          <option>Tóc</option>
-          <option>Móng tay/chân</option>
-          <option>Máu</option>
-          <option>Cuống rốn</option>
-        </select>
-
-        <label>Số mẫu xét nghiệm:</label>
-        <input type="number" name={`person${index}SampleAmount`} placeholder="Nhập số mẫu xét nghiệm" />
-
-        <label>Có tiền sử bệnh về máu hoặc cấy ghép tủy và nhận máu trong 6 tháng gần đây?</label>
-        <div className="adn-radio-group">
-          <label>
-            <input type="radio" name={`person${index}BloodHistory`} value="yes" /> Có
-          </label>
-          <label>
-            <input type="radio" name={`person${index}BloodHistory`} value="no" /> Không
-          </label>
-        </div>
-      </div>
-    );
-  }
-  return fields;
-};
-
-
+  const totalPrice = calculateTotalPrice();
 
   if (isLoading) return <div className="adn-loading">Đang tải thông tin...</div>;
 
   return (
     <div className="adn-form-wrapper">
-      <h2 className="adn-form-title">ĐƠN YÊU CẦU PHÂN TÍCH ADN DÂN SỰ</h2>
+      <h2 className="adn-form-title">ĐƠN YÊU CẦU PHÂN TÍCH ADN HÀNH CHÍNH</h2>
       <form className="adn-form">
-
         <label>Họ tên người yêu cầu:</label>
         <input type="text" name="requesterName" value={customer.requesterName} disabled />
 
         <label>Giới tính:</label>
         <input type="text" name="gender" value={customer.gender} disabled />
-
 
         <div className="adn-flex-row">
           <div>
@@ -193,26 +205,43 @@ const ADNRequestLegalForm = () => {
         <input type="text" name="resultAddress" />
 
         <label>Tên xét nghiệm:</label>
-        <select name="testType">
-          <option value="">-- Chọn--</option>
-          <option>Xét nghiệm ADN Mẹ-Con</option>
-          <option>Xét nghiệm ADN Cha-Con</option>
+        <select
+          name="testType"
+          value={selectedService?.serviceID || ''}
+          onChange={(e) => {
+            const selected = services.find(s => s.serviceID.toString() === e.target.value);
+            setSelectedService(selected);
+          }}
+        >
+          <option value="">-- Chọn --</option>
+          {services.map(service => (
+            <option key={service.serviceID} value={service.serviceID}>
+              {`${service.serviceName} - ${service.timeTest} ngày - ${service.price.toLocaleString('vi-VN')} VNĐ`}
+            </option>
+          ))}
         </select>
 
         <label>Thời gian nhận kết quả:</label>
-        <input type="text" name="resultTime" />
+        <input
+          type="text"
+          name="resultTime"
+          value={selectedService ? `${selectedService.timeTest} ngày` : ''}
+          disabled
+        />
 
         <label>Số người cần phân tích:</label>
-        <select onChange={handleSampleChange} name="sampleCount">
+        <select onChange={handleSampleChange} name="sampleCount" value={sampleCount}>
           <option value="">-- Chọn số mẫu --</option>
           {[2, 3, 4, 5].map((num) => (
             <option value={num} key={num}>{num} người</option>
           ))}
         </select>
 
-        {renderSampleFields()}
+        {sampleCount >= 2 && renderSampleFields()}
 
-        <div className="adn-total-cost">TỔNG CHI PHÍ: ............. VNĐ</div>
+        <div className="adn-total-cost">
+          TỔNG CHI PHÍ: {totalPrice !== null ? `${totalPrice.toLocaleString('vi-VN')} VNĐ` : '.........'}
+        </div>
 
         <button type="submit" className="adn-submit-btn">Gửi Yêu Cầu</button>
       </form>

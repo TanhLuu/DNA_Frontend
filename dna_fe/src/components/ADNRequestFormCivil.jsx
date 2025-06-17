@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import {
-  fetchAccountInfo,
-  getCustomerByAccountId
-} from '../api/accountApi';
+import { fetchAccountInfo, getCustomerByAccountId } from '../api/accountApi';
+import { getAllCivilServices } from '../api/serviceApi';
 import '../styles/components/ADNRequestForm.css';
 
 const ADNRequestCivilForm = () => {
@@ -16,8 +14,11 @@ const ADNRequestCivilForm = () => {
     phone: '',
     email: ''
   });
-  const [sampleCount, setSampleCount] = useState(0);
+
+  const [sampleCount, setSampleCount] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  const [services, setServices] = useState([]);
+  const [selectedService, setSelectedService] = useState(null);
 
   const formatDate = (iso) => iso?.split('T')[0] || '';
 
@@ -39,8 +40,11 @@ const ADNRequestCivilForm = () => {
           phone: acc.phone || '',
           email: acc.email || ''
         });
+
+        const civilServices = await getAllCivilServices();
+        setServices(civilServices);
       } catch (err) {
-        console.error('Error fetching customer info:', err);
+        console.error('Error:', err);
       } finally {
         setIsLoading(false);
       }
@@ -75,7 +79,6 @@ const ADNRequestCivilForm = () => {
           <label>Mối quan hệ:</label>
           <input type="text" name={`person${index}Relationship`} placeholder="Nhập mối quan hệ" />
 
-
           <label>Mẫu xét nghiệm:</label>
           <select name={`person${index}SampleType`}>
             <option>Tóc</option>
@@ -95,6 +98,13 @@ const ADNRequestCivilForm = () => {
     return fields;
   };
 
+  const calculateTotalPrice = () => {
+    if (!selectedService || !sampleCount || isNaN(sampleCount)) return null;
+    const additionalCost = (sampleCount - 2) * 1500000;
+    return selectedService.price + (additionalCost > 0 ? additionalCost : 0);
+  };
+
+  const totalPrice = calculateTotalPrice();
 
   if (isLoading) return <div className="adn-loading">Đang tải thông tin...</div>;
 
@@ -108,7 +118,6 @@ const ADNRequestCivilForm = () => {
 
         <label>Giới tính:</label>
         <input type="text" name="gender" value={customer.gender} disabled />
-
 
         <div className="adn-flex-row">
           <div>
@@ -158,32 +167,44 @@ const ADNRequestCivilForm = () => {
         <label>Địa chỉ nhận kết quả:</label>
         <input type="text" name="resultAddress" />
 
-
         <label>Tên xét nghiệm:</label>
-        <select name="testType">
-          <option value="">-- Chọn--</option>
-          <option>Xét nghiệm ADN Mẹ-Con</option>
-          <option>Xét nghiệm ADN Cha-Con</option>
+        <select
+          name="testType"
+          value={selectedService?.serviceID || ''}
+          onChange={(e) => {
+            const selected = services.find(s => s.serviceID.toString() === e.target.value);
+            setSelectedService(selected);
+          }}
+        >
+          <option value="">-- Chọn --</option>
+          {services.map(service => (
+            <option key={service.serviceID} value={service.serviceID}>
+              {`${service.serviceName} - ${service.timeTest} ngày - ${service.price.toLocaleString('vi-VN')} VNĐ`}
+            </option>
+          ))}
         </select>
 
         <label>Thời gian nhận kết quả:</label>
-        <input type="text" name="resultTime" />
+        <input
+          type="text"
+          name="resultTime"
+          value={selectedService ? `${selectedService.timeTest} ngày` : ''}
+          disabled
+        />
 
         <label>Số người cần phân tích:</label>
-        <select onChange={handleSampleChange} name="sampleCount">
+        <select onChange={handleSampleChange} name="sampleCount" value={sampleCount}>
           <option value="">-- Chọn số mẫu --</option>
           {[2, 3, 4, 5].map((num) => (
             <option value={num} key={num}>{num} người</option>
           ))}
         </select>
 
-        {renderSampleFields()}
+        {sampleCount >= 2 && renderSampleFields()}
 
-
-
-
-
-        <div className="adn-total-cost">TỔNG CHI PHÍ: ............. VNĐ</div>
+        <div className="adn-total-cost">
+          TỔNG CHI PHÍ: {totalPrice !== null ? `${totalPrice.toLocaleString('vi-VN')} VNĐ` : '.........'}
+        </div>
 
         <button type="submit" className="adn-submit-btn">Gửi Yêu Cầu</button>
       </form>
