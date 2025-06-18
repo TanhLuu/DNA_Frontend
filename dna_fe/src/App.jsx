@@ -19,7 +19,7 @@ import ADNRequestLegalForm from './components/ADN_Form/ADNRequestLegalForm';
 import CivilServicePricing from './pages/Pricing/CivilServicePricing';
 import LegalServicePricing from './pages/Pricing/LegalServicePricing';
 import AllServicePricing from './pages/Pricing/AllServicePricing';
-import CustomerHistory from './pages/customer/CustomerHistory';
+import OrderHistory from './pages/customer/OrderHistory';
 
 
 
@@ -81,7 +81,7 @@ function App() {
             {role === 'customer' && (
               <>
                 <Route path="/profile" element={<Profile />} />
-                <Route path="/customerHistory" element={<CustomerHistory />} />
+                <Route path="/OrderHistory" element={<OrderHistory />} />
               </>
             )}
 

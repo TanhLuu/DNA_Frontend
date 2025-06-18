@@ -14,9 +14,8 @@ export const useStaffInfo = () => {
     const fullName = localStorage.getItem('fullName');
     const role = localStorage.getItem('role');
     const accountId = localStorage.getItem('accountId');
-    const staffId = localStorage.getItem('staffId'); // Lấy staffId từ localStorage
+    const staffId = localStorage.getItem('staffId');
 
-    // Ghi log để kiểm tra dữ liệu localStorage
     console.log('localStorage:', { fullName, role, accountId, staffId });
 
     if (!role || !fullName || !accountId) {
@@ -28,35 +27,42 @@ export const useStaffInfo = () => {
     const fetchStaffInfo = async () => {
       try {
         setIsLoading(true);
-        let translatedRole = 'Nhân viên';
 
-        if (role === 'STAFF' || role === 'MANAGER') {
+        if (role === 'MANAGER') {
+          setStaffInfo({
+            name: fullName,
+            role: 'MANAGER',
+            staffId: staffId ? parseInt(staffId) : null
+          });
+        } else if (role === 'STAFF') {
           const staff = await getStaffByAccountId(accountId);
           console.log('API getStaffByAccountId response:', staff);
 
-          translatedRole =
+          const translatedRole =
             staff.role === 'NORMAL_STAFF'
               ? 'NORMAL STAFF'
               : staff.role === 'LAB_STAFF'
               ? 'LAB STAFF'
-              : role === 'MANAGER'
-              ? 'Quản lý'
-              : 'Nhân viên';
-        } else {
-          translatedRole = 'Người dùng';
-        }
+              : 'STAFF';
 
-        setStaffInfo({
-          name: fullName,
-          role: translatedRole,
-          staffId: staffId ? parseInt(staffId) : null // Sử dụng staffId từ localStorage
-        });
+          setStaffInfo({
+            name: fullName,
+            role: translatedRole,
+            staffId: staffId ? parseInt(staffId) : null
+          });
+        } else {
+          setStaffInfo({
+            name: fullName,
+            role: 'Người dùng',
+            staffId: null
+          });
+        }
       } catch (err) {
         console.error('Lỗi khi lấy thông tin nhân viên:', err);
         setError('Không thể tải thông tin nhân viên: ' + (err.response?.data?.message || err.message));
         setStaffInfo({
           name: fullName || 'Nhân viên',
-          role: 'Nhân viên',
+          role: role || 'Nhân viên',
           staffId: staffId ? parseInt(staffId) : null
         });
       } finally {
