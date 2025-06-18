@@ -205,12 +205,15 @@ const OrdersPage = () => {
                 </td>
                 <td>
                   <button
-                    className="action-btn"
-                    onClick={() => handleUpdateOrder(order.orderId, order.orderStatus)}
-                    disabled={!canUpdateOrder(order.orderStatus, staffRole)}
-                  >
-                    Cập nhật đơn
-                  </button>
+  className="action-btn"
+  onClick={() => handleUpdateOrder(order.orderId, order.orderStatus)}
+  disabled={
+    !canUpdateOrder(order.orderStatus, staffRole) ||
+    (staffRole === 'NORMAL_STAFF' && getNextStatus(order.orderStatus) === 'TESTING')
+  }
+>
+  Cập nhật đơn
+</button>
                   <button className="action-btn" onClick={() => handleViewDetails(order.orderId)}>Chi tiết đơn</button>
                 </td>
               </tr>

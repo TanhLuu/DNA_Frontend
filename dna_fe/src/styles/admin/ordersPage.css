@@ -90,3 +90,8 @@
   font-size: 10px;
   cursor: pointer;
 }
+
+.action-btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
