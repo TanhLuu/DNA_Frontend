@@ -27,7 +27,11 @@ const useADNRequestForm = (getServices) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const accRes = await fetchAccountInfo();
+        setIsLoading(true);
+        const [accRes, servicesData] = await Promise.all([
+          fetchAccountInfo(),
+          getServices()
+        ]);
         const acc = accRes.data;
         const cusRes = await getCustomerByAccountId(acc.id);
         const cus = cusRes.data;
@@ -43,11 +47,10 @@ const useADNRequestForm = (getServices) => {
           email: acc.email || ''
         });
 
-        const servicesData = await getServices();
-        setServices(servicesData);
+        setServices(servicesData.data || servicesData);
       } catch (err) {
-        console.error('Error fetching info:', err);
-        setError('Failed to load customer or service data.');
+        console.error('Error fetching data:', err);
+        setError('Không thể tải thông tin khách hàng hoặc dịch vụ.');
       } finally {
         setIsLoading(false);
       }
@@ -61,7 +64,7 @@ const useADNRequestForm = (getServices) => {
   };
 
   const handleInputChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
   const calculateTotalPrice = (isCivil) => {
@@ -78,8 +81,7 @@ const useADNRequestForm = (getServices) => {
     try {
       const customerId = localStorage.getItem('customerId');
       if (!customerId) {
-        setError('Customer ID not found in localStorage. Please log in.');
-        return;
+        throw new Error('Không tìm thấy ID khách hàng. Vui lòng đăng nhập.');
       }
 
       const orderData = {
@@ -87,17 +89,25 @@ const useADNRequestForm = (getServices) => {
         staffId: null,
         serviceId: parseInt(formData.testType),
         orderDate: formData.orderDate || new Date().toISOString().split('T')[0],
-        orderStatus: formData.orderStatus || 'PENDING',
+        orderStatus: 'PENDING',
         sampleType: formData.method || '',
         resultDeliveryMethod: formData.receiveAt || '',
         resultDeliverAddress: formData.resultAddress || '',
-        kitCode: formData.method === 'home' ? `KIT-${Math.random().toString(36).substr(2, 9)}` : null,
+        kitCode: formData.method === 'home' ? `KIT-${Math.random().toString(36).substr(2, 9).toUpperCase()}` : null,
         sampleQuantity: parseInt(sampleCount) || 2,
         amount: calculateTotalPrice(isCivil) || 0,
       };
 
+      // Validate required fields
+      if (!orderData.serviceId || !orderData.sampleType || !orderData.resultDeliveryMethod) {
+        throw new Error('Vui lòng điền đầy đủ thông tin: Loại xét nghiệm, phương thức lấy mẫu, và hình thức nhận kết quả.');
+      }
+
       const orderResponse = await axios.post('http://localhost:8080/api/testorders', orderData, {
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
       });
       const orderId = orderResponse.data.orderId;
 
@@ -132,24 +142,30 @@ const useADNRequestForm = (getServices) => {
       const failedSamples = [];
       for (const [index, sample] of samples.entries()) {
         try {
+          if (!sample.name || !sample.sampleType) {
+            throw new Error(`Mẫu ${index + 1}: Thiếu tên hoặc loại mẫu.`);
+          }
           await axios.post('http://localhost:8080/api/testSamples', sample, {
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${localStorage.getItem('token')}`
+            },
           });
         } catch (sampleErr) {
-          failedSamples.push(`Sample ${index + 1}: ${sampleErr.response?.data?.message || sampleErr.message}`);
+          failedSamples.push(`Mẫu ${index + 1}: ${sampleErr.response?.data?.message || sampleErr.message}`);
         }
       }
 
       if (failedSamples.length > 0) {
-        setError(`Some samples failed to save: ${failedSamples.join('; ')}`);
+        setError(`Một số mẫu không được lưu: ${failedSamples.join('; ')}`);
       } else {
-        setSuccess('Bạn đã tạo đơn thành công');
+        setSuccess('Tạo đơn hàng thành công!');
         setFormData({});
         setSampleCount("");
       }
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to create Test Order or Samples.');
-      console.error('Error:', err);
+      setError(err.response?.data?.message || err.message || 'Tạo đơn hàng hoặc mẫu thất bại.');
+      console.error('Submit error:', err);
     }
   };
 

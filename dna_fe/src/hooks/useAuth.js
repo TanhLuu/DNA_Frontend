@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { loginUser, registerUser, createStaff, resetPasswordAuthenticated, resetPasswordWithToken } from '../api/authApi';
-import { getCustomerByAccountId } from '../api/accountApi';
+import { getCustomerByAccountId, getStaffByAccountId } from '../api/accountApi';
 import { useNavigate } from 'react-router-dom';
 
 export const useAuth = () => {
@@ -16,46 +16,60 @@ export const useAuth = () => {
     localStorage.setItem('fullName', account.fullName || '');
     localStorage.setItem('email', account.email || '');
     localStorage.setItem('phone', account.phone || '');
-    
+
     window.dispatchEvent(new Event('storage'));
   };
 
   const login = async (username, password) => {
-  setError('');
-  try {
-    const res = await loginUser(username, password);
-    const { account, token } = res.data;
+    setError('');
+    try {
+      const res = await loginUser(username, password);
+      const { account, token } = res.data;
 
-    if (!token) throw new Error('Token không tồn tại');
-    saveAccountToLocalStorage(account, token);
+      if (!token) throw new Error('Token không tồn tại');
+      saveAccountToLocalStorage(account, token);
 
-    const role = account.role?.toUpperCase();
+      const role = account.role?.toUpperCase();
 
-    if (role === 'STAFF' || role === 'ADMIN') {
-      navigate('/ordersPageAdmin', { replace: true });
-    } else if (role === 'CUSTOMER') {
-      try {
-        const customerRes = await getCustomerByAccountId(account.id);
-        const customerId = customerRes?.data?.id;
+      if (role === 'STAFF') {
+        try {
+          const staffRes = await getStaffByAccountId(account.id);
+          const staffId = staffRes?.id;
+          const staffRole = staffRes?.role;
 
-        // 👉 Lưu thêm customerId vào localStorage
-        if (customerId) {
-          localStorage.setItem('customerId', customerId);
+          if (staffId) {
+            localStorage.setItem('staffId', staffId);
+          }
+          if (staffRole) {
+            localStorage.setItem('staffRole', staffRole); // ví dụ: LAB, TECHNICIAN
+          }
+        } catch (err) {
+          console.warn('Không thể lấy staffId hoặc staffRole', err);
         }
 
-        customerId
-          ? navigate('/', { replace: true }) // đã có hồ sơ → về trang chủ
-          : navigate('/profile', { replace: true }); // chưa có hồ sơ → bắt cập nhật
-      } catch {
-        navigate('/profile', { replace: true });
+        navigate('/ordersPageAdmin', { replace: true });
+      } else if (role === 'CUSTOMER') {
+        try {
+          const customerRes = await getCustomerByAccountId(account.id);
+          const customerId = customerRes?.data?.id;
+
+          if (customerId) {
+            localStorage.setItem('customerId', customerId);
+          }
+
+          customerId
+            ? navigate('/', { replace: true })
+            : navigate('/profile', { replace: true });
+        } catch {
+          navigate('/profile', { replace: true });
+        }
+      } else {
+        navigate('/');
       }
-    } else {
-      navigate('/');
+    } catch (err) {
+      setError(err.response?.data?.message || err.message || 'Đăng nhập thất bại');
     }
-  } catch (err) {
-    setError(err.response?.data?.message || err.message || 'Đăng nhập thất bại');
-  }
-};
+  };
 
 
   const register = async (form) => {
