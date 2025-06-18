@@ -28,6 +28,9 @@ import ADNMeCon from './pages/AdnMecon';
 import AdnMeCon from './pages/AdnMecon';
 import AdnAnhChiEm from './pages/AdnAnhChiEm';
 import FormStep1 from './components/FormStep1';
+import FormStep5 from './components/FormStep5';
+import DichVu from './pages/DichVu';
+import BangGia from './pages/BangGia';
 function App() {
   const [role, setRole] = useState(localStorage.getItem('role')?.toLowerCase());
   useEffect(() => {
@@ -100,7 +103,7 @@ function App() {
       </div>
     </Router>
     */
-    <FormStep1/>
+    <FormStep5/>
   );
 }
 

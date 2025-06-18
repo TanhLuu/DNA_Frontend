@@ -48,3 +48,13 @@ export const getStaffByAccountId = async (accountId) => {
   const response = await axiosInstance.get(`/api/staff/account/${accountId}`);
   return response.data; // StaffDTO
 };
+
+//thêm vào 2 cái dưới
+export const getStaffById = async (staffId) => {
+  const response = await axiosInstance.get(`/api/staff/${staffId}`);
+  return response.data;
+};
+export const getAccountById = async (accountId) => {
+  const response = await axiosInstance.get(`/api/account/${accountId}`);
+  return response.data;
+};

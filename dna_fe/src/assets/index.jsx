@@ -16,7 +16,11 @@ import partner2 from './partner2.jpg';
 import partner3 from './partner3.jpg';
 import partner4 from './partner4.jpg';
 import partner5 from './partner5.jpg';
-
+import Bsi from './Bsi.png';
+import hanhchinh from './hanhchinh.png'; 
+import dansu from './dansu.png'; 
+import bonbuoc from './bonbuoc.jpg';
+// Add your image path
 // Export all images
 export {
   logo,
@@ -36,5 +40,9 @@ export {
   partner2, 
   partner3,
   partner4,
-  partner5
+  partner5,
+  Bsi,
+  hanhchinh,
+  dansu,
+  bonbuoc
 };
