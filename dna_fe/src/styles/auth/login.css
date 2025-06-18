@@ -11,7 +11,7 @@
   background-color: white;
   padding: 30px 40px;
   border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   width: 100%;
   max-width: 400px;
 }
@@ -43,7 +43,29 @@
   margin-top: 16px;
   text-align: center;
 }
+
 .auth-form a {
   color: #0072c6;
   text-decoration: none;
 }
+
+.password-field {
+  position: relative;
+  width: 100%;
+}
+
+.password-field input {
+  width: 100%;
+  padding-right: 40px; /* Chừa chỗ cho icon */
+}
+
+.password-toggle {
+  position: absolute;
+  top: 42%;
+  right: 10px;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #666;
+  font-size: 1.2em;
+}
+

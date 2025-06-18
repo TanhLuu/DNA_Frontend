@@ -1,41 +1,105 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Header from './components/Shared/Header';
-import Footer from './components/Shared/Footer';
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import Header from './components/Share/Header';
+import Footer from './components/Share/Footer';
+import AdminLayout from './components/Share/AdminLayout';
 import Login from './pages/auth/Login';
+import ForgotPassword from './pages/auth/ForgotPassword';
+import ResetPasswordFromEmail from './pages/auth/ResetPasswordFromEmail';
+import ResetPassword from './pages/auth/ResetPassword';
 import Register from './pages/auth/Register';
 import Home from './pages/Home';
-import DichVu from './pages/DichVu';
-import BangGia from './pages/BangGia';
-import TienTrinh from './pages/TienTrinh';
-import TuThuGuiMau from './pages/TuThu&GuiMau';
-import TuThuGuiMauTT from './pages/TuThu&GuiMauTT';
-import ChuyenMau from './pages/ChuyenMau';
+import OrdersPage from './pages/admin/OrdersPage';
+import Profile from './components/Profile';
+import ServiceManagement from './pages/admin/ServiceManagement';
+import Dashboard from './pages/admin/Dashboard';
 import './styles/global.css';
-
+import ADNRequestFormCivil from './components/ADN_Form/ADNRequestFormCivil';
+import ADNRequestLegalForm from './components/ADN_Form/ADNRequestLegalForm';
+import CivilServicePricing from './pages/Pricing/CivilServicePricing';
+import LegalServicePricing from './pages/Pricing/LegalServicePricing';
+import AllServicePricing from './pages/Pricing/AllServicePricing';
+import TuThuGuiMau from './pages/TuThu&GuiMau';
+import AdnTuNguyen from './pages/ADNTuNguyen';
+import AdnOngChau from './pages/AdnOngChau';
+import AdnHanhChinh from './pages/AdnHanhChinh';
+import AdnChacon from './pages/AdnChacon';
+import ADNMeCon from './pages/AdnMecon';
+import AdnMeCon from './pages/AdnMecon';
+import AdnAnhChiEm from './pages/AdnAnhChiEm';
 function App() {
+  const [role, setRole] = useState(localStorage.getItem('role')?.toLowerCase());
+  useEffect(() => {
+    const checkRole = () => {
+      const currentRole = localStorage.getItem('role')?.toLowerCase();
+      if (currentRole !== role) {
+        setRole(currentRole);
+      }
+    };
+
+    const interval = setInterval(checkRole, 100);
+    return () => clearInterval(interval);
+  }, [role]);
+
+  useEffect(() => {
+    const handleStorageChange = () => {
+      setRole(localStorage.getItem('role')?.toLowerCase());
+    };
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
+
   return (
+    /*
     <Router>
       <div className="app">
-        <Header />
+        {(role !== 'staff' && role !== 'manager') && <Header />}
 
         <main className="main-content">
           <Routes>
-            <Route path="/" element={<Home />} />
-
-            <Route path="/admin" element={<h2>Trang admin</h2>} />
+            
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
-            <Route path="/dich-vu" element={<DichVu />} />
-            <Route path="/bang-gia" element={<BangGia />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/change-password" element={<ResetPassword />} />
+            <Route path="/reset-password" element={<ResetPasswordFromEmail />} />
+            <Route path="/requestFormCivil" element={<ADNRequestFormCivil />} />
+            <Route path="/requesFormtLegal" element={<ADNRequestLegalForm />} />
+            <Route path="/civil-price" element={<CivilServicePricing />} />
+            <Route path="/legal-price" element={<LegalServicePricing />} />
+            <Route path="/all-price" element={<AllServicePricing />} />
+
+            {(role === 'staff' || role === 'manager') && (
+              <>
+                <Route path="/ordersPageAdmin" element={<AdminLayout> <OrdersPage /> </AdminLayout>} />
+                <Route path="/serviceManagement" element={<AdminLayout> <ServiceManagement /> </AdminLayout>}/>
+                <Route path="/dashboard" element={<AdminLayout><Dashboard /></AdminLayout>}/>
+              </>
+            )}
+
+            {(!role || role === 'customer') && (
+              <Route path="/" element={<Home />} />
+            )}
+
+            {role === 'customer' && (
+              <Route path="/profile" element={<Profile />} />
+            )}
+
+            <Route path="*" element={
+              (role === 'staff' || role === 'manager') ? (
+                <Navigate to="/ordersPageAdmin" replace />
+              ) : (
+                <Navigate to="/" replace />
+              )
+            } />
           </Routes>
         </main>
-        
 
-        <Footer />
-
+        {(role !== 'staff' && role !== 'manager') && <Footer />}
       </div>
     </Router>
+    */
+    <AdnTuNguyen />
   );
 }
 

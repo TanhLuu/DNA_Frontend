@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import '../styles/Home.css';
 import * as asset from '../assets';
+import AdnBooking from '../components/UI/AdnBooking';
 
 const images = [asset.banner001, asset.banner002, asset.banner003];
 
@@ -80,26 +81,7 @@ const Home = () => {
                             </div>
 
 
-                            <div class="adn-booking">
-                                <div class="adn-card">
-                                    <h3>Xét nghiệm ADN Dân sự</h3>
-                                    <ul>
-                                        <li>✔ Dành cho mục đích cá nhân</li>
-                                        <li>✔ Không yêu cầu giấy tờ pháp lý</li>
-                                        <li>✔ Thông tin được bảo mật</li>
-                                    </ul>
-                                    <a href="/"><button>Đặt lịch</button></a>
-                                </div>
-                                <div class="adn-card">
-                                    <h3>Xét nghiệm ADN Hành chính</h3>
-                                    <ul>
-                                        <li>✔ Dùng trong các thủ tục pháp lý</li>
-                                        <li>✔ Yêu cầu CMND/Khai sinh</li>
-                                        <li>✔ Có giá trị pháp lý</li>
-                                    </ul>
-                                    <a href="/"><button>Đặt lịch</button></a>
-                                </div>
-                            </div>
+                            <AdnBooking />
                         </div>
                     </div>
                 </div>
@@ -188,7 +170,7 @@ const Home = () => {
 
             <div className='news-container'>
                 <h2 className='news-title'>TIN TỨC</h2>
-                    {/* viết phần này sau */}
+                {/* viết phần này sau */}
 
 
 

@@ -1,0 +1,101 @@
+
+
+.adn-form-wrapper {
+  max-width: 1000px;
+  margin: 40px auto;
+  background-color: #fff;
+  padding: 40px;
+  border-radius: 14px;
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.08);
+}
+
+.adn-form-title {
+  text-align: center;
+  color: #2c3e50;
+  margin-bottom: 30px;
+  font-size: 26px;
+  font-weight: 600;
+}
+
+.adn-form label {
+  display: block;
+  margin-top: 18px;
+  font-weight: 600;
+  color: #333;
+}
+
+.adn-form input,
+.adn-form select {
+  width: 100%;
+  padding: 10px;
+  margin-top: 6px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 15px;
+  background-color: #fff;
+}
+
+.adn-flex-row {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.adn-flex-row > div {
+  flex: 1;
+  min-width: 240px;
+}
+
+.adn-section-heading {
+  margin-top: 40px;
+  font-size: 18px;
+  color: #1a4d80;
+  font-weight: 600;
+  border-bottom: 2px solid #3498db;
+  padding-bottom: 6px;
+}
+
+.adn-radio-group,
+.adn-checkbox-group {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+.adn-sample-block {
+  background-color: #f6fafd;
+  border: 1px solid #d6e8f7;
+  padding: 20px;
+  border-radius: 10px;
+  margin-top: 20px;
+}
+
+.adn-sample-title {
+  margin-bottom: 15px;
+  color: #007acc;
+  font-weight: 600;
+}
+
+.adn-total-cost {
+  margin-top: 30px;
+  font-weight: bold;
+  font-size: 18px;
+  color: #2c3e50;
+}
+
+.adn-submit-btn {
+  margin-top: 30px;
+  background-color: #1a73e8;
+  color: #fff;
+  padding: 14px 26px;
+  font-size: 16px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.25s ease;
+}
+
+.adn-submit-btn:hover {
+  background-color: #0d59c7;
+}

@@ -16,9 +16,7 @@ import partner2 from './partner2.jpg';
 import partner3 from './partner3.jpg';
 import partner4 from './partner4.jpg';
 import partner5 from './partner5.jpg';
-import bonbuoc from './bonbuoc.png';
-import dansu from './dansu.jpg';
-import hanhchinh from './hanhchinh.jpg';
+
 // Export all images
 export {
   logo,
@@ -38,8 +36,5 @@ export {
   partner2, 
   partner3,
   partner4,
-  partner5,
-  bonbuoc,
-  dansu,
-  hanhchinh
+  partner5
 };

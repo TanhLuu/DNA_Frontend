@@ -1,0 +1,94 @@
+.civil-pricing-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #f9fbfc;
+  color: #333;
+}
+
+.title {
+  text-align: center;
+  color: #0056b3;
+  font-size: 2.2rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+}
+
+.subtitle {
+  text-align: center;
+  color: #666;
+  font-size: 1.05rem;
+  margin-bottom: 2.5rem;
+}
+
+.service-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2rem;
+}
+
+.service-card {
+  background: white;
+  border-radius: 16px;
+  padding: 1.8rem;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.07);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border-left: 5px solid #007bff;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.service-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 24px rgba(0, 123, 255, 0.15);
+}
+
+.service-name {
+  color: #d62828;
+  font-size: 1.35rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+}
+
+.service-description {
+  font-size: 1rem;
+  color: #555;
+  margin-bottom: 1rem;
+  line-height: 1.5;
+  min-height: 60px;
+}
+
+.service-info {
+  margin-top: auto;
+}
+
+.service-info p {
+  margin: 0.4rem 0;
+  font-size: 0.95rem;
+  color: #2e2e2e;
+}
+
+.service-info p strong {
+  color: #007bff;
+}
+
+.controls {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 20px 0;
+  flex-wrap: wrap;
+}
+
+.search-input,
+.sort-select {
+  padding: 8px;
+  font-size: 14px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  width: 100%;
+  max-width: 300px;
+}

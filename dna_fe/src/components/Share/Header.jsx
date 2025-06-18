@@ -1,0 +1,101 @@
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import '../../styles/components/shared/header.css';
+import logo from '../../assets/logo.jpg';
+
+const Header = () => {
+  const [fullName, setFullName] = useState('');
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const savedFullName = localStorage.getItem('fullName');
+    if (savedFullName) {
+      setFullName(savedFullName);
+    }
+
+    const handleStorageChange = () => {
+      const updatedFullName = localStorage.getItem('fullName');
+      setFullName(updatedFullName || '');
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.clear();
+    window.location.href = '/';
+  };
+
+  const handleChangePassword = () => {
+    navigate('/change-password');
+    setIsDropdownOpen(false);
+  };
+
+  const toggleDropdown = () => {
+    setIsDropdownOpen(!isDropdownOpen);
+  };
+
+  return (
+    <header className="header">
+      <div className="top-bar">
+        <div className="contact-info">
+          <span>📞 1900 565656</span>
+          <span>📧 contact@adntest.vn</span>
+          <span>📍 123 Đường ABC, Q.1, TP.HCM</span>
+        </div>
+        <div className="auth-links">
+          {fullName ? (
+            <div className="user-menu">
+              <span onClick={toggleDropdown} className="user-name">
+                👤 {fullName}
+              </span>
+              {isDropdownOpen && (
+                <div className="dropdown-menu">
+                  <a href="/orders">Đơn hàng</a>
+                  <a href="/profile">Hồ sơ</a>
+                  <span onClick={handleChangePassword} className="logout-btn">Đổi mật khẩu</span>
+                  <span onClick={handleLogout} className="logout-btn">Đăng xuất</span>
+                </div>
+              )}
+            </div>
+          ) : (
+            <>
+              <a className='register-link' href="/register">Đăng ký</a> | <a className='login-link' href="/login">Đăng nhập</a>
+            </>
+          )}
+        </div>
+      </div>
+
+      <div className="main-nav">
+        <div className="logo-section">
+          <img src={logo} alt="MedLab Logo" className="logo" />
+          <div className="logo-text">
+            <strong>MEDLAB</strong>
+            <div className="slogan">Xét nghiệm ADN hàng đầu</div>
+          </div>
+        </div>
+        <nav className="menu">
+          <a href="/"><strong>Trang chủ</strong></a>
+          <a href="/services"><strong>Dịch vụ</strong></a>
+          <div className="price-dropdown">
+            <a href="/all-price"><strong>Bảng giá</strong></a>
+            <div className="price-dropdown-menu">
+              <a href="/civil-price">Dân sự</a>
+              <a href="/legal-price">Pháp lý</a>
+            </div>
+          </div>
+          <a href="/A"><strong>Hướng dẫn</strong></a>
+          <a href="/news"><strong>Tin tức</strong></a>
+        </nav>
+        <div className="search-box">
+          <input type="text" placeholder="Tìm kiếm..." />
+          <button>🔍</button>
+        </div>
+      </div>
+    </header>
+  );
+};
+
+export default Header;

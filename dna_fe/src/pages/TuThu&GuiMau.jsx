@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
-import "../styles/tuthu&guimau.css";
+import { getCustomerByAccountId } from '../api/accountApi';
+import { getAllServices } from '../api/serviceApi';
+import axiosInstance from '../api/axiosInstance'; // Add this import
+import '../styles/tuthu&guimau.css';
 
 const TuThuGuiMau = () => {
     const [customer, setCustomer] = useState(null);
+    const [services, setServices] = useState([]);
     const [kitInfo, setKitInfo] = useState({
         tenBoKit: "",
         maBoKit: "",
@@ -11,63 +14,159 @@ const TuThuGuiMau = () => {
         soDienThoai: "",
         diaChiNhan: "",
         ngayGui: "",
+        serviceId: "",
     });
-    const [confirmed, setConfirmed] = useState(false); // Thêm state này
-    //Lấy dữ liệu từ DB 
+    const [confirmed, setConfirmed] = useState(false);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+
     useEffect(() => {
-        //Gọi API lấy dữ liệu khách hàng
-        axios.get("/api/customer/1")
-            .then(res => setCustomer(res.data))
-            .catch(console.error);
+        const fetchData = async () => {
+            try {
+                setLoading(true);
+                // Lấy accountId từ localStorage
+                const accountId = localStorage.getItem('accountId');
 
-        //Gọi API lấy thông tin bộ kit
-        axios.get("/api/kit/1")
-            .then(res => setKitInfo(prev => ({
-                ...prev,
-                ...res.data
-            })))
-            .catch(console.error);
+                if (!accountId) {
+                    setError("Không tìm thấy thông tin tài khoản");
+                    setLoading(false);
+                    return;
+                }
 
+                // Lấy thông tin customer và account
+                const customerResponse = await getCustomerByAccountId(accountId);
+                console.log("Customer data:", customerResponse); // Debug để xem cấu trúc dữ liệu
+
+                if (customerResponse && customerResponse.data) {
+                    setCustomer(customerResponse.data);
+
+                    // Debug: kiểm tra cấu trúc dữ liệu
+                    console.log("Customer data structure:", JSON.stringify(customerResponse.data, null, 2));
+
+                    // Điền thông tin từ customer vào form
+                    setKitInfo(prev => ({
+                        ...prev,
+                        tenKhachHang: customerResponse.data.fullName || "",
+                        soDienThoai: customerResponse.data.phoneNumber || "",
+                        diaChiNhan: customerResponse.data.address || ""
+                    }));
+                }
+
+                // Lấy danh sách dịch vụ
+                const servicesData = await getAllServices();
+                setServices(servicesData || []);
+
+                setLoading(false);
+            } catch (err) {
+                console.error("Error fetching data:", err);
+                setError("Lỗi khi tải dữ liệu: " + (err.response?.data?.message || err.message));
+                setLoading(false);
+            }
+        };
+
+        fetchData();
     }, []);
-
-    //Xử lý thay đổi input
+    // Handle input changes
     const handleChange = (e) => {
         setKitInfo({
             ...kitInfo,
             [e.target.name]: e.target.value
-        })
+        });
     };
 
-    //Xử lý submit form
-    const handleSubmit = (e) => {
-        e.preventDefault(); // Quan trọng!
-        axios.post("/api/send-sample", kitInfo)
-            .then(res => setConfirmed(true))
-            .catch(console.error);
+    // Handle form submission - create a test order
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        if (!customer) {
+            setError("Customer information is required");
+            return;
+        }
+
+        try {
+            // Convert the form data to a TestOrderDTO
+            const testOrderData = {
+                customerId: customer.id,
+                accountId: localStorage.getItem('accountId') || "1",
+                serviceId: kitInfo.serviceId,
+                orderDate: new Date().toISOString().split('T')[0],
+                sampleType: "DNA Sample",
+                orderStatus: "PENDING",
+                resultDeliveryMethod: "Email",
+                resultDeliverAddress: kitInfo.diaChiNhan,
+                kitCode: kitInfo.maBoKit,
+                sampleQuantity: 1,
+                amount: 1
+            };
+
+            // Send POST request to create a test order
+            const response = await axiosInstance.post("/api/orders", testOrderData);
+            console.log("Order created:", response.data);
+            setConfirmed(true);
+        } catch (err) {
+            console.error("Error creating order:", err);
+            setError("Failed to submit the order: " + (err.response?.data?.message || err.message));
+        }
     };
+    const formatDate = (dateString) => {
+        if (!dateString) return "N/A";
+        try {
+            const date = new Date(dateString);
+            if (isNaN(date.getTime())) return dateString; // If parsing fails, return the original string
+            return date.toLocaleDateString('vi-VN'); // Format for Vietnamese locale
+        } catch (error) {
+            console.error("Error formatting date:", error);
+            return dateString;
+        }
+    };
+
+    if (loading) return <div className="loading">Loading...</div>;
+    if (error) return <div className="error-message">{error}</div>;
 
     return (
+
         <div className="container">
-            {/*Thông tin Khách hàng */}
+            {/* Customer Information */}
             <div className="customer-info">
                 <h3>Thông tin Khách hàng</h3>
                 {customer ? (
                     <div>
-                        <div><b>Họ và tên:</b> {customer.name}</div>
-                        <div><b>Ngày sinh:</b> {customer.dob}</div>
-                        <div><b>Giới tính:</b> {customer.gender}</div>
-                        <div><b>Số điện thoại:</b> {customer.phone}</div>
-                        <div><b>Địa chỉ:</b> {customer.address}</div>
-                        <div><b>Email:</b> {customer.email}</div>
-                        <div><b>Mã đơn:</b> {customer.orderCode}</div>
-                        <div><b>Ngày đặt lịch:</b> {customer.bookingDate}</div>
+                        <div><b>Họ và tên:</b> {customer.fullName || "N/A"}</div>
+                        <div><b>Ngày sinh:</b> {formatDate(customer.dateOfBirth) || "N/A"}</div>
+                        <div><b>Giới tính:</b> {customer.gender || "N/A"}</div>
+                        <div><b>Số điện thoại:</b> {customer.phoneNumber || "N/A"}</div>
+                        <div><b>Địa chỉ:</b> {customer.address || "N/A"}</div>
+                        <div><b>Email:</b> {customer.email || "N/A"}</div>
+                        <div><b>Mã đơn:</b> {customer.id || "N/A"}</div>
+                        <div><b>Ngày đặt lịch:</b> {formatDate(customer.dateOfIssue) || "N/A"}</div>
                     </div>
-                ) : <div>Loading......</div>}
+                ) : <div>Loading customer information...</div>}
             </div>
 
-            {/*Form lấy mẫu*/}
+            {/* Sample Collection Form */}
             <form className="form-section" onSubmit={handleSubmit}>
                 <h2 className="form-title">Chuẩn bị lấy mẫu</h2>
+
+                {/* Service Selection */}
+                <div className="form-row">
+                    <label><b>Chọn dịch vụ:</b></label>
+                    <select
+                        name="serviceId"
+                        value={kitInfo.serviceId}
+                        onChange={handleChange}
+                        className="form-input"
+                        required
+                    >
+                        <option value="">-- Chọn dịch vụ --</option>
+                        {services.map(service => (
+                            <option key={service.serviceID} value={service.serviceID}>
+                                {service.serviceName}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+
                 <div className="form-row">
                     <label><b>Tên bộ kit:</b></label>
                     <input
@@ -75,6 +174,7 @@ const TuThuGuiMau = () => {
                         value={kitInfo.tenBoKit}
                         onChange={handleChange}
                         className="form-input"
+                        required
                     />
                 </div>
                 <div className="form-row">
@@ -84,6 +184,7 @@ const TuThuGuiMau = () => {
                         value={kitInfo.maBoKit}
                         onChange={handleChange}
                         className="form-input"
+                        required
                     />
                 </div>
                 <div className="form-row">
@@ -93,6 +194,7 @@ const TuThuGuiMau = () => {
                         value={kitInfo.tenKhachHang}
                         onChange={handleChange}
                         className="form-input"
+                        required
                     />
                 </div>
                 <div className="form-row">
@@ -102,6 +204,7 @@ const TuThuGuiMau = () => {
                         value={kitInfo.soDienThoai}
                         onChange={handleChange}
                         className="form-input"
+                        required
                     />
                 </div>
                 <div className="form-row">
@@ -111,6 +214,7 @@ const TuThuGuiMau = () => {
                         value={kitInfo.diaChiNhan}
                         onChange={handleChange}
                         className="form-input"
+                        required
                     />
                 </div>
                 <div className="form-row">
@@ -121,6 +225,7 @@ const TuThuGuiMau = () => {
                         value={kitInfo.ngayGui}
                         onChange={handleChange}
                         className="form-input"
+                        required
                     />
                 </div>
                 <div className="form-actions">

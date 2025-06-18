@@ -1,0 +1,103 @@
+.dna-test-container {
+  font-family: 'Roboto', Arial, sans-serif;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 20px;
+  color: #333;
+  line-height: 1.6;
+}
+
+.main-title {
+  color: #0066cc;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+}
+
+.dna-section {
+  margin-bottom: 40px;
+}
+
+.section-title {
+  color: #ff9900;
+  margin-bottom: 15px;
+  font-size: 1.6rem;
+}
+
+.section-subtitle {
+  font-weight: bold;
+  margin: 15px 0 10px 0;
+}
+
+.sub-title {
+  color: #ff66cc;
+  margin: 15px 0;
+  font-size: 1.3rem;
+}
+
+.bullet-list {
+  list-style-type: none;
+  padding-left: 0;
+  margin-top: 15px;
+}
+
+.bullet-list li {
+  position: relative;
+  padding-left: 20px;
+  margin-bottom: 12px;
+}
+
+.bullet-list li::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  top: 0;
+  font-size: 18px;
+  color: #333;
+}
+
+.principles-list li {
+  margin-bottom: 15px;
+}
+
+.testing-method {
+  margin-bottom: 30px;
+  background-color: #f9f9f9;
+  padding: 15px;
+  border-radius: 5px;
+}
+
+.sample-types {
+  margin-bottom: 15px;
+  font-style: italic;
+}
+
+.process {
+  margin-top: 20px;
+}
+
+.process p {
+  margin-bottom: 10px;
+}
+
+strong {
+  font-weight: bold;
+}
+
+em {
+  font-style: italic;
+}
+
+@media (max-width: 768px) {
+  .dna-test-container {
+    padding: 15px;
+  }
+  
+  .section-title {
+    font-size: 1.4rem;
+  }
+  
+  .sub-title {
+    font-size: 1.2rem;
+  }
+}
