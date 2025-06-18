@@ -1,6 +1,8 @@
+// src/pages/admin/OrdersPage.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import '../../styles/admin/ordersPage.css';
+import { getAccountByCustomerId } from '../../api/accountApi'; // Import hàm mới
 
 const useOrders = () => {
   const [orders, setOrders] = useState([]);
@@ -8,9 +10,10 @@ const useOrders = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [filter, setFilter] = useState('ALL');
+  const [accountData, setAccountData] = useState({}); // Lưu thông tin tài khoản
 
   useEffect(() => {
-    const fetchOrders = async () => {
+    const fetchOrdersAndAccounts = async () => {
       try {
         setIsLoading(true);
         const response = await axios.get('http://localhost:8080/api/testorders', {
@@ -19,22 +22,53 @@ const useOrders = () => {
             'Authorization': `Bearer ${localStorage.getItem('token')}`,
           },
         });
-        setOrders(response.data);
-        setFilteredOrders(response.data);
+
+        const ordersData = response.data;
+        setOrders(ordersData);
+
+        // Lấy thông tin tài khoản cho mỗi đơn hàng
+        const accountPromises = ordersData.map(async (order) => {
+          try {
+            const accountResponse = await getAccountByCustomerId(order.customerId);
+            const account = accountResponse.data;
+            return {
+              customerId: order.customerId,
+              fullName: account.fullName || 'N/A',
+              phone: account.phone || 'N/A',
+              email: account.email || 'N/A',
+            };
+          } catch (err) {
+            console.error(`Lỗi khi lấy tài khoản cho customer ${order.customerId}:`, err);
+            return {
+              customerId: order.customerId,
+              fullName: 'N/A',
+              phone: 'N/A',
+              email: 'N/A',
+            };
+          }
+        });
+
+        const accounts = await Promise.all(accountPromises);
+        const accountMap = accounts.reduce((acc, account) => {
+          acc[account.customerId] = account;
+          return acc;
+        }, {});
+        setAccountData(accountMap);
+        setFilteredOrders(ordersData);
       } catch (err) {
         setError('Không thể tải danh sách đơn hàng: ' + (err.response?.data?.message || err.message));
       } finally {
         setIsLoading(false);
       }
     };
-    fetchOrders();
+    fetchOrdersAndAccounts();
   }, []);
 
   useEffect(() => {
     if (filter === 'ALL') {
       setFilteredOrders(orders);
     } else {
-      setFilteredOrders(orders.filter(order => order.orderStatus === filter));
+      setFilteredOrders(orders.filter((order) => order.orderStatus === filter));
     }
   }, [filter, orders]);
 
@@ -42,11 +76,11 @@ const useOrders = () => {
     setFilter(status);
   };
 
-  return { orders, setOrders, filteredOrders, isLoading, error, handleFilterChange };
+  return { orders, setOrders, filteredOrders, isLoading, error, handleFilterChange, accountData };
 };
 
 const OrdersPage = () => {
-  const { orders, setOrders, filteredOrders, isLoading, error, handleFilterChange } = useOrders();
+  const { orders, setOrders, filteredOrders, isLoading, error, handleFilterChange, accountData } = useOrders();
   const [updateError, setUpdateError] = useState(null);
 
   const getStatusClass = (status) => {
@@ -83,14 +117,7 @@ const OrdersPage = () => {
   };
 
   const getNextStatus = (currentStatus) => {
-    const statusFlow = [
-      'PENDING',
-      'PREPARING',
-      'COLLECTING',
-      'TRANSFERRING',
-      'TESTING',
-      'COMPLETED'
-    ];
+    const statusFlow = ['PENDING', 'PREPARING', 'COLLECTING', 'TRANSFERRING', 'TESTING', 'COMPLETED'];
     const currentIndex = statusFlow.indexOf(currentStatus);
     if (currentIndex < statusFlow.length - 1) {
       return statusFlow[currentIndex + 1];
@@ -123,17 +150,16 @@ const OrdersPage = () => {
         orderStatus: nextStatus,
       };
 
-      const response = await axios.put(`http://localhost:8080/api/testorders/${orderId}`, updatedData, {
+      await axios.put(`http://localhost:8080/api/testorders/${orderId}`, updatedData, {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
         },
       });
 
-      // Cập nhật state thay vì tải lại trang
-      setOrders(orders.map(order =>
-        order.orderId === orderId ? { ...order, orderStatus: nextStatus } : order
-      ));
+      setOrders(
+        orders.map((order) => (order.orderId === orderId ? { ...order, orderStatus: nextStatus } : order))
+      );
       alert('Cập nhật đơn hàng thành công!');
     } catch (err) {
       setUpdateError(err.response?.data?.message || 'Cập nhật đơn hàng thất bại');
@@ -153,13 +179,27 @@ const OrdersPage = () => {
     <div className="orders-container">
       {updateError && <div className="text-red-500 mb-4">{updateError}</div>}
       <div className="orders-buttons">
-        <button className="btn btn-red" onClick={() => handleFilterChange('PENDING')}>Đặt lịch/Đăng ký</button>
-        <button className="btn btn-gray" onClick={() => handleFilterChange('PREPARING')}>Chuẩn bị lấy mẫu</button>
-        <button className="btn btn-yellow" onClick={() => handleFilterChange('COLLECTING')}>Thu thập mẫu</button>
-        <button className="btn btn-light-blue" onClick={() => handleFilterChange('TRANSFERRING')}>Chuyển mẫu</button>
-        <button className="btn btn-blue" onClick={() => handleFilterChange('TESTING')}>Xét nghiệm</button>
-        <button className="btn btn-green" onClick={() => handleFilterChange('COMPLETED')}>Hoàn thành</button>
-        <button className="btn btn-dark-blue" onClick={() => handleFilterChange('ALL')}>Tất cả</button>
+        <button className="btn btn-red" onClick={() => handleFilterChange('PENDING')}>
+          Đặt lịch/Đăng ký
+        </button>
+        <button className="btn btn-gray" onClick={() => handleFilterChange('PREPARING')}>
+          Chuẩn bị lấy mẫu
+        </button>
+        <button className="btn btn-yellow" onClick={() => handleFilterChange('COLLECTING')}>
+          Thu thập mẫu
+        </button>
+        <button className="btn btn-light-blue" onClick={() => handleFilterChange('TRANSFERRING')}>
+          Chuyển mẫu
+        </button>
+        <button className="btn btn-blue" onClick={() => handleFilterChange('TESTING')}>
+          Xét nghiệm
+        </button>
+        <button className="btn btn-green" onClick={() => handleFilterChange('COMPLETED')}>
+          Hoàn thành
+        </button>
+        <button className="btn btn-dark-blue" onClick={() => handleFilterChange('ALL')}>
+          Tất cả
+        </button>
       </div>
 
       <div className="orders-table-wrapper">
@@ -182,39 +222,50 @@ const OrdersPage = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredOrders.map(order => (
+            {filteredOrders.map((order) => (
               <tr key={order.orderId}>
                 <td>{order.orderId}</td>
-                <td>{order.customerId}</td>
-                <td>{order.customerId}</td>
-                <td>{order.customerId}</td>
-                <td>{order.serviceId}</td>
+                <td>{accountData[order.customerId]?.fullName || 'N/A'}</td>
+                <td>{accountData[order.customerId]?.phone || 'N/A'}</td>
+                <td>{accountData[order.customerId]?.email || 'N/A'}</td>
+                <td>{order.serviceId || 'N/A'}</td>
                 <td>{getPurpose(order.serviceId)}</td>
                 <td>{order.resultDeliverAddress || 'N/A'}</td>
-                <td><span className="pill">{order.sampleType === 'center' ? 'Tại trung tâm' : 'Tự lấy tại nhà'}</span></td>
-                <td>{order.serviceId}</td>
+                <td>
+                  <span className="pill">{order.sampleType === 'center' ? 'Tại trung tâm' : 'Tự lấy mẫu'}</span>
+                </td>
+                <td>{order.serviceId || 'N/A'}</td>
                 <td>{formatDate(order.orderDate)}</td>
                 <td>{formatPrice(order.amount)}</td>
                 <td className={`status ${getStatusClass(order.orderStatus)}`}>
-                  {order.orderStatus === 'PENDING' ? 'Đặt lịch/Đăng ký' :
-                   order.orderStatus === 'PREPARING' ? 'Chuẩn bị lấy mẫu' :
-                   order.orderStatus === 'COLLECTING' ? 'Thu thập mẫu' :
-                   order.orderStatus === 'TRANSFERRING' ? 'Chuyển mẫu' :
-                   order.orderStatus === 'TESTING' ? 'Xét nghiệm' :
-                   order.orderStatus === 'COMPLETED' ? 'Hoàn thành' : 'N/A'}
+                  {order.orderStatus === 'PENDING'
+                    ? 'Đặt lịch/Đăng ký'
+                    : order.orderStatus === 'PREPARING'
+                    ? 'Chuẩn bị lấy mẫu'
+                    : order.orderStatus === 'COLLECTING'
+                    ? 'Thu thập mẫu'
+                    : order.orderStatus === 'TRANSFERRING'
+                    ? 'Chuyển mẫu'
+                    : order.orderStatus === 'TESTING'
+                    ? 'Xét nghiệm'
+                    : order.orderStatus === 'COMPLETED'
+                    ? 'Hoàn thành'
+                    : 'N/A'}
                 </td>
                 <td>
                   <button
-  className="action-btn"
-  onClick={() => handleUpdateOrder(order.orderId, order.orderStatus)}
-  disabled={
-    !canUpdateOrder(order.orderStatus, staffRole) ||
-    (staffRole === 'NORMAL_STAFF' && getNextStatus(order.orderStatus) === 'TESTING')
-  }
->
-  Cập nhật đơn
-</button>
-                  <button className="action-btn" onClick={() => handleViewDetails(order.orderId)}>Chi tiết đơn</button>
+                    className="action-btn"
+                    onClick={() => handleUpdateOrder(order.orderId, order.orderStatus)}
+                    disabled={
+                      !canUpdateOrder(order.orderStatus, staffRole) ||
+                      (staffRole === 'NORMAL_STAFF' && getNextStatus(order.orderStatus) === 'TESTING')
+                    }
+                  >
+                    Cập nhật đơn
+                  </button>
+                  <button className="action-btn" onClick={() => handleViewDetails(order.orderId)}>
+                    Chi tiết đơn
+                  </button>
                 </td>
               </tr>
             ))}

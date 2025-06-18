@@ -49,4 +49,19 @@ export const getStaffByAccountId = async (accountId) => {
   return response.data; // StaffDTO
 };
 
-
+export const getAccountByCustomerId = async (customerId) => {
+  try {
+    // Lấy CustomerDTO để có accountId
+    const customerRes = await axiosInstance.get(`/api/customers/${customerId}`);
+    const accountId = customerRes.data.accountId;
+    if (!accountId) {
+      throw new Error('Không tìm thấy accountId cho customer này');
+    }
+    // Lấy AccountDTO
+    const accountRes = await axiosInstance.get(`/api/account/${accountId}`);
+    return accountRes;
+  } catch (error) {
+    console.error(`Lỗi khi lấy tài khoản cho customerId ${customerId}:`, error);
+    throw error;
+  }
+};

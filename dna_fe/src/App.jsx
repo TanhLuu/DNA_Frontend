@@ -21,6 +21,7 @@ import LegalServicePricing from './pages/Pricing/LegalServicePricing';
 import AllServicePricing from './pages/Pricing/AllServicePricing';
 
 
+
 function App() {
   const [role, setRole] = useState(localStorage.getItem('role')?.toLowerCase());
   useEffect(() => {
@@ -67,6 +68,7 @@ function App() {
                 <Route path="/ordersPageAdmin" element={<AdminLayout> <OrdersPage /> </AdminLayout>} />
                 <Route path="/serviceManagement" element={<AdminLayout> <ServiceManagement /> </AdminLayout>}/>
                 <Route path="/dashboard" element={<AdminLayout><Dashboard /></AdminLayout>}/>
+
               </>
             )}
 

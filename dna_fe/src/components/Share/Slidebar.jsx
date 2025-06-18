@@ -25,7 +25,7 @@ const Sidebar = () => {
           <Link to="/ordersPageAdmin">Đơn xét nghiệm</Link>
           <Link to="/serviceManagement">Quản lý dịch vụ</Link>
           <Link to="/dashboard">Dashboard</Link>
-          <Link to="#">Quản lý feedback</Link>
+          <Link to="/B">Quản lý feedback</Link>
         </nav>
       </div>
       <div className="admin-controls">
