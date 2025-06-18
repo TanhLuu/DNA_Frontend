@@ -53,7 +53,7 @@ const Header = () => {
               </span>
               {isDropdownOpen && (
                 <div className="dropdown-menu">
-                  <a href="/orders">Đơn hàng</a>
+                  <a href="/customerHistory">Đơn hàng</a>
                   <a href="/profile">Hồ sơ</a>
                   <span onClick={handleChangePassword} className="logout-btn">Đổi mật khẩu</span>
                   <span onClick={handleLogout} className="logout-btn">Đăng xuất</span>

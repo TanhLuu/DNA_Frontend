@@ -75,3 +75,14 @@ export const getServiceById = async (serviceId) => {
     throw error;
   }
 };
+
+// === Test Order APIs (Thêm mới) ===
+export const getOrdersByCustomerId = async (customerId) => {
+  try {
+    const response = await axiosInstance.get(`/api/testorders/customer/${customerId}`);
+    return response;
+  } catch (error) {
+    console.error(`Lỗi khi lấy đơn hàng cho customerId ${customerId}:`, error);
+    throw error;
+  }
+};
