@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import '../../styles/components/ADNRequestForm.css';
 
 const ADNRequestForm = ({
@@ -19,6 +19,31 @@ const ADNRequestForm = ({
   handleSubmit,
   calculateTotalPrice,
 }) => {
+  const [isFormValid, setIsFormValid] = useState(false);
+
+  useEffect(() => {
+    const checkFormValidity = () => {
+      if (!customer.requesterName || !formData.receiveAt || !formData.testType || !sampleCount) {
+        return false;
+      }
+
+      for (let i = 1; i <= sampleCount; i++) {
+        const prefix = `person${i}`;
+        if (
+          !formData[`${prefix}Name`] ||
+          !formData[`${prefix}Gender`] ||
+          !formData[`${prefix}SampleType`] ||
+          (!isCivil && !formData[`${prefix}SampleAmount`])
+        ) {
+          return false;
+        }
+      }
+      return true;
+    };
+
+    setIsFormValid(checkFormValidity());
+  }, [customer.requesterName, formData, sampleCount, isCivil]);
+
   const renderSampleFields = () => {
     const fields = [];
     for (let i = 1; i <= sampleCount; i++) {
@@ -300,7 +325,13 @@ const ADNRequestForm = ({
           TỔNG CHI PHÍ: {totalPrice !== null ? `${totalPrice.toLocaleString('vi-VN')} VNĐ` : '.........'}
         </div>
 
-        <button type="submit" className="adn-submit-btn">Gửi Yêu Cầu</button>
+        <button
+          type="submit"
+          className={`adn-submit-btn ${!isFormValid ? 'disabled' : ''}`}
+          disabled={!isFormValid}
+        >
+          Gửi Yêu Cầu
+        </button>
       </form>
     </div>
   );

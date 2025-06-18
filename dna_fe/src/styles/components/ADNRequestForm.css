@@ -99,3 +99,23 @@
 .adn-submit-btn:hover {
   background-color: #0d59c7;
 }
+
+
+.adn-submit-btn {
+  background-color: #4CAF50; /* Màu xanh khi enabled */
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.adn-submit-btn.disabled {
+  background-color: #cccccc; /* Màu xám khi disabled */
+  cursor: not-allowed;
+}
+
+.adn-submit-btn:hover:not(.disabled) {
+  background-color: #45a049; /* Màu khi hover nếu enabled */
+}
