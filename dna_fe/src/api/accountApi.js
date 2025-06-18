@@ -65,3 +65,13 @@ export const getAccountByCustomerId = async (customerId) => {
     throw error;
   }
 };
+
+export const getServiceById = async (serviceId) => {
+  try {
+    const response = await axiosInstance.get(`/api/services/${serviceId}`);
+    return response;
+  } catch (error) {
+    console.error(`Lỗi khi lấy dịch vụ ${serviceId}:`, error);
+    throw error;
+  }
+};

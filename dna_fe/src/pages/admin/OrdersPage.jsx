@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import '../../styles/admin/ordersPage.css';
-import { getAccountByCustomerId } from '../../api/accountApi'; // Import hàm mới
+import { getAccountByCustomerId, getServiceById } from '../../api/accountApi';
 
 const useOrders = () => {
   const [orders, setOrders] = useState([]);
@@ -10,10 +10,11 @@ const useOrders = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [filter, setFilter] = useState('ALL');
-  const [accountData, setAccountData] = useState({}); // Lưu thông tin tài khoản
+  const [accountData, setAccountData] = useState({});
+  const [serviceData, setServiceData] = useState({}); // Lưu thông tin dịch vụ
 
   useEffect(() => {
-    const fetchOrdersAndAccounts = async () => {
+    const fetchOrdersAndData = async () => {
       try {
         setIsLoading(true);
         const response = await axios.get('http://localhost:8080/api/testorders', {
@@ -26,7 +27,7 @@ const useOrders = () => {
         const ordersData = response.data;
         setOrders(ordersData);
 
-        // Lấy thông tin tài khoản cho mỗi đơn hàng
+        // Lấy thông tin tài khoản
         const accountPromises = ordersData.map(async (order) => {
           try {
             const accountResponse = await getAccountByCustomerId(order.customerId);
@@ -54,6 +55,44 @@ const useOrders = () => {
           return acc;
         }, {});
         setAccountData(accountMap);
+
+        // Lấy thông tin dịch vụ
+        const servicePromises = ordersData.map(async (order) => {
+          try {
+            if (!order.serviceId) {
+              return {
+                serviceId: order.serviceId,
+                serviceName: 'N/A',
+                servicePurpose: 'N/A',
+                timeTest: 'N/A',
+              };
+            }
+            const serviceResponse = await getServiceById(order.serviceId);
+            const service = serviceResponse.data;
+            return {
+              serviceId: order.serviceId,
+              serviceName: service.serviceName || 'N/A',
+              servicePurpose: service.servicePurpose || 'N/A',
+              timeTest: service.timeTest || 'N/A',
+            };
+          } catch (err) {
+            console.error(`Lỗi khi lấy dịch vụ ${order.serviceId}:`, err);
+            return {
+              serviceId: order.serviceId,
+              serviceName: 'N/A',
+              servicePurpose: 'N/A',
+              timeTest: 'N/A',
+            };
+          }
+        });
+
+        const services = await Promise.all(servicePromises);
+        const serviceMap = services.reduce((acc, service) => {
+          acc[service.serviceId] = service;
+          return acc;
+        }, {});
+        setServiceData(serviceMap);
+
         setFilteredOrders(ordersData);
       } catch (err) {
         setError('Không thể tải danh sách đơn hàng: ' + (err.response?.data?.message || err.message));
@@ -61,7 +100,7 @@ const useOrders = () => {
         setIsLoading(false);
       }
     };
-    fetchOrdersAndAccounts();
+    fetchOrdersAndData();
   }, []);
 
   useEffect(() => {
@@ -76,11 +115,11 @@ const useOrders = () => {
     setFilter(status);
   };
 
-  return { orders, setOrders, filteredOrders, isLoading, error, handleFilterChange, accountData };
+  return { orders, setOrders, filteredOrders, isLoading, error, handleFilterChange, accountData, serviceData };
 };
 
 const OrdersPage = () => {
-  const { orders, setOrders, filteredOrders, isLoading, error, handleFilterChange, accountData } = useOrders();
+  const { orders, setOrders, filteredOrders, isLoading, error, handleFilterChange, accountData, serviceData } = useOrders();
   const [updateError, setUpdateError] = useState(null);
 
   const getStatusClass = (status) => {
@@ -101,10 +140,6 @@ const OrdersPage = () => {
 
   const formatPrice = (amount) => {
     return amount ? amount.toLocaleString('vi-VN') + ' VNĐ' : 'N/A';
-  };
-
-  const getPurpose = (serviceId) => {
-    return serviceId ? `Service ${serviceId}` : 'N/A';
   };
 
   const canUpdateOrder = (status, role) => {
@@ -228,13 +263,13 @@ const OrdersPage = () => {
                 <td>{accountData[order.customerId]?.fullName || 'N/A'}</td>
                 <td>{accountData[order.customerId]?.phone || 'N/A'}</td>
                 <td>{accountData[order.customerId]?.email || 'N/A'}</td>
-                <td>{order.serviceId || 'N/A'}</td>
-                <td>{getPurpose(order.serviceId)}</td>
+                <td>{serviceData[order.serviceId]?.serviceName || 'N/A'}</td>
+                <td>{serviceData[order.serviceId]?.servicePurpose || 'N/A'}</td>
                 <td>{order.resultDeliverAddress || 'N/A'}</td>
                 <td>
                   <span className="pill">{order.sampleType === 'center' ? 'Tại trung tâm' : 'Tự lấy mẫu'}</span>
                 </td>
-                <td>{order.serviceId || 'N/A'}</td>
+                <td>{serviceData[order.serviceId]?.timeTest || 'N/A'} ngày</td>
                 <td>{formatDate(order.orderDate)}</td>
                 <td>{formatPrice(order.amount)}</td>
                 <td className={`status ${getStatusClass(order.orderStatus)}`}>
