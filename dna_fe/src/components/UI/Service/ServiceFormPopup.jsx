@@ -3,16 +3,18 @@ import {
   Dialog, DialogTitle, DialogContent, DialogActions,
   TextField, Button, FormControl, InputLabel, Select, MenuItem
 } from '@mui/material';
-import { createService, updateService } from '../../api/serviceApi';
+import { createService, updateService } from '../../../api/serviceApi';
 
 const ServiceFormPopup = ({ open, onClose, serviceToEdit, onSuccess }) => {
   const [formData, setFormData] = useState({
     serviceName: '',
     servicePurpose: '',
     timeTest: 0,
-    serviceBlog: '',
+    describe: '',
     price: 0
   });
+
+  
 
   const [errors, setErrors] = useState({});
 
@@ -22,7 +24,7 @@ const ServiceFormPopup = ({ open, onClose, serviceToEdit, onSuccess }) => {
         serviceName: serviceToEdit.serviceName,
         servicePurpose: serviceToEdit.servicePurpose,
         timeTest: serviceToEdit.timeTest,
-        serviceBlog: serviceToEdit.serviceBlog || '',
+        describe: serviceToEdit.describe || '',
         price: serviceToEdit.price
       });
     } else {
@@ -30,7 +32,7 @@ const ServiceFormPopup = ({ open, onClose, serviceToEdit, onSuccess }) => {
         serviceName: '',
         servicePurpose: '',
         timeTest: '',
-        serviceBlog: '',
+        describe: '',
         price: ''
       });
     }
@@ -128,12 +130,12 @@ const ServiceFormPopup = ({ open, onClose, serviceToEdit, onSuccess }) => {
         />
         <TextField
           margin="dense"
-          name="serviceBlog"
+          name="describe"
           label="Mô tả (Không bắt buộc)"
           fullWidth
           multiline
           rows={3}
-          value={formData.serviceBlog}
+          value={formData.describe}
           onChange={handleChange}
         />
       </DialogContent>

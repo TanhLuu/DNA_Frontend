@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import ServiceFormPopup from './ServiceFormPopup';
+import ServiceFormPopup from '../../components/UI/Service/ServiceFormPopup';
+import ServiceDetailDialog from '../../components/UI/Service/ServiceDetailDialog'; // Đã sửa đúng đường dẫn
 import { getAllServices, deleteService } from '../../api/serviceApi';
 import '../../styles/admin/serviceManagement.css';
+import { Tooltip } from '@mui/material';
+
 
 const ServiceManagement = () => {
   const [services, setServices] = useState([]);
@@ -9,9 +12,13 @@ const ServiceManagement = () => {
   const [formOpen, setFormOpen] = useState(false);
   const [selectedService, setSelectedService] = useState(null);
   const [searchKeyword, setSearchKeyword] = useState('');
+  const [userRole, setUserRole] = useState('');
+  const [viewingService, setViewingService] = useState(null); // 💡 để mở dialog chi tiết
 
   useEffect(() => {
     fetchServices();
+    const role = localStorage.getItem('role');
+    setUserRole(role || '');
   }, []);
 
   const fetchServices = async () => {
@@ -49,6 +56,10 @@ const ServiceManagement = () => {
     }
   };
 
+  const handleViewDetail = (service) => {
+    setViewingService(service); // 💡 mở popup dialog
+  };
+
   const filteredServices = services.filter(service =>
     service.serviceName.toLowerCase().includes(searchKeyword.toLowerCase())
   );
@@ -58,10 +69,12 @@ const ServiceManagement = () => {
       <div className="service-card">
         <div className="service-header">
           <span>Quản lý dịch vụ</span>
-          <button className="add-button" onClick={openAddModal}>+ Thêm dịch vụ</button>
+          {userRole === 'MANAGER' && (
+            <button className="service-btn-add" onClick={openAddModal}>+ Thêm dịch vụ</button>
+          )}
         </div>
 
-        <div className="search-bar">
+        <div className="service-search-bar">
           🔍
           <input
             type="text"
@@ -93,8 +106,32 @@ const ServiceManagement = () => {
                     <td>{service.timeTest}</td>
                     <td>{Number(service.price).toLocaleString('vi-VN')}</td>
                     <td>
-                      <button className="edit-btn" onClick={() => openEditModal(service)}>Sửa</button>
-                      <button className="delete-btn" onClick={() => handleDelete(service.serviceID)}>Xóa</button>
+                      <Tooltip title="Xem chi tiết dịch vụ">
+                        <button
+                          className="service-btn service-detail-btn"
+                          onClick={() => handleViewDetail(service)}
+                        >
+                          Chi tiết
+                        </button>
+                      </Tooltip>
+                      <Tooltip title="Chỉnh sửa dịch vụ">
+                        <button
+                          className="service-btn service-edit-btn"
+                          onClick={() => openEditModal(service)}
+                          disabled={userRole !== 'MANAGER'}
+                        >
+                          Sửa
+                        </button>
+                      </Tooltip>
+                      <Tooltip title="Xóa dịch vụ">
+                        <button
+                          className="service-btn service-delete-btn"
+                          onClick={() => handleDelete(service.serviceID)}
+                          disabled={userRole !== 'MANAGER'}
+                        >
+                          Xóa
+                        </button>
+                      </Tooltip>
                     </td>
                   </tr>
                 ))
@@ -115,6 +152,13 @@ const ServiceManagement = () => {
         onClose={() => setFormOpen(false)}
         serviceToEdit={selectedService}
         onSuccess={fetchServices}
+      />
+
+      {/* 💡 Popup chi tiết */}
+      <ServiceDetailDialog
+        open={!!viewingService}
+        onClose={() => setViewingService(null)}
+        service={viewingService}
       />
     </div>
   );

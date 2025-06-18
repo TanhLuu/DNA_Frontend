@@ -81,3 +81,52 @@
   border-radius: 4px;
   cursor: pointer;
 }
+
+/* Nút hành động chung */
+.service-btn {
+  padding: 6px 10px;
+  border-radius: 6px;
+  margin-right: 5px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  font-size: 14px;
+}
+
+/* Nút Chi tiết */
+.service-detail-btn {
+  background-color: #e0f0ff;
+  border: 1px solid #2196f3;
+  color: #0d47a1;
+}
+
+.service-detail-btn:hover {
+  background-color: #bbdefb;
+}
+
+/* Nút Sửa */
+.service-edit-btn {
+  background-color: #ffe082;
+  color: #8d6e63;
+}
+
+.service-edit-btn:hover {
+  background-color: #ffd54f;
+}
+
+/* Nút Xóa */
+.service-delete-btn {
+  background-color: #ef9a9a;
+  color: #b71c1c;
+}
+
+.service-delete-btn:hover {
+  background-color: #e57373;
+}
+
+/* Khi disable */
+.service-btn:disabled {
+  background-color: #ccc !important;
+  color: #666 !important;
+  cursor: not-allowed !important;
+}

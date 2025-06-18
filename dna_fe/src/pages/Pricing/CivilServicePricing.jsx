@@ -1,7 +1,7 @@
 
 import { getAllCivilServices } from '../../api/serviceApi';
 import useFilteredServices from '../../hooks/useFilteredServices';
-import ServiceFilterBar from '../../components/UI/ServiceFilterBar';
+import ServiceFilterBar from '../../components/UI/Service/ServiceFilterBar';
 import '../../styles/components/ServicePricing.css';
 
 const CivilServicePricing = () => {
@@ -29,7 +29,7 @@ const CivilServicePricing = () => {
         {filteredServices.map((service) => (
           <div className="service-card" key={service.serviceID}>
             <h3 className="service-name">{service.serviceName}</h3>
-            <p className="service-description">{service.serviceBlog || 'Không có mô tả chi tiết.'}</p>
+            <p className="service-description">{service.describe || 'Không có mô tả chi tiết.'}</p>
             <div className="service-info">
               <p><strong>Thời gian xét nghiệm:</strong> {service.timeTest} ngày</p>
               <p><strong>Giá:</strong> {service.price.toLocaleString('vi-VN')} VNĐ</p>
