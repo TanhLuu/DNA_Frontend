@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { getCustomerByAccountId } from '../api/accountApi';
-import { fetchAccountInfo } from '../api/accountApi';
+import { getCustomerByAccountId, fetchAccountInfo } from '../api/accountApi';
 import { getTestOrdersByCustomerId } from '../api/testorder';
 import { getTestSamplesByOrderId } from '../api/testSample';
 import { getAllServices } from '../api/serviceApi';
@@ -16,7 +15,7 @@ function FormStep1() {
     const [testOrder, setTestOrder] = useState(null);
     const [testSamples, setTestSamples] = useState([]);
     const [service, setService] = useState({});
-    const formRef = useRef(null);
+    const pdfContentRef = useRef(null);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -76,7 +75,6 @@ function FormStep1() {
                                 }
 
                                 // 5. Lấy thông tin dịch vụ nếu có serviceId
-                                // 5. Lấy thông tin dịch vụ nếu có serviceId
                                 if (latestOrder.serviceId) {
                                     try {
                                         const servicesResponse = await getAllServices();
@@ -114,21 +112,10 @@ function FormStep1() {
     }, []);
 
     const downloadAsPDF = () => {
-        const input = formRef.current;
+        const input = pdfContentRef.current;
         if (!input) return;
 
-        // Tạm thời ẩn nút download trong quá trình chụp PDF
-        const downloadButton = document.querySelector('.download-button-container');
-        if (downloadButton) {
-            downloadButton.style.display = 'none';
-        }
-
         html2canvas(input).then((canvas) => {
-            // Hiển thị lại nút download sau khi chụp xong
-            if (downloadButton) {
-                downloadButton.style.display = '';
-            }
-
             const imgData = canvas.toDataURL('image/png');
             const pdf = new jsPDF('p', 'mm', 'a4');
             const pdfWidth = pdf.internal.pageSize.getWidth();
@@ -164,8 +151,9 @@ function FormStep1() {
     if (!testOrder && !accountData) return <div>Không có dữ liệu</div>;
 
     return (
-        <div>
-            <div ref={formRef} className="booking-info-form">
+        <div className="form-container">
+            {/* PDF Content - This is what will be included in the PDF */}
+            <div ref={pdfContentRef} className="pdf-content">
                 <div className="form-header">
                     <h2>Chi tiết Đặt lịch</h2>
                 </div>
@@ -226,22 +214,16 @@ function FormStep1() {
                     <span className="label">Nhận kết quả:</span>
                     <span>{testOrder?.resultDeliverAddress}</span>
                 </div>
+            </div>
 
-                <div>
-                    <div ref={formRef} className="booking-info-form">
-                        {/* Nội dung form */}
-
-                        {/* Đặt nút download ở cuối, vẫn trong ref nhưng sẽ bị ẩn tạm thời khi chụp */}
-                        <div className="download-button-container">
-                            <button
-                                className="download-button"
-                                onClick={downloadAsPDF}
-                            >
-                                Tải form
-                            </button>
-                        </div>
-                    </div>
-                </div>
+            {/* Download Button - Outside of pdfContentRef so it's not included in the PDF */}
+            <div className="download-button-container">
+                <button
+                    className="download-button"
+                    onClick={downloadAsPDF}
+                >
+                    Tải form
+                </button>
             </div>
         </div>
     );

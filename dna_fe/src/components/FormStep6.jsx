@@ -1,103 +1,212 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import React, { useEffect, useState, useRef } from "react";
+import { getCustomerByAccountId, fetchAccountInfo } from '../api/accountApi';
+import { getTestOrdersByCustomerId } from '../api/testorder';
+import { getTestSamplesByOrderId } from '../api/testSample';
+import { getAllServices } from '../api/serviceApi';
 
 export default function FormStep6({ data }) {
-    const navigate = useNavigate();
-    const [showPdf, setShowPdf] = useState(false);
+    const [accountData, setAccountData] = useState(null);
+    const [customer, setCustomer] = useState({});
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
-    const [testResult, setTestResult] = useState(null);
-    
+    const [error, setError] = useState("");
+    const [testOrder, setTestOrder] = useState(null);
+    const [testSamples, setTestSamples] = useState([]);
+    const [service, setService] = useState({});
+    const formRef = useRef(null);
+
     useEffect(() => {
-        // Fetch test result when component mounts if we have maHoSo
-        if (data && data.maHoSo) {
-            fetchTestResult(data.maHoSo);
-        }
-    }, [data]);
+        const fetchData = async () => {
+            try {
+                setLoading(true);
+                // Lấy accountId từ localStorage
+                const accountId = localStorage.getItem('accountId');
 
-    const fetchTestResult = async (maHoSo) => {
-        setLoading(true);
-        setError(null);
+                if (!accountId) {
+                    setError("Không tìm thấy thông tin tài khoản");
+                    setLoading(false);
+                    return;
+                }
+
+                // 1. Lấy thông tin account trước
+                const accountResponse = await fetchAccountInfo();
+                console.log("Account data:", accountResponse);
+
+                // 2. Sau đó lấy thông tin customer
+                const customerResponse = await getCustomerByAccountId(accountId);
+                console.log("Customer data:", customerResponse);
+
+                // Lưu thông tin account
+                if (accountResponse && accountResponse.data) {
+                    setAccountData(accountResponse.data);
+                }
+
+                // Lưu thông tin customer
+                if (customerResponse && customerResponse.data) {
+                    setCustomer(customerResponse.data);
+
+                    // 3. Lấy test orders của customer này
+                    if (customerResponse.data.id) {
+                        try {
+                            const orderResponse = await getTestOrdersByCustomerId(customerResponse.data.id);
+                            console.log("Test orders for customer:", orderResponse);
+
+                            // Lấy order gần nhất nếu có
+                            if (orderResponse && orderResponse.length > 0) {
+                                // Sort by date (most recent first)
+                                const sortedOrders = orderResponse.sort((a, b) =>
+                                    new Date(b.orderDate) - new Date(a.orderDate)
+                                );
+                                const latestOrder = sortedOrders[0];
+                                setTestOrder(latestOrder);
+
+                                // 4. Lấy test samples cho order này
+                                try {
+                                    const samplesResponse = await getTestSamplesByOrderId(latestOrder.orderId);
+                                    console.log("Test samples for order:", samplesResponse);
+
+                                    if (samplesResponse && samplesResponse.length > 0) {
+                                        setTestSamples(samplesResponse);
+                                    }
+                                } catch (sampleErr) {
+                                    console.error("Error fetching test samples:", sampleErr);
+                                }
+
+                                // 5. Lấy thông tin dịch vụ nếu có serviceId
+                                if (latestOrder.serviceId) {
+                                    try {
+                                        const servicesResponse = await getAllServices();
+                                        console.log("Services:", servicesResponse);
+
+                                        const matchedService = servicesResponse.find(
+                                            s => s.serviceID === latestOrder.serviceId ||
+                                                Number(s.serviceID) === Number(latestOrder.serviceId)
+                                        );
+
+                                        if (matchedService) {
+                                            setService(matchedService);
+                                            console.log("Matched service:", matchedService);
+                                        }
+                                    } catch (serviceErr) {
+                                        console.error("Error fetching services:", serviceErr);
+                                    }
+                                }
+                            }
+                        } catch (orderErr) {
+                            console.error("Error fetching test orders:", orderErr);
+                        }
+                    }
+                }
+
+                setLoading(false);
+            } catch (err) {
+                console.error("Error fetching data:", err);
+                setError("Lỗi khi tải dữ liệu: " + (err.response?.data?.message || err.message));
+                setLoading(false);
+            }
+        };
+
+        fetchData();
+    }, []);
+
+    // const handleViewResult = () => {
+    //     //Di chuyển sang trang kết quả
+    //     setShowPdf(true);
+    // };
+
+    // const handleReview = () => {
+    //     // Di chuyển sang trang đánh giá
+    //     if (data && data.maHoSo) {
+    //         navigate(`/review/${data.maHoSo}`);
+    //     } else {
+    //         alert("Không tìm thấy mã hồ sơ");
+    //     }
+    // };
+
+    // Format date for display
+    const formatDate = (dateString) => {
+        if (!dateString) return "";
         try {
-            const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/test-results/${maHoSo}`);
-            setTestResult(response.data);
-        } catch (err) {
-            console.error("Error fetching test result:", err);
-            setError("Không thể tải kết quả xét nghiệm. Vui lòng thử lại sau.");
-        } finally {
-            setLoading(false);
+            const date = new Date(dateString);
+            return date.toLocaleDateString('vi-VN', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric'
+            }).replace(/\//g, '/');
+        } catch (error) {
+            return dateString;
         }
     };
 
-    const handleViewResult = () => {
-        //Di chuyển sang trang kết quả
-        setShowPdf(true);
-    };
-
-    const handleReview = () => {
-        // Di chuyển sang trang đánh giá
-        if (data && data.maHoSo) {
-            navigate(`/review/${data.maHoSo}`);
-        } else {
-            alert("Không tìm thấy mã hồ sơ");
-        }
-    };
-
-    if (loading) return <div>Loading...</div>;
+    if (loading) return <div className="loading">Đang tải dữ liệu...</div>;
     if (error) return <div className="error-message">{error}</div>;
-    if (!data) return <div>Không có dữ liệu hồ sơ</div>;
+    if (!testOrder && !accountData) return <div>Không có dữ liệu</div>;
 
     return (
         <div>
-            <div className="result-info-form">
+            <div ref={formRef} className="booking-info-form">
+
+
                 <div className="info-row">
                     <span className="label">Mã hồ sơ:</span>
-                    <span>{data.maHoSo || ""}</span>
+                    <span>{testOrder?.orderId}</span>
                 </div>
+
                 <div className="info-row">
                     <span className="label">Người đăng ký:</span>
-                    <span>{data.nguoiDangKy || ""}</span>
+                    <span>{accountData?.fullName}{accountData?.dateOfBirth ? `, ${formatDate(accountData.dateOfBirth)}` : ''}</span>
                 </div>
+
                 <div className="info-row">
                     <span className="label">Liên hệ:</span>
-                    <span>{data.lienHe || ""}</span>
+                    <span>{accountData?.phone}{accountData?.email ? ` - ${accountData.email}` : ''}</span>
                 </div>
+
                 <div className="info-row">
                     <span className="label">Địa chỉ:</span>
-                    <span>{data.diaChi || ""}</span>
+                    <span>{customer?.address || testOrder?.resultDeliverAddress}</span>
                 </div>
+
                 <div className="info-row">
                     <span className="label">Loại xét nghiệm:</span>
-                    <span>{data.loaiXetNghiem || ""}</span>
+                    <span>{service?.serviceName}</span>
                 </div>
+
                 <div className="info-row">
                     <span className="label">Mục đích:</span>
-                    <span>{data.mucDich || ""}</span>
+                    <span>{service?.servicePurpose}</span>
                 </div>
+
                 <div className="info-row">
                     <span className="label">Người tham gia:</span>
-                    <ul className="participants">
-                        {(data.nguoiThamGia || []).map((item, idx) => (
-                            <li key={idx}>{item}</li>
-                        ))}
-                    </ul>
+                    <div className="participants-list">
+                        {testSamples.length > 0 ? (
+                            <ul>
+                                {testSamples.map((sample, index) => (
+                                    <li key={sample.id || index}>
+                                        {sample.name} - {sample.relationship} ({formatDate(sample.dateOfBirth)})
+                                    </li>
+                                ))}
+                            </ul>
+                        ) : (
+                            <span>Chưa có dữ liệu người tham gia</span>
+                        )}
+                    </div>
                 </div>
                 <div className="info-row">
                     <span className="label">Loại mẫu:</span>
-                    <span>{data.loaiMau || ""}</span>
+                    <span>{testSamples[0]?.sampleType?.toLowerCase()}</span>
                 </div>
                 <div className="info-row">
-                    <span className="label">Hình thức mẫu:</span>
-                    <span>{data.hinhThucMau || ""}</span>
+                    <span className="label">Hình thức thu mẫu:</span>
+                    <span>{testOrder?.resultDeliveryMethod}</span>
                 </div>
                 <div className="info-row">
                     <span className="label">Kết quả:</span>
-                    <span>{data.ketQua || testResult?.ketQua || ""}</span>
+
                 </div>
             </div>
-            
-            {showPdf && (data.ketQuaFileUrl || testResult?.fileUrl) && (
+
+            {/* {showPdf && (data.ketQuaFileUrl || testResult?.fileUrl) && (
                 <div className="pdf-container">
                     <div className="pdf-header">
                         <h3>Kết quả xét nghiệm</h3>
@@ -129,7 +238,7 @@ export default function FormStep6({ data }) {
                     onClick={handleReview}>
                     Đánh giá
                 </button>
-            </div>
+            </div> */}
         </div>
     );
 }
