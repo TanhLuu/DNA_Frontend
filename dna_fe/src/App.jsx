@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, Form } from 'react-router-dom';
 import Header from './components/Share/Header';
 import Footer from './components/Share/Footer';
 import AdminLayout from './components/Share/AdminLayout';
@@ -27,6 +27,7 @@ import AdnChacon from './pages/AdnChacon';
 import ADNMeCon from './pages/AdnMecon';
 import AdnMeCon from './pages/AdnMecon';
 import AdnAnhChiEm from './pages/AdnAnhChiEm';
+import FormStep1 from './components/FormStep1';
 function App() {
   const [role, setRole] = useState(localStorage.getItem('role')?.toLowerCase());
   useEffect(() => {
@@ -99,7 +100,7 @@ function App() {
       </div>
     </Router>
     */
-    <TuThuGuiMau />
+    <FormStep1/>
   );
 }
 
