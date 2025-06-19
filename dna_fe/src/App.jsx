@@ -104,7 +104,7 @@ function App() {
       </div>
     </Router>
     */
-    <FormStep1/>
+   <FormStep1/>
   );
 }
 
