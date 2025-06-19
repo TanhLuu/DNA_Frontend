@@ -26,7 +26,7 @@
 .orders-table th,
 .orders-table td {
   padding: 12px 15px;
-  text-align: left;
+  text-align: center;
   border-bottom: 1px solid #ddd;
 }
 
@@ -78,7 +78,6 @@
 }
 
 .pill {
-  background-color: #e0e0e0;
   color: #333;
   padding: 5px 10px;
   border-radius: 12px;

@@ -72,7 +72,7 @@ function App() {
                 <Route path="/ordersPageAdmin" element={<AdminLayout> <OrdersPage /> </AdminLayout>} />
                 <Route path="/serviceManagement" element={<AdminLayout> <ServiceManagement /> </AdminLayout>}/>
                 <Route path="/dashboard" element={<AdminLayout><Dashboard /></AdminLayout>}/>
-
+              <Route path="/customer/orders/:orderId" element={<AdminLayout><OrderDetail /></AdminLayout>} />
               </>
             )}
 
@@ -85,9 +85,11 @@ function App() {
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/OrderHistory" element={<OrderHistory />} />
                 <Route path="/customer/orders/:orderId" element={<OrderDetail />} />
-                
+                <Route path="/customer/orders/:orderId" element={<OrderDetail />} />
               </>
             )}
+
+            
 
             <Route path="*" element={
               (role === 'staff' || role === 'manager') ? (

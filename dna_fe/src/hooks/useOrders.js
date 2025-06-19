@@ -25,11 +25,11 @@ const useOrders = () => {
 
         const accountPromises = ordersData.map(order =>
           getAccountByCustomerId(order.customerId)
-            .then(res => ({
+            .then(account => ({
               customerId: order.customerId,
-              fullName: res.data.fullName || 'N/A',
-              phone: res.data.phone || 'N/A',
-              email: res.data.email || 'N/A',
+              fullName: account.fullName || 'N/A',
+              phone: account.phone || 'N/A',
+              email: account.email || 'N/A',
             }))
             .catch(() => ({
               customerId: order.customerId,
@@ -44,24 +44,24 @@ const useOrders = () => {
         const servicePromises = ordersData.map(order =>
           order.serviceId
             ? getServiceById(order.serviceId)
-                .then(res => ({
-                  serviceId: order.serviceId,
-                  serviceName: res.data.serviceName || 'N/A',
-                  servicePurpose: res.data.servicePurpose || 'N/A',
-                  timeTest: res.data.timeTest || 'N/A',
-                }))
-                .catch(() => ({
-                  serviceId: order.serviceId,
-                  serviceName: 'N/A',
-                  servicePurpose: 'N/A',
-                  timeTest: 'N/A',
-                }))
-            : Promise.resolve({
+              .then(service => ({
+                serviceId: order.serviceId,
+                serviceName: service.serviceName || 'N/A',
+                servicePurpose: service.servicePurpose || 'N/A',
+                timeTest: service.timeTest || 'N/A',
+              }))
+              .catch(() => ({
                 serviceId: order.serviceId,
                 serviceName: 'N/A',
                 servicePurpose: 'N/A',
                 timeTest: 'N/A',
-              })
+              }))
+            : Promise.resolve({
+              serviceId: order.serviceId,
+              serviceName: 'N/A',
+              servicePurpose: 'N/A',
+              timeTest: 'N/A',
+            })
         );
         const services = await Promise.all(servicePromises);
         setServiceData(services.reduce((acc, s) => ({ ...acc, [s.serviceId]: s }), {}));

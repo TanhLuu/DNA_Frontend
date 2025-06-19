@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { getTestOrderById } from '../api/orderApi';
-import { getServiceById, getAccountByCustomerId, getStaffById,getTestSamplesByOrderId } from '../api/accountApi';
+import { getServiceById, getAccountByCustomerId, getStaffById,getTestSamplesByOrderId,getAccountById } from '../api/accountApi';
 
 export const useOrderDetail = (orderId) => {
   const [order, setOrder] = useState(null);
@@ -11,6 +11,8 @@ export const useOrderDetail = (orderId) => {
   const [samples, setSamples] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [registrationStaffAccount, setRegistrationStaffAccount] = useState(null);
+const [testingStaffAccount, setTestingStaffAccount] = useState(null);
 
   useEffect(() => {
     const fetchOrderDetail = async () => {
@@ -29,14 +31,20 @@ export const useOrderDetail = (orderId) => {
         setSamples(sampleList);
 
         if (orderData.registrationStaffId) {
-          const regStaff = await getStaffById(orderData.registrationStaffId);
-          setRegistrationStaff(regStaff);
-        }
+  const regStaff = await getStaffById(orderData.registrationStaffId);
+  setRegistrationStaff(regStaff);
 
-        if (orderData.testingStaffId) {
-          const testStaff = await getStaffById(orderData.testingStaffId);
-          setTestingStaff(testStaff);
-        }
+  const regAccount = await getAccountById(regStaff.accountId);
+  setRegistrationStaffAccount(regAccount);
+}
+
+if (orderData.testingStaffId) {
+  const testStaff = await getStaffById(orderData.testingStaffId);
+  setTestingStaff(testStaff);
+
+  const testAccount = await getAccountById(testStaff.accountId);
+  setTestingStaffAccount(testAccount);
+}
 
       } catch (err) {
         console.error('Lỗi khi lấy chi tiết đơn hàng:', err);
@@ -50,13 +58,15 @@ export const useOrderDetail = (orderId) => {
   }, [orderId]);
 
   return {
-    order,
-    service,
-    customer,
-    samples,
-    registrationStaff,
-    testingStaff,
-    loading,
-    error
-  };
+  order,
+  service,
+  customer,
+  samples,
+  registrationStaff,
+  registrationStaffAccount,
+  testingStaff,
+  testingStaffAccount,
+  loading,
+  error
+};
 };

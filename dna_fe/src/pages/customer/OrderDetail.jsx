@@ -7,14 +7,17 @@ const OrderDetail = () => {
     const navigate = useNavigate();
     const { orderId } = useParams();
     const {
-        order,
-        service,
-        customer,
-        samples,
-        registrationStaff,
-        testingStaff,
-        loading
-    } = useOrderDetail(orderId);
+  order,
+  service,
+  customer,
+  samples,
+  registrationStaff,
+  registrationStaffAccount,
+  testingStaff,
+  testingStaffAccount,
+  loading
+} = useOrderDetail(orderId);
+
 
     const formatDate = (dateStr) => dateStr ? new Date(dateStr).toLocaleDateString('vi-VN') : 'N/A';
 
@@ -28,11 +31,26 @@ const OrderDetail = () => {
 
             <div className="order-section">
                 <h3>Thông tin đơn hàng</h3>
-                <p><strong>Trạng thái:</strong> {order.orderStatus}</p>
+                <p><strong>Trạng thái:</strong> {{
+                    PENDING: 'Đặt lịch/Đăng ký',
+                    PREPARING: 'Chuẩn bị lấy mẫu',
+                    COLLECTING: 'Thu thập mẫu',
+                    TRANSFERRING: 'Chuyển mẫu',
+                    TESTING: 'Xét nghiệm',
+                    COMPLETED: 'Hoàn thành'
+                }[order.orderStatus] || 'N/A'}</p>
+
                 <p><strong>Ngày đăng ký:</strong> {formatDate(order.orderDate)}</p>
                 <p><strong>Hình thức thu mẫu:</strong> {order.sampleType === 'center' ? 'Tại trung tâm' : 'Tự lấy mẫu tại nhà'}</p>
-                <p><strong>Mã kit:</strong> {order.kitCode || 'Không có'}</p>
-                <p><strong>Hình thức nhận kết quả:</strong> {order.resultDeliveryMethod}</p>
+                {order.sampleType === 'home' && (
+                    <p><strong>Mã kit:</strong> {order.kitCode || 'Không có'}</p>
+                )}
+                <p><strong>Hình thức nhận kết quả:</strong> {{
+                    office: 'Tại văn phòng',
+                    home: 'Gửi kết quả về nhà',
+                    email: 'Nhận kết quả qua email',
+                }[order.resultDeliveryMethod]}</p>
+                
                 <p><strong>Địa chỉ nhận kết quả:</strong> {order.resultDeliverAddress}</p>
                 <p><strong>Số lượng mẫu:</strong> {order.sampleQuantity}</p>
                 <p><strong>Tổng phí:</strong> {order.amount.toLocaleString('vi-VN')} VNĐ</p>
@@ -66,17 +84,17 @@ const OrderDetail = () => {
             </div>
 
             <div className="order-section">
-                <h3>Nhân viên xử lý</h3>
-                <p><strong>Nhân viên đăng ký:</strong> {registrationStaff ? registrationStaff.name : 'Không có'}</p>
-                <p><strong>Nhân viên xét nghiệm:</strong> {testingStaff ? testingStaff.name : 'Không có'}</p>
-            </div>
+  <h3>Nhân viên xử lý</h3>
+  <p><strong>Nhân viên thu mẫu:</strong> {registrationStaffAccount ? registrationStaffAccount.fullName : 'Chưa có'}</p>
+  <p><strong>Nhân viên xét nghiệm:</strong> {testingStaffAccount ? testingStaffAccount.fullName : 'Chưa có'}</p>
+</div>
 
             <div className="order-section">
                 <h3>Danh sách mẫu xét nghiệm</h3>
                 {samples.length > 0 ? (
                     samples.map((sample, index) => (
                         <div key={sample.id || index} className="sample-box">
-                            <h4>🔬 Mẫu #{index + 1}</h4>
+                            <h4>Người phân tích thứ {index + 1}</h4>
                             <p><strong>Họ tên:</strong> {sample.name}</p>
                             <p><strong>Ngày sinh:</strong> {formatDate(sample.dateOfBirth)}</p>
                             <p><strong>Giới tính:</strong> {sample.gender}</p>

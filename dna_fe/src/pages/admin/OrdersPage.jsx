@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import useOrders from '../../hooks/useOrders';
 import OrderFilterBar from '../../components/UI/Order/OrderFilterBar';
 import axios from 'axios';
@@ -27,10 +28,10 @@ const OrdersPage = () => {
 
   const canUpdateOrder = (status, role) => {
     const normal = ['PENDING', 'PREPARING', 'COLLECTING', 'TRANSFERRING'];
-    const lab = ['TRANSFERRING','TESTING', 'COMPLETED'];
+    const lab = ['TRANSFERRING', 'TESTING', 'COMPLETED'];
     return role === 'NORMAL_STAFF' ? normal.includes(status)
-         : role === 'LAB_STAFF' ? lab.includes(status)
-         : false;
+      : role === 'LAB_STAFF' ? lab.includes(status)
+        : false;
   };
 
   const getNextStatus = status => {
@@ -45,17 +46,19 @@ const OrdersPage = () => {
     if (!staffRole) return setUpdateError('Không tìm thấy vai trò nhân viên. Vui lòng đăng nhập lại.');
     if (!canUpdateOrder(currentStatus, staffRole))
       return setUpdateError(`Bạn không có quyền cập nhật đơn hàng ở trạng thái ${currentStatus}`);
-    
+
     const next = getNextStatus(currentStatus);
     if (next === currentStatus) return setUpdateError('Đơn hàng đã ở trạng thái cuối cùng!');
 
     try {
       await axios.put(`http://localhost:8080/api/testorders/${orderId}`,
         { staffId: localStorage.getItem('staffId'), orderStatus: next },
-        { headers: {
+        {
+          headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${localStorage.getItem('token')}`,
-          }}
+          }
+        }
       );
       setOrders(orders.map(o => o.orderId === orderId ? { ...o, orderStatus: next } : o));
       alert('Cập nhật đơn hàng thành công!');
@@ -63,8 +66,10 @@ const OrdersPage = () => {
       setUpdateError(err.response?.data?.message || 'Cập nhật đơn hàng thất bại');
     }
   };
-
-  const handleViewDetails = id => alert(`Xem chi tiết đơn hàng ID: ${id}`);
+  const navigate = useNavigate();
+  const handleViewDetails = (orderId) => {
+    navigate(`/customer/orders/${orderId}`);
+  };
 
   if (isLoading) return <div className="orders-loading">Đang tải dữ liệu...</div>;
   if (error) return <div className="orders-error text-red-500">{error}</div>;

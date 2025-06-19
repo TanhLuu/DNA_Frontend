@@ -14,6 +14,8 @@ export const updateAccountInfo = (accountId, accountData) => {
   return axiosInstance.put(`/api/account/${accountId}`, accountData);
 };
 
+
+
 // === Customer APIs ===
 
 // Lấy customer theo accountId
@@ -96,5 +98,10 @@ export const getOrdersByCustomerId = async (customerId) => {
 
 export const getTestSamplesByOrderId = async (orderId) => {
   const res = await axiosInstance.get(`/api/testSamples/order/${orderId}`);
+  return res.data;
+};
+
+export const getAccountById = async (accountId) => {
+  const res = await axiosInstance.get(`/api/account/${accountId}`);
   return res.data;
 };
