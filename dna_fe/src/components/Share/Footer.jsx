@@ -28,7 +28,7 @@ const Footer = () => {
           <h4>Liên kết nhanh</h4>
           <ul className="footer-links">
             <li><a href="/services">Dịch vụ</a></li>
-            <li><a href="/pricing">Bảng giá</a></li>
+            <li><a href="/all-price">Bảng giá</a></li>
             <li><a href="/contact">Liên hệ</a></li>
             <li><a href="/guide">Hướng dẫn</a></li>
             <li><a href="/news">Tin tức</a></li>

@@ -67,7 +67,7 @@ export const useAuth = () => {
         navigate('/');
       }
     } catch (err) {
-      setError(err.response?.data?.message || err.message || 'Đăng nhập thất bại');
+      setError('Đăng nhập thất bại');
     }
   };
 

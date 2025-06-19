@@ -59,7 +59,7 @@ export const getAccountByCustomerId = async (customerId) => {
     }
     // Lấy AccountDTO
     const accountRes = await axiosInstance.get(`/api/account/${accountId}`);
-    return accountRes;
+    return accountRes.data;
   } catch (error) {
     console.error(`Lỗi khi lấy tài khoản cho customerId ${customerId}:`, error);
     throw error;
@@ -69,12 +69,18 @@ export const getAccountByCustomerId = async (customerId) => {
 export const getServiceById = async (serviceId) => {
   try {
     const response = await axiosInstance.get(`/api/services/${serviceId}`);
-    return response;
+    return response.data;
   } catch (error) {
     console.error(`Lỗi khi lấy dịch vụ ${serviceId}:`, error);
     throw error;
   }
 };
+
+export const getStaffById = async (staffId) => {
+  const response = await axiosInstance.get(`/api/staff/${staffId}`);
+  return response.data;
+};
+
 
 // === Test Order APIs (Thêm mới) ===
 export const getOrdersByCustomerId = async (customerId) => {
@@ -85,4 +91,10 @@ export const getOrdersByCustomerId = async (customerId) => {
     console.error(`Lỗi khi lấy đơn hàng cho customerId ${customerId}:`, error);
     throw error;
   }
+};
+
+
+export const getTestSamplesByOrderId = async (orderId) => {
+  const res = await axiosInstance.get(`/api/testSamples/order/${orderId}`);
+  return res.data;
 };

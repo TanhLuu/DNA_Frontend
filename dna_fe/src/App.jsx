@@ -20,6 +20,8 @@ import CivilServicePricing from './pages/Pricing/CivilServicePricing';
 import LegalServicePricing from './pages/Pricing/LegalServicePricing';
 import AllServicePricing from './pages/Pricing/AllServicePricing';
 import OrderHistory from './pages/customer/OrderHistory';
+import OrderDetail from './pages/customer/OrderDetail';
+
 
 
 
@@ -82,6 +84,8 @@ function App() {
               <>
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/OrderHistory" element={<OrderHistory />} />
+                <Route path="/customer/orders/:orderId" element={<OrderDetail />} />
+                
               </>
             )}
 
