@@ -37,34 +37,35 @@ const Header = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
 
+  useEffect(() => {
+    let lastScrollTop = 0;
+    const topBar = document.querySelector('.top-bar');
+
+    const handleScroll = () => {
+      let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      if (scrollTop > lastScrollTop && scrollTop > 50) {
+        topBar.classList.add('hidden');
+      } else if (scrollTop <= 50) {
+        topBar.classList.remove('hidden');
+      }
+      lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const getInitial = (name) => {
+    return name ? name.charAt(0).toUpperCase() : 'U';
+  };
+
   return (
-    <header className="header">
+    <header className="header-outer">
       <div className="top-bar">
         <div className="contact-info">
           <span>📞 1900 565656</span>
           <span>📧 contact@adntest.vn</span>
           <span>📍 123 Đường ABC, Q.1, TP.HCM</span>
-        </div>
-        <div className="auth-links">
-          {fullName ? (
-            <div className="user-menu">
-              <span onClick={toggleDropdown} className="user-name">
-                👤 {fullName}
-              </span>
-              {isDropdownOpen && (
-                <div className="dropdown-menu">
-                  <a href="/OrderHistory">Đơn hàng</a>
-                  <a href="/profile">Hồ sơ</a>
-                  <span onClick={handleChangePassword} className="logout-btn">Đổi mật khẩu</span>
-                  <span onClick={handleLogout} className="logout-btn">Đăng xuất</span>
-                </div>
-              )}
-            </div>
-          ) : (
-            <>
-              <a className='register-link' href="/register">Đăng ký</a> | <a className='login-link' href="/login">Đăng nhập</a>
-            </>
-          )}
         </div>
       </div>
 
@@ -76,22 +77,41 @@ const Header = () => {
             <div className="slogan">Xét nghiệm ADN hàng đầu</div>
           </div>
         </div>
-        <nav className="menu">
-          <a href="/"><strong>Trang chủ</strong></a>
-          <a href="/services"><strong>Dịch vụ</strong></a>
+
+        <nav className="nav-center">
+          <a href="/">Trang chủ</a>
+          <a href="/services">Dịch vụ</a>
           <div className="price-dropdown">
-            <a href="/all-price"><strong>Bảng giá</strong></a>
+            <a href="/all-price">Bảng giá</a>
             <div className="price-dropdown-menu">
               <a href="/civil-price">Dân sự</a>
               <a href="/legal-price">Pháp lý</a>
             </div>
           </div>
-          <a href="/A"><strong>Hướng dẫn</strong></a>
-          <a href="/news"><strong>Tin tức</strong></a>
+          <a href="/A">Hướng dẫn</a>
+          <a href="/news">Tin tức</a>
         </nav>
-        <div className="search-box">
-          <input type="text" placeholder="Tìm kiếm..." />
-          <button>🔍</button>
+
+        <div className={`auth-links ${isDropdownOpen ? 'active' : ''}`}>
+          {fullName ? (
+            <div className="user-menu">
+              <button onClick={toggleDropdown} className="user-name">
+                <span className="user-avatar">{getInitial(fullName)}</span>
+                {fullName}
+              </button>
+              <div className="dropdown-menu">
+                <a href="/OrderHistory">Đơn hàng</a>
+                <a href="/profile">Hồ sơ</a>
+                <span onClick={handleChangePassword} className="logout-btn">Đổi mật khẩu</span>
+                <span onClick={handleLogout} className="logout-btn">Đăng xuất</span>
+              </div>
+            </div>
+          ) : (
+            <div className="auth-options">
+              <a className="register-link" href="/register">Đăng ký</a>
+              <a className="login-link" href="/login">Đăng nhập</a>
+            </div>
+          )}
         </div>
       </div>
     </header>

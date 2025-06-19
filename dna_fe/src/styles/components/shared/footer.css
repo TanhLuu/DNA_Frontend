@@ -1,73 +1,96 @@
 .footer {
-  background-color: #0072c6;
-  color: white;
-  padding: 20px 30px;
-  font-family: sans-serif;
-}
-
-h4 {
-  margin-bottom: 5px;
+  background-color: #333333;
+  color: #fff;
+  padding: 50px 20px 20px;
+  font-family: 'Segoe UI', sans-serif;
 }
 
 .footer-container {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
-  grid-gap: 50px;
-  padding: 20px 15px;
+  max-width: 1200px;
+  margin: auto;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 40px;
 }
 
-.footer-col {
-  min-width: 200px;
-  gap: 30px;
+.footer-brand {
+  max-width: 300px;
+  text-align: left;
+}
+
+.footer-logo-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 15px;
 }
 
 .footer-logo {
-  width: 80px;
-  margin-bottom: 12px;
+  height: 50px;
 }
 
-.footer-col p,
-.footer-col a {
-  font-size: 14px;
+.footer-brand-name {
+  font-size: 20px;
+  font-weight: 700;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.footer-tagline {
+  font-size: 15px;
+  color: #ccc;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+
+.footer-logo {
+  height: 50px;
+  margin-bottom: 15px;
+}
+
+.footer-brand p {
+  font-size: 15px;
   line-height: 1.5;
-  color: #e0e0e0;
-  text-decoration: none;
+  margin-bottom: 20px;
 }
 
 .footer-links {
-  text-align: left;
-  padding-left: 0;
-}
-
-.footer-links li {
-  list-style: none;
-  margin-bottom: 8px;
-  text-indent: 0;
-}
-
-.footer-links a:hover {
-  text-decoration: underline;
-}
-
-.social-icons a {
-  display: inline-block;
-  margin-right: 10px;
-  font-size: 14px;
-  color: white;
-  margin: 10px 5px;
-}
-
-.certifications-top {
-  width: 122px;
-  height: auto;
-}
-
-.certifications-bottom {
   display: flex;
-  gap: 2px;
+  gap: 60px;
+  flex-wrap: wrap;
 }
 
-.certifications-bottom img {
-  width: 60px;
-  height: auto;
+.footer-links h4 {
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+.footer-links ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer-links ul li a {
+  color: #ccc;
+  text-decoration: none;
+  font-size: 14px;
+  display: block;
+  margin-bottom: 8px;
+  transition: color 0.3s;
+}
+
+.footer-links ul li a:hover {
+  color: #fff;
+}
+
+.footer-bottom {
+  text-align: center;
+  color: #888;
+  font-size: 13px;
+  padding-top: 20px;
+  border-top: 1px solid #333;
+  margin-top: 40px;
 }

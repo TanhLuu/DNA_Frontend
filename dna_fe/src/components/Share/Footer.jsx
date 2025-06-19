@@ -1,56 +1,45 @@
 import React from 'react';
 import '../../styles/components/shared/footer.css';
-import * as asset from '../../assets';;
+import * as asset from '../../assets';
 
 const Footer = () => {
   return (
     <footer className="footer">
       <div className="footer-container">
+        {/* Logo + Mô tả */}
+        <div className="footer-brand">
+  <div className="footer-logo-group">
+    <img src={asset.logo} alt="MedLab Logo" className="footer-logo" />
+    <span className="footer-brand-name">MEDLAB</span>
+  </div>
+  <p className="footer-tagline">TRUNG TÂM XÉT NGHIỆM ADN ĐÁNG TIN CẬY HÀNG ĐẦU VIỆT NAM.</p>
+</div>
 
-        <div className="footer-col logo-col">
-          <img src={asset.logo} alt="MedLab Logo" className="footer-logo" />
-          <p>
-            Trung tâm xét nghiệm ADN hàng đầu với hơn 10 năm kinh nghiệm, cam kết độ chính xác cao,
-            bảo mật thông tin tuyệt đối và dịch vụ tận tâm.
-          </p>
-          <p className="copyright">© 2025 Trung tâm xét nghiệm ADN. Bảo lưu mọi quyền.</p>
-        </div>
-
-        <div className="footer-col">
-          <h4>Thông tin liên hệ</h4>
-          <p><strong>Địa chỉ:</strong> 123 Đường ABC, Quận 1,<br />TP. Hồ Chí Minh</p>
-          <p><strong>Điện thoại:</strong> +84 0123 456 789</p>
-          <p><strong>Email:</strong> contact@adntest.vn</p>
-          <p><strong>Giờ làm việc:</strong> Thứ 2 - Thứ 7, 8:00 - 18:00</p>
-        </div>
-
-        <div className="footer-col">
-          <h4>Liên kết nhanh</h4>
-          <ul className="footer-links">
-            <li><a href="/services">Dịch vụ</a></li>
-            <li><a href="/all-price">Bảng giá</a></li>
-            <li><a href="/contact">Liên hệ</a></li>
-            <li><a href="/guide">Hướng dẫn</a></li>
-            <li><a href="/news">Tin tức</a></li>
-          </ul>
-        </div>
-
-        <div className="footer-col">
-          <h4>Kết nối với chúng tôi</h4>
-          <div class="social-icons">
-            <a href="#"><i className="fab fa-facebook-f">Facebook</i></a>
-            <a href="#"><i className="fab fa-zalo">Zalo</i></a>
-            <a href="#"><i className="fab fa-youtube">YouTube</i></a>
+        {/* Liên kết */}
+        <div className="footer-links">
+          <div>
+            <h4>Thông tin</h4>
+            <ul>
+              <li><a href="/about">Về MedLab</a></li>
+              <li><a href="/services">Dịch vụ</a></li>
+              <li><a href="/pricing">Bảng giá</a></li>
+              <li><a href="/contact">Liên hệ</a></li>
+            </ul>
           </div>
-          <div className="certifications">
-            <h4>Chứng nhận uy tín</h4>
-            <img src={asset.bocongthuong} className='certifications-top' alt="bocongthuong" />
-            <div className="certifications-bottom">
-              <img src={asset.iso} alt="ISO 9001" />
-              <img src={asset.acceredited} alt="Accredited" />
-            </div>
+          <div>
+            <h4>Hỗ trợ</h4>
+            <ul>
+              <li><a href="/guide">Hướng dẫn</a></li>
+              <li><a href="/privacy">Chính sách</a></li>
+              <li><a href="/terms">Điều khoản</a></li>
+            </ul>
           </div>
         </div>
+      </div>
+
+      {/* Copyright */}
+      <div className="footer-bottom">
+        © 2025 MedLab. All rights reserved.
       </div>
     </footer>
   );

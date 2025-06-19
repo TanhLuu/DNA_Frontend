@@ -38,7 +38,7 @@ const handleViewDetails = (orderId) => {
 
   return (
     <div className="customer-orders-container">
-      <h2 className="text-2xl font-bold mb-4">Lịch sử đơn hàng</h2>
+      <h2 className="text-2xl font-bold mb-4">Đơn hàng</h2>
 
       <OrderFilterBar handleFilterChange={handleFilterChange} />
 

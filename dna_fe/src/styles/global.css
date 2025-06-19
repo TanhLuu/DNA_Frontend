@@ -7,7 +7,7 @@
 body {
   margin: 0;
   font-family: Arial, sans-serif;
-  background-color: #f4f6f8;
+  background-color: white;
 }
 
 a {
@@ -16,7 +16,7 @@ a {
 
 .admin-main {
   flex-grow: 1;
-  background-color: #f3f4f6;
+  background-color: white;
   overflow: auto;
 }
 
