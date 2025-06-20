@@ -1,10 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import '../styles/Home.css';
-
 import * as asset from '../assets';
 import AdnBooking from '../components/UI/AdnBooking';
-
-
 
 const Home = () => {
     const [hoveredBox, setHoveredBox] = useState(null);
