@@ -2,17 +2,22 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../../styles/components/shared/header.css';
 import logo from '../../assets/logo.jpg';
+import ResetPassword from '../UI/Auth/ResetPassword';
+import Login from '../UI/Auth/Login';
+import Register from '../UI/Auth/Register';
+import ForgotPassword from '../UI/Auth/ForgotPassword';
 
 const Header = () => {
+  const [formType, setFormType] = useState(null);
   const [fullName, setFullName] = useState('');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isResetOpen, setIsResetOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
     const savedFullName = localStorage.getItem('fullName');
-    if (savedFullName) {
-      setFullName(savedFullName);
-    }
+    if (savedFullName) setFullName(savedFullName);
 
     const handleStorageChange = () => {
       const updatedFullName = localStorage.getItem('fullName');
@@ -29,13 +34,12 @@ const Header = () => {
   };
 
   const handleChangePassword = () => {
-    navigate('/change-password');
+    setIsResetOpen(true);
     setIsDropdownOpen(false);
   };
 
-  const toggleDropdown = () => {
-    setIsDropdownOpen(!isDropdownOpen);
-  };
+  const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
+  const toggleMenu = () => setMenuOpen(!menuOpen);
 
   useEffect(() => {
     let lastScrollTop = 0;
@@ -55,9 +59,7 @@ const Header = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const getInitial = (name) => {
-    return name ? name.charAt(0).toUpperCase() : 'U';
-  };
+  const getInitial = (name) => name ? name.charAt(0).toUpperCase() : 'U';
 
   return (
     <header className="header-outer">
@@ -78,11 +80,19 @@ const Header = () => {
           </div>
         </div>
 
-        <nav className="nav-center">
+        <button className="menu-toggle" onClick={toggleMenu}>
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+
+        <nav className={`nav-center ${menuOpen ? 'show' : ''}`}>
           <a href="/">Trang chủ</a>
           <a href="/services">Dịch vụ</a>
           <div className="price-dropdown">
-            <a href="/all-price">Bảng giá</a>
+            <a href="/all-price">
+              Bảng giá <span style={{ fontSize: '12px' }}>▾</span>
+            </a>
             <div className="price-dropdown-menu">
               <a href="/civil-price">Dân sự</a>
               <a href="/legal-price">Pháp lý</a>
@@ -97,7 +107,7 @@ const Header = () => {
             <div className="user-menu">
               <button onClick={toggleDropdown} className="user-name">
                 <span className="user-avatar">{getInitial(fullName)}</span>
-                {fullName}
+                {fullName} <span style={{ fontSize: '12px', marginLeft: '4px' }}>▾</span>
               </button>
               <div className="dropdown-menu">
                 <a href="/OrderHistory">Đơn hàng</a>
@@ -108,12 +118,37 @@ const Header = () => {
             </div>
           ) : (
             <div className="auth-options">
-              <a className="register-link" href="/register">Đăng ký</a>
-              <a className="login-link" href="/login">Đăng nhập</a>
+              <button className="register-link" onClick={() => setFormType('register')}>Đăng ký</button>
+              <button className="login-link" onClick={() => setFormType('login')}>Đăng nhập</button>
             </div>
           )}
         </div>
       </div>
+
+      {!fullName && (
+        <>
+          <Login
+            isOpen={formType === 'login'}
+            onClose={() => setFormType(null)}
+            onSwitch={() => setFormType('register')}
+            onForgot={() => setFormType('forgot')}
+          />
+          <Register
+            isOpen={formType === 'register'}
+            onClose={() => setFormType(null)}
+            onSwitch={() => setFormType('login')}
+          />
+          <ForgotPassword
+            isOpen={formType === 'forgot'}
+            onClose={() => setFormType(null)}
+          />
+        </>
+      )}
+
+      <ResetPassword
+        isOpen={isResetOpen}
+        onClose={() => setIsResetOpen(false)}
+      />
     </header>
   );
 };

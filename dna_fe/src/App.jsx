@@ -3,11 +3,8 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Header from './components/Share/Header';
 import Footer from './components/Share/Footer';
 import AdminLayout from './components/Share/AdminLayout';
-import Login from './pages/auth/Login';
-import ForgotPassword from './pages/auth/ForgotPassword';
 import ResetPasswordFromEmail from './pages/auth/ResetPasswordFromEmail';
-import ResetPassword from './pages/auth/ResetPassword';
-import Register from './pages/auth/Register';
+import ResetPassword from './components/UI/Auth/ResetPassword';
 import Home from './pages/Home';
 import OrdersPage from './pages/admin/OrdersPage';
 import Profile from './components/Profile';
@@ -21,9 +18,6 @@ import LegalServicePricing from './pages/Pricing/LegalServicePricing';
 import AllServicePricing from './pages/Pricing/AllServicePricing';
 import OrderHistory from './pages/customer/OrderHistory';
 import OrderDetail from './pages/customer/OrderDetail';
-
-
-
 
 
 function App() {
@@ -55,10 +49,6 @@ function App() {
 
         <main className="main-content">
           <Routes>
-            
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/change-password" element={<ResetPassword />} />
             <Route path="/reset-password" element={<ResetPasswordFromEmail />} />
             <Route path="/requestFormCivil" element={<ADNRequestFormCivil />} />
@@ -87,9 +77,7 @@ function App() {
                 <Route path="/customer/orders/:orderId" element={<OrderDetail />} />
                 <Route path="/customer/orders/:orderId" element={<OrderDetail />} />
               </>
-            )}
-
-            
+            )}  
 
             <Route path="*" element={
               (role === 'staff' || role === 'manager') ? (

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { useAuth } from '../../hooks/useAuth';
-import '../../styles/auth/register.css';
+import { useAuth } from '../../../hooks/useAuth';
+import '../../../styles/auth/register.css';
 
 const CreateStaff = ({ onClose }) => {
   const { registerStaff, error, success } = useAuth();

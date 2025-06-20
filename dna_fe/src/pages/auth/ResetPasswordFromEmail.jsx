@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../hooks/useAuth';
-import '../../styles/auth/AuthForm.css';
+import '../../styles/auth/ResetPasswordFromEmail.css';
 
 const ResetPasswordFromEmail = () => {
   const { resetPasswordWithEmailToken, success, error } = useAuth();
@@ -25,14 +25,22 @@ const ResetPasswordFromEmail = () => {
   };
 
   return (
-    <div className="auth-form-container">
-      <h2 className="auth-form-title">Reset Your Password</h2>
-      <form onSubmit={handleSubmit} className="auth-form">
-        <input type="password" placeholder="Enter new password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} required />
-        <button className="auth-button" type="submit">Reset Password</button>
-        {success && <p className="auth-message success">{success}</p>}
-        {error && <p className="auth-message error">{error}</p>}
-      </form>
+    <div className="reset-password-wrapper">
+      <div className="reset-password-container">
+        <h2 className="reset-password-title">Reset Your Password</h2>
+        <form onSubmit={handleSubmit} className="reset-password-form">
+          <input
+            type="password"
+            placeholder="Enter new password"
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+            required
+          />
+          <button type="submit">Reset Password</button>
+          {success && <p className="auth-message success">{success}</p>}
+          {error && <p className="auth-message error">{error}</p>}
+        </form>
+      </div>
     </div>
   );
 };

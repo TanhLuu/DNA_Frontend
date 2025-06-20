@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import CreateStaff from '../auth/CreateStaff';
+import CreateStaff from '../../components/UI/Auth/CreateStaff';
 import {
     BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
     PieChart, Pie, Cell, ResponsiveContainer

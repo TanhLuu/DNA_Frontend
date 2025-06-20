@@ -1,94 +1,129 @@
+/* Container chính */
 .civil-pricing-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 2.5rem 1.5rem;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: #f9fbfc;
+  max-width: 1240px;
+  margin: 180px auto 75px;
+  padding: 0 24px;
+  font-family: 'Poppins', sans-serif;
   color: #333;
-}
-
-.title {
-  text-align: center;
-  color: #0056b3;
-  font-size: 2.2rem;
-  font-weight: bold;
-  margin-bottom: 0.5rem;
-  text-transform: uppercase;
-}
-
-.subtitle {
-  text-align: center;
-  color: #666;
-  font-size: 1.05rem;
-  margin-bottom: 2.5rem;
-}
-
-.service-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 2rem;
-}
-
-.service-card {
-  background: white;
-  border-radius: 16px;
-  padding: 1.8rem;
-  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.07);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  border-left: 5px solid #007bff;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-.service-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 12px 24px rgba(0, 123, 255, 0.15);
-}
-
-.service-name {
-  color: #d62828;
-  font-size: 1.35rem;
-  font-weight: 600;
-  margin-bottom: 0.75rem;
-}
-
-.service-description {
-  font-size: 1rem;
-  color: #555;
-  margin-bottom: 1rem;
-  line-height: 1.5;
-  min-height: 60px;
-}
-
-.service-info {
-  margin-top: auto;
-}
-
-.service-info p {
-  margin: 0.4rem 0;
-  font-size: 0.95rem;
-  color: #2e2e2e;
-}
-
-.service-info p strong {
-  color: #007bff;
 }
 
 .controls {
   display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  margin: 20px 0;
-  flex-wrap: wrap;
+  justify-content: flex-start;
+  gap: 35px;
 }
 
-.search-input,
-.sort-select {
-  padding: 8px;
-  font-size: 14px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  width: 100%;
-  max-width: 300px;
+.pricing-description {
+  background-color: #f9fafb;
+  border-left: 4px solid #1e3a8a;
+  padding: 16px 20px;
+  margin: 16px 0;
+  border-radius: 8px;
+  font-size: 15px;
+  line-height: 1.6;
+  color: #374151;
+}
+
+.pricing-description p {
+  margin: 10px 0;
+}
+
+/* Tiêu đề chính */
+.title {
+  text-align: center;
+  font-size: 32px;
+  font-weight: 600;
+  color: #003366;
+  margin-bottom: 12px;
+}
+
+/* Tiêu đề phụ */
+.subtitle {
+  text-align: center;
+  font-size: 18px;
+  color: #666;
+  margin-bottom: 40px;
+}
+
+/* Grid dịch vụ */
+.service-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 28px;
+  margin-top: 32px;
+}
+
+/* Card dịch vụ */
+.service-card {
+  background-color: #ffffff;
+  border-radius: 16px;
+  padding: 28px 24px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+  border-left: 4px solid transparent;
+  transition: all 0.3s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+}
+
+.service-card:hover {
+  transform: translateY(-4px);
+  border-left: 6px solid #adb5bd;
+  /* xám sáng sang trọng */
+  box-shadow: 0 16px 38px rgba(173, 181, 189, 0.3);
+  /* bóng nhẹ màu xám */
+  background-color: #f8f9fa;
+  /* nền sáng dịu */
+}
+
+/* Tên dịch vụ */
+.service-name {
+  font-size: 20px;
+  font-weight: 600;
+  color: #003366;
+  margin-bottom: 12px;
+}
+
+/* Mô tả */
+.service-description {
+  font-size: 15px;
+  color: #555;
+  margin-bottom: 20px;
+  min-height: 60px;
+}
+
+/* Thông tin chi tiết */
+.service-info p {
+  margin: 6px 0;
+  font-size: 15px;
+  color: #444;
+}
+
+.service-info p strong {
+  color: #222;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .title {
+    font-size: 26px;
+  }
+
+  .subtitle {
+    font-size: 16px;
+  }
+
+  .service-card {
+    padding: 20px 18px;
+  }
+
+  .service-name {
+    font-size: 18px;
+  }
+
+  .service-description,
+  .service-info p {
+    font-size: 14px;
+  }
 }
