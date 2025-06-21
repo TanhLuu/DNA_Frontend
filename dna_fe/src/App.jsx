@@ -89,7 +89,7 @@ import LegalPrice from './pages/LegalPrice';
 import QRCode from './pages/auth/QRCode';
 import CompletePayment from './pages/auth/CompletePayment';
 import History from './pages/auth/History';
-import NewsPage from './pages/auth/NewsPage';
+import NewsPage from './pages/auth/BlogList';
 import Profile from './components/Profile';
 import OrderCivil from './pages/auth/OrderCivil';
 import OrderLegal from './pages/auth/OrderLegal';
@@ -99,7 +99,13 @@ import ADNft from './pages/auth/ADNfather';
 import ADNgrandparent from './pages/auth/ADNgrandft';
 import ADNmother from './pages/auth/ADNmother';
 import ADNsibling from './pages/auth/ADNbrosis';
+import BlogList from './pages/auth/BlogList';
+import BlogDetail from './pages/auth/BlogDetail';
+import BlogAdminList from './pages/admin/BlogAdminList';
+import CreateBlog from './pages/admin/CreateBlog';
+import EditBlog from './pages/admin/EditBlog';
 import './styles/global.css';
+
 
 function App() {
   const [role, setRole] = useState(localStorage.getItem("role"));
@@ -135,7 +141,11 @@ function App() {
                <Route path="/guide/mother" element={<ADNmother />} />
                <Route path="/guide/sibling" element={<ADNsibling />} />
           <Route path="/payment/complete/:orderId" element={<CompletePayment />} />
-
+             <Route path="/admin/blogs" element={<BlogAdminList />} />
+        <Route path="/admin/create" element={<CreateBlog />} />
+        <Route path="/admin/edit/:id" element={<EditBlog />} />
+          <Route path="/blog" element={<BlogList />} />
+        <Route path="/blog/:id" element={<BlogDetail />} />
             {(!role || role === "customer") && <Route path="/" element={<Home />} />}
 
             {role === "staff" && (
