@@ -19,8 +19,8 @@
 }
 
 .half-width {
-    max-width: 50%; /* Giới hạn chiều rộng một nửa màn hình */
-    margin-left: 0; /* Căn trái để phù hợp với thiết kế */
+    max-width: 50%;
+    margin-left: 0; 
 }
 
 .hero-overlay {
@@ -420,3 +420,42 @@
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
 }
 
+.certification-container {
+    text-align: center;
+    padding: 60px 20px;
+    background-color: #f9f9f9;
+}
+
+.certification-title {
+    font-size: 28px;
+    font-weight: 600;
+    margin-bottom: 30px;
+    color: #333;
+}
+
+.certification-logos {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 40px;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.certification-logos img {
+    max-height: 70px;
+    max-width: 120px;
+    filter: grayscale(100%);
+    opacity: 0.7;
+    transition: 0.3s ease-in-out;
+}
+
+.certification-logos img:hover {
+    filter: grayscale(0%);
+    opacity: 1;
+}
+
+.certification-note {
+    font-size: 16px;
+    color: #666;
+}

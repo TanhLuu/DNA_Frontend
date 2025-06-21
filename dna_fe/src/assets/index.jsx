@@ -22,6 +22,10 @@ import partner2 from './partner2.jpg';
 import partner3 from './partner3.jpg';
 import partner4 from './partner4.jpg';
 import partner5 from './partner5.jpg';
+import ART from './ART.jpg';
+import CAP from './CAP.jpg';
+import CLIA from './CLIA.jpg';
+import ISO from './ISO.jpg';
 
 // Export all images
 export {
@@ -49,4 +53,8 @@ export {
   partner3,
   partner4,
   partner5,
+  ART,
+  CAP,
+  CLIA,
+  ISO
 };

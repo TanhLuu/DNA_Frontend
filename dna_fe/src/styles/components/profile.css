@@ -1,60 +1,72 @@
-/* src/styles/components/profile.css */
-
-body {
-  background-color: #f4f6f9;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+.profile-background {
+    background: linear-gradient(135deg, #494949, #b6b6b6);
+    width: 100%;
+    padding: 30px 0 5px 0;
 }
 
 .profile-container {
-  max-width: 850px;
-  margin: 165px auto 50px;
-  padding: 48px;
-  background-color: #ffffff;
-  border-radius: 20px;
-  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.08);
-  transition: all 0.3s ease-in-out;
+  max-width: 800px;
+  margin: 160px auto 70px;
+  padding: 40px;
+  background-color: #fefefe;
+  border-radius: 16px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  font-family: 'Segoe UI', sans-serif;
 }
 
-.profile-container h2 {
-  font-size: 32px;
-  color: #003366;
+.profile-header {
   text-align: center;
-  font-weight: 700;
   margin-bottom: 40px;
-  text-transform: uppercase;
 }
 
-.profile-field {
+.profile-avatar {
+  width: 100px;
+  height: 100px;
+  background-color: #007bff;
+  color: white;
+  font-size: 32px;
+  font-weight: bold;
   display: flex;
   align-items: center;
-  gap: 20px;
-  margin-bottom: 24px;
+  justify-content: center;
+  border-radius: 50%;
+  margin: 0 auto 15px;
+  box-shadow: 0 0 10px rgba(0, 123, 255, 0.3);
+}
+
+.profile-header h2 {
+  font-size: 24px;
+  color: #333;
+}
+
+/* Grid layout 2 columns */
+.profile-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 25px 40px;
 }
 
 .profile-field label {
-  flex: 0 0 180px;
-  font-size: 16px;
-  font-weight: 600;
-  color: #333;
+  display: block;
+  font-weight: 500;
+  margin-bottom: 6px;
+  color: #555;
 }
 
 .profile-field input,
 .profile-field select {
-  flex: 1;
-  padding: 12px 16px;
-  font-size: 16px;
-  border: 2px solid #e0e0e0;
-  border-radius: 12px;
-  background-color: #f9f9f9;
-  transition: all 0.3s ease-in-out;
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: 0.3s;
 }
 
 .profile-field input:focus,
 .profile-field select:focus {
-  background-color: #fff;
   border-color: #007bff;
   outline: none;
-  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2);
 }
 
 .profile-button {
@@ -63,23 +75,22 @@ body {
 }
 
 .profile-button button {
-  padding: 14px 32px;
   background-color: #007bff;
-  color: #fff;
-  font-size: 18px;
-  font-weight: 600;
+  color: white;
   border: none;
-  border-radius: 12px;
+  padding: 14px 32px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 500;
   cursor: pointer;
-  transition: background-color 0.3s, transform 0.2s;
+  transition: background-color 0.3s;
 }
 
 .profile-button button:hover {
   background-color: #0056b3;
-  transform: translateY(-2px);
 }
 
 .profile-button button:disabled {
-  opacity: 0.6;
+  background-color: #999;
   cursor: not-allowed;
 }

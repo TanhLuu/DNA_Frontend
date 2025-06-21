@@ -12,7 +12,7 @@ const ServiceDetailDialog = ({ open, onClose, service }) => {
       <DialogTitle>Chi tiết dịch vụ</DialogTitle>
       <DialogContent dividers>
         <Typography variant="subtitle1"><strong>Tên dịch vụ:</strong> {service.serviceName}</Typography>
-        <Typography variant="subtitle1"><strong>Loại dịch vụ:</strong> {service.servicePurpose}</Typography>
+        <Typography variant="subtitle1"><strong>Loại dịch vụ:</strong> {service.serviceType}</Typography>
         <Typography variant="subtitle1"><strong>Thời gian xét nghiệm:</strong> {service.timeTest} ngày</Typography>
         <Typography variant="subtitle1">
           <strong>Giá:</strong> {Number(service.price).toLocaleString('vi-VN')} VND

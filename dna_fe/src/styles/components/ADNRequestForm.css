@@ -1,8 +1,6 @@
-
-
 .adn-form-wrapper {
   max-width: 1000px;
-  margin: 40px auto;
+  margin: 170px auto 30px;
   background-color: #fff;
   padding: 40px;
   border-radius: 14px;
@@ -82,6 +80,11 @@
   font-weight: bold;
   font-size: 18px;
   color: #2c3e50;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* hoặc center nếu bạn muốn căn giữa */
+  gap: 8px; /* thêm khoảng cách giữa giá và nút */
+
 }
 
 .adn-submit-btn {

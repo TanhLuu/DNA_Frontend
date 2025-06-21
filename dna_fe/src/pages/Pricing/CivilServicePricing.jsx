@@ -59,7 +59,7 @@ const CivilServicePricing = () => {
               <div className="service-info">
                 <p><strong>Thời gian xét nghiệm:</strong> {service.timeTest} ngày</p>
                 <p><strong>Giá:</strong> {service.price.toLocaleString('vi-VN')} VNĐ</p>
-                <p><strong>Mục đích:</strong> {service.servicePurpose}</p>
+                <p><strong>Loại dịch vụ:</strong> {service.serviceType}</p>
               </div>
             </div>
           );

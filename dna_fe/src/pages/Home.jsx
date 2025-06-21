@@ -248,6 +248,19 @@ const Home = () => {
                     <img src={asset.partner5} alt="Partner 5" />
                 </div>
             </div>
+
+            <div className="certification-container">
+                <h2 className="certification-title">XÉT NGHIỆM ADN VỚI SỰ CÔNG NHẬN CÓ UY TÍN</h2>
+                <div className="certification-logos">
+                    <img src={asset.CLIA} alt="CLIA" />
+                    <img src={asset.CAP} alt="CAP" />
+                    <img src={asset.ART} alt="ART" />
+                    <img src={asset.ISO} alt="ISO" />
+                </div>
+                <p className="certification-note">
+                    Chứng nhận được áp dụng cho các xét nghiệm DNA hợp pháp trong phạm vi.
+                </p>
+            </div>
         </div>
     );
 };

@@ -102,7 +102,7 @@ const ServiceManagement = () => {
                 filteredServices.map(service => (
                   <tr key={service.serviceID}>
                     <td>{service.serviceName}</td>
-                    <td>{service.servicePurpose}</td>
+                    <td>{service.serviceType}</td>
                     <td>{service.timeTest}</td>
                     <td>{Number(service.price).toLocaleString('vi-VN')}</td>
                     <td>

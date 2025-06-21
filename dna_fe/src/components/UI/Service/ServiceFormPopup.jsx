@@ -8,7 +8,7 @@ import { createService, updateService } from '../../../api/serviceApi';
 const ServiceFormPopup = ({ open, onClose, serviceToEdit, onSuccess }) => {
   const [formData, setFormData] = useState({
     serviceName: '',
-    servicePurpose: '',
+    serviceType: '',
     timeTest: 0,
     describe: '',
     price: 0
@@ -22,7 +22,7 @@ const ServiceFormPopup = ({ open, onClose, serviceToEdit, onSuccess }) => {
     if (serviceToEdit) {
       setFormData({
         serviceName: serviceToEdit.serviceName,
-        servicePurpose: serviceToEdit.servicePurpose,
+        serviceType: serviceToEdit.serviceType,
         timeTest: serviceToEdit.timeTest,
         describe: serviceToEdit.describe || '',
         price: serviceToEdit.price
@@ -30,7 +30,7 @@ const ServiceFormPopup = ({ open, onClose, serviceToEdit, onSuccess }) => {
     } else {
       setFormData({
         serviceName: '',
-        servicePurpose: '',
+        serviceType: '',
         timeTest: '',
         describe: '',
         price: ''
@@ -49,7 +49,7 @@ const ServiceFormPopup = ({ open, onClose, serviceToEdit, onSuccess }) => {
   const validateForm = () => {
     const newErrors = {};
     if (!formData.serviceName.trim()) newErrors.serviceName = 'Tên dịch vụ là bắt buộc';
-    if (!formData.servicePurpose.trim()) newErrors.servicePurpose = 'Loại dịch vụ là bắt buộc';
+    if (!formData.serviceType.trim()) newErrors.serviceType = 'Loại dịch vụ là bắt buộc';
     if (formData.price <= 0) newErrors.price = 'Giá phải lớn hơn 0';
     if (formData.timeTest <= 0) newErrors.timeTest = 'Thời gian xét nghiệm phải lớn hơn 0';
     setErrors(newErrors);
@@ -89,12 +89,12 @@ const ServiceFormPopup = ({ open, onClose, serviceToEdit, onSuccess }) => {
           helperText={errors.serviceName}
         />
 
-        <FormControl fullWidth margin="dense" error={!!errors.servicePurpose}>
-          <InputLabel id="servicePurpose-label">Loại Dịch Vụ</InputLabel>
+        <FormControl fullWidth margin="dense" error={!!errors.serviceType}>
+          <InputLabel id="serviceType-label">Loại Dịch Vụ</InputLabel>
           <Select
-            labelId="servicePurpose-label"
-            name="servicePurpose"
-            value={formData.servicePurpose}
+            labelId="serviceType-label"
+            name="serviceType"
+            value={formData.serviceType}
             onChange={handleChange}
             label="Loại Dịch Vụ"
           >
@@ -102,8 +102,8 @@ const ServiceFormPopup = ({ open, onClose, serviceToEdit, onSuccess }) => {
             <MenuItem value="Hành chính">Hành chính</MenuItem>
           </Select>
         </FormControl>
-        {errors.servicePurpose && (
-          <span style={{ color: 'red', fontSize: 12 }}>{errors.servicePurpose}</span>
+        {errors.serviceType && (
+          <span style={{ color: 'red', fontSize: 12 }}>{errors.serviceType}</span>
         )}
 
         <TextField

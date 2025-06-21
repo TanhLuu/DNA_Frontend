@@ -23,11 +23,11 @@ export const deleteService = async (id) => {
 
 export const getAllCivilServices = async () => {
   const res = await axiosInstance.get('/api/services');
-  return res.data.filter(service => service.servicePurpose === "Dân sự");
+  return res.data.filter(service => service.serviceType === "Dân sự");
 };
 
 export const getAllLegalServices = async () => {
   const res = await axiosInstance.get('/api/services');
-  return res.data.filter(service => service.servicePurpose === "Hành chính");
+  return res.data.filter(service => service.serviceType === "Hành chính");
 };
 

@@ -47,19 +47,19 @@ const useOrders = () => {
               .then(service => ({
                 serviceId: order.serviceId,
                 serviceName: service.serviceName || 'N/A',
-                servicePurpose: service.servicePurpose || 'N/A',
+                serviceType: service.serviceType || 'N/A',
                 timeTest: service.timeTest || 'N/A',
               }))
               .catch(() => ({
                 serviceId: order.serviceId,
                 serviceName: 'N/A',
-                servicePurpose: 'N/A',
+                serviceType: 'N/A',
                 timeTest: 'N/A',
               }))
             : Promise.resolve({
               serviceId: order.serviceId,
               serviceName: 'N/A',
-              servicePurpose: 'N/A',
+              serviceType: 'N/A',
               timeTest: 'N/A',
             })
         );
