@@ -32,6 +32,9 @@ import FormStep5 from './components/FormStep5';
 import DichVu from './pages/DichVu';
 import BangGia from './pages/BangGia';
 import FormStep6 from './components/FormStep6';
+import Blog  from './pages/Blog';
+import BlogList from './pages/BlogList';
+import BlogDetail from './pages/BlogDetail';
 function App() {
   const [role, setRole] = useState(localStorage.getItem('role')?.toLowerCase());
   useEffect(() => {
@@ -104,7 +107,14 @@ function App() {
       </div>
     </Router>
     */
-   <FormStep1/>
+    <Router>
+      <Routes>
+        <Route path="/" element={<Navigate to="/blogs" replace />} />
+        <Route path="/blogs" element={<BlogList />} />
+        <Route path="/blog/:id" element={<BlogDetail />} />
+        <Route path="/create-blog" element={<Blog />} />
+      </Routes>
+    </Router>
   );
 }
 
