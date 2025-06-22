@@ -1,135 +1,97 @@
-import React, { useState } from 'react';
-import '../styles/components/Profile.css';
+import React from 'react';
+import '../styles/components/profile.css';
+import { useCustomerProfile } from '../hooks/useCustomerProfile';
+
+const genderOptions = ['Nam', 'Nữ', 'Khác'];
+const documentOptions = ['CCCD', 'Giấy khai sinh', 'Hộ chiếu'];
 
 const Profile = () => {
-  const [formData, setFormData] = useState({
-    fullName: 'Nguyễn Văn An',
-    phone: '0945123456',
-    email: 'nguyenvanan@example.com',
-    address: '123 Đường Lê Lợi, Quận 1, TP. HCM',
-    birthDate: '15/03/1980',
-    gender: 'Nam'
-  });
+  const {
+    account, customer, isLoading, isSubmitting,
+    setAccount, setCustomer, handleSave
+  } = useCustomerProfile();
 
-  const [isEditing, setIsEditing] = useState(false);
+  const handleChange = (setter) => (e) =>
+    setter((prev) => ({ ...prev, [e.target.name]: e.target.value }));
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setIsEditing(false);
-  };
+  if (isLoading) return <div>Đang tải...</div>;
 
   return (
+    <div className="profile-background">
     <div className="profile-container">
-      <div className="profile-card">
-        <div className="profile-header">
-          <div className="avatar">
-            <span className="avatar-text">
-              {formData.fullName.split(' ').map(n => n[0]).join('').substring(0, 2)}
-            </span>
-          </div>
-          <div className="user-info">
-            <h2>{formData.fullName}</h2>
-            <p>{formData.email}</p>
-          </div>
+      <div className="profile-header">
+        <div className="profile-avatar">
+          {account.fullName
+            ?.split(' ')
+            .map((w) => w[0])
+            .join('')
+            .toUpperCase()}
+        </div>
+        <h2>{account.fullName || 'Thông tin cá nhân'}</h2>
+      </div>
+
+      <div className="profile-grid">
+        <div className="profile-field">
+          <label>Họ tên:</label>
+          <input type="text" name="fullName" value={account.fullName} onChange={handleChange(setAccount)} />
+        </div>
+        <div className="profile-field">
+          <label>Giới tính:</label>
+          <select name="gender" value={customer.gender} onChange={handleChange(setCustomer)}>
+            {genderOptions.map((g) => (
+              <option key={g} value={g}>{g}</option>
+            ))}
+          </select>
         </div>
 
-        <div className="profile-content">
-          <h3>Thông tin cá nhân</h3>
-          <div className="info-section">
-            <div className="info-row">
-              <label>Ngày sinh:</label>
-              <span>{formData.birthDate}</span>
-            </div>
-            <div className="info-row">
-              <label>Giới tính:</label>
-              <span>{formData.gender}</span>
-            </div>
-            <div className="info-row">
-              <label>Số điện thoại:</label>
-              <span>{formData.phone}</span>
-            </div>
-            <div className="info-row">
-              <label>Email:</label>
-              <span>{formData.email}</span>
-            </div>
-            <div className="info-row">
-              <label>Địa chỉ:</label>
-              <span>{formData.address}</span>
-            </div>
-          </div>
+        <div className="profile-field">
+          <label>Số điện thoại:</label>
+          <input type="text" name="phone" value={account.phone} onChange={handleChange(setAccount)} />
+        </div>
+        <div className="profile-field">
+          <label>Ngày sinh:</label>
+          <input type="date" name="dateOfBirth" value={customer.dateOfBirth} onChange={handleChange(setCustomer)} />
+        </div>
 
-          <h3>Chỉnh sửa thông tin</h3>
-          <form onSubmit={handleSubmit} className="edit-form">
-            <div className="form-group">
-              <label>Họ tên</label>
-              <input
-                type="text"
-                name="fullName"
-                value={formData.fullName}
-                onChange={handleInputChange}
-                disabled={!isEditing}
-              />
-            </div>
-            <div className="form-group">
-              <label>Số điện thoại</label>
-              <input
-                type="text"
-                name="phone"
-                value={formData.phone}
-                onChange={handleInputChange}
-                disabled={!isEditing}
-              />
-            </div>
-            <div className="form-group">
-              <label>Địa chỉ email</label>
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleInputChange}
-                disabled={!isEditing}
-              />
-            </div>
-            <div className="form-group">
-              <label>Địa chỉ</label>
-              <input
-                type="text"
-                name="address"
-                value={formData.address}
-                onChange={handleInputChange}
-                disabled={!isEditing}
-              />
-            </div>
-            <div className="button-group">
-              {!isEditing ? (
-                <button type="button" onClick={() => setIsEditing(true)} className="edit-btn">
-                  Chỉnh sửa
-                </button>
-              ) : (
-                <>
-                  <button type="submit" className="save-btn">Lưu thay đổi</button>
-                  <button 
-                    type="button" 
-                    onClick={() => setIsEditing(false)} 
-                    className="cancel-btn"
-                  >
-                    Đặt lại
-                  </button>
-                </>
-              )}
-            </div>
-          </form>
+        <div className="profile-field">
+          <label>Email:</label>
+          <input type="email" name="email" value={account.email} onChange={handleChange(setAccount)} />
+        </div>
+        <div className="profile-field">
+          <label>Địa chỉ:</label>
+          <input type="text" name="address" value={customer.address} onChange={handleChange(setCustomer)} />
+        </div>
+
+        <div className="profile-field">
+          <label>Loại giấy tờ:</label>
+          <select name="documentType" value={customer.documentType} onChange={handleChange(setCustomer)}>
+            {documentOptions.map((doc) => (
+              <option key={doc} value={doc}>{doc}</option>
+            ))}
+          </select>
+        </div>
+        <div className="profile-field">
+          <label>Số giấy tờ:</label>
+          <input type="text" name="cccd" value={customer.cccd} onChange={handleChange(setCustomer)} />
+        </div>
+
+        <div className="profile-field">
+          <label>Nơi cấp:</label>
+          <input type="text" name="placeOfIssue" value={customer.placeOfIssue} onChange={handleChange(setCustomer)} />
+        </div>
+        <div className="profile-field">
+          <label>Ngày cấp:</label>
+          <input type="date" name="dateOfIssue" value={customer.dateOfIssue} onChange={handleChange(setCustomer)} />
         </div>
       </div>
+
+      <div className="profile-button">
+        <button onClick={handleSave} disabled={isSubmitting}>
+          {isSubmitting ? 'Đang lưu...' : 'Lưu thông tin'}
+        </button>
+      </div>
     </div>
+            </div>
   );
 };
 

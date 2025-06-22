@@ -1,0 +1,132 @@
+.service-container {
+  background-color: #f5f8fc;
+  padding: 30px;
+  min-height: 100vh;
+}
+
+.service-card {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
+}
+
+.service-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #0080ff;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+.add-button {
+  background-color: #e0e0e0;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.search-bar input {
+  padding: 6px 10px;
+  width: 250px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  margin-left: 5px;
+}
+
+.service-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.service-table th,
+.service-table td {
+  border: 1px solid #ddd;
+  padding: 12px;
+  text-align: left;
+}
+
+.service-table th {
+  background-color: #f1f1f1;
+  font-weight: bold;
+}
+
+.edit-btn {
+  background-color: #ffc107;
+  color: black;
+  border: none;
+  padding: 6px 12px;
+  margin-right: 5px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.delete-btn {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* Nút hành động chung */
+.service-btn {
+  padding: 6px 10px;
+  border-radius: 6px;
+  margin-right: 5px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  font-size: 14px;
+}
+
+/* Nút Chi tiết */
+.service-detail-btn {
+  background-color: #e0f0ff;
+  border: 1px solid #2196f3;
+  color: #0d47a1;
+}
+
+.service-detail-btn:hover {
+  background-color: #bbdefb;
+}
+
+/* Nút Sửa */
+.service-edit-btn {
+  background-color: #ffe082;
+  color: #8d6e63;
+}
+
+.service-edit-btn:hover {
+  background-color: #ffd54f;
+}
+
+/* Nút Xóa */
+.service-delete-btn {
+  background-color: #ef9a9a;
+  color: #b71c1c;
+}
+
+.service-delete-btn:hover {
+  background-color: #e57373;
+}
+
+/* Khi disable */
+.service-btn:disabled {
+  background-color: #ccc !important;
+  color: #666 !important;
+  cursor: not-allowed !important;
+}

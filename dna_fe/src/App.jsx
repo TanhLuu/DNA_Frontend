@@ -1,184 +1,98 @@
-// import React from 'react';
-// import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-// import Header from './components/Shared/Header';
-// import Footer from './components/Shared/Footer';
-// import Login from './pages/auth/Login';
-// import Register from './pages/auth/Register';
-// import Home from './pages/Home';
-// import AdminLayout from './components/Shared/AdminLayout';
-// import './styles/global.css';
-
-// function App() {
-//   return (
-//     <Router>
-//       <div className="app">
-//         <Header />
-        
-//         <main className="main-content">
-//           <Routes>
-//             <Route path="/" element={<Home />} />
-
-//             {/* <Route path="/admin" element={<AdminLayout />} /> */}
-//             <Route path="/login" element={<Login />} />
-//             <Route path="/register" element={<Register />} />
-            
-//           </Routes>
-//         </main>
-        
-//         <Footer />
-//       </div>
-//     </Router>
-//   );
-// }
-
-// export default App;
-
-
-// import React from 'react';
-// import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-// import Header from './components/Shared/Header';
-// import Footer from './components/Shared/Footer';
-// import Login from './pages/auth/Login';
-// import Register from './pages/auth/Register';
-// import Home from './pages/Home';
-// import AdminLayout from './components/Shared/AdminLayout'; // bạn làm sau
-// import './styles/global.css';
-
-// function App() {
-//   const role = localStorage.getItem('role'); // 'customer' | 'staff' | null
-
-//   return (
-//     <Router>
-//       <div className="app">
-//         {/* Chỉ hiển thị Header/Footer nếu là customer hoặc chưa login */}
-//         {(role !== 'staff') && <Header />}
-
-//         <main className="main-content">
-//           <Routes>
-//             {/* Với customer hoặc chưa login, show Home */}
-//             {(role === 'customer' || !role) && <Route path="/" element={<Home />} />}
-
-//             {/* Với staff, show trang trắng (placeholder AdminLayout sau này) */}
-//             {role === 'staff' && <Route path="/admin" element={<AdminLayout />} />} 
-
-//             <Route path="/login" element={<Login />} />
-//             <Route path="/register" element={<Register />} />
-//           </Routes>
-//         </main>
-
-//         {(role !== 'staff') && <Footer />}
-//       </div>
-//     </Router>
-//   );
-// }
-
-// export default App;
-
-
-//Code test role
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Header from './components/Shared/Header';
-import Footer from './components/Shared/Footer';
-import Login from './pages/auth/Login';
-import Register from './pages/auth/Register';
-import Home from './pages/Home';
-import AdminLayout from './components/Shared/AdminLayout';
-import CivilPrice from './pages/CivilPrice';
-import LegalPrice from './pages/LegalPrice';
-
-import History from './pages/auth/History';
-import NewsPage from './pages/auth/BlogList';
-import Profile from './components/Profile';
-import OrderCivil from './pages/auth/OrderCivil';
-import OrderLegal from './pages/auth/OrderLegal';
-import CivilADNGuide from './pages/auth/CivilADNGuide';
-import LegalADNGuide from './pages/auth/LegalADNGuide';
-import ADNft from './pages/auth/ADNfather';
-import ADNgrandparent from './pages/auth/ADNgrandft';
-import ADNmother from './pages/auth/ADNmother';
-import ADNsibling from './pages/auth/ADNbrosis';
-import BlogList from './pages/auth/BlogList';
-import BlogDetail from './pages/auth/BlogDetail';
-import BlogAdminList from './pages/admin/BlogAdminList';
-import CreateBlog from './pages/admin/CreateBlog';
-import EditBlog from './pages/admin/EditBlog';
-import PaymentPage from './pages/auth/PaymentPage';
-import VNPayReturnPage from './pages/auth/VNPayReturnPage';
-import PaymentHistory from './pages/auth/PaymentHistory';
 import './styles/global.css';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import Header from './components/Share/Header';
+import Footer from './components/Share/Footer';
+import AdminLayout from './components/Share/AdminLayout';
+import ResetPasswordFromEmail from './pages/auth/ResetPasswordFromEmail';
+import ResetPassword from './components/UI/Auth/ResetPassword';
+import Home from './pages/Home';
+import OrdersPage from './pages/admin/OrdersPage';
+import Profile from './components/Profile';
+import ServiceManagement from './pages/admin/ServiceManagement';
+import Dashboard from './pages/admin/Dashboard';
+import ADNRequestFormCivil from './components/ADN_Form/ADNRequestFormCivil';
+import ADNRequestLegalForm from './components/ADN_Form/ADNRequestLegalForm';
+import CivilServicePricing from './pages/Pricing/CivilServicePricing';
+import LegalServicePricing from './pages/Pricing/LegalServicePricing';
+import AllServicePricing from './pages/Pricing/AllServicePricing';
+import OrderHistory from './pages/customer/OrderHistory';
+import OrderDetailAdmin from './pages/admin/OrderDetailAdmin';
+import OrderDetailCustomer from './pages/customer/OrderDetailCustomer';
+import TestResultInput from "./pages/admin/TestResultInput";
 
 
 function App() {
-  const [role, setRole] = useState(localStorage.getItem("role"));
-    const customerId = localStorage.getItem("customerId"); 
+  const [role, setRole] = useState(localStorage.getItem('role')?.toLowerCase());
+  useEffect(() => {
+    const checkRole = () => {
+      const currentRole = localStorage.getItem('role')?.toLowerCase();
+      if (currentRole !== role) {
+        setRole(currentRole);
+      }
+    };
+
+    const interval = setInterval(checkRole, 100);
+    return () => clearInterval(interval);
+  }, [role]);
+
   useEffect(() => {
     const handleStorageChange = () => {
-      setRole(localStorage.getItem("role"));
+      setRole(localStorage.getItem('role')?.toLowerCase());
     };
-    window.addEventListener("storage", handleStorageChange);
-    return () => window.removeEventListener("storage", handleStorageChange);
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
   }, []);
 
   return (
     <Router>
       <div className="app">
-        {role !== "staff" && <Header />}
+        {(role !== 'staff' && role !== 'manager') && <Header />}
 
         <main className="main-content">
           <Routes>
-            
-            <Route path="/civil-price" element={<CivilPrice />} />
-            <Route path="/legal-price" element={<LegalPrice />} />
-           
-            <Route path="/news" element={<NewsPage />} />
-            <Route path="/history" element={<History />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/order/civil" element={<OrderCivil />} />
-            <Route path="/order/legal" element={<OrderLegal />} />
-             <Route path="/civil" element={<CivilADNGuide />} />
-              <Route path="/legal" element={<LegalADNGuide />} />
-              <Route path="/adn-father" element={<ADNft />} />
-              <Route path="/grandparent" element={<ADNgrandparent />} />
-               <Route path="/guide/mother" element={<ADNmother />} />
-               <Route path="/guide/sibling" element={<ADNsibling />} />
-         
-             <Route path="/admin/blogs" element={<BlogAdminList />} />
-        <Route path="/admin/create" element={<CreateBlog />} />
-        <Route path="/admin/edit/:id" element={<EditBlog />} />
-          <Route path="/blog" element={<BlogList />} />
-        <Route path="/blog/:id" element={<BlogDetail />} />
-        {role === "customer" && (
-  <>
-    <Route path="/payment" element={<PaymentPage />} />
-    <Route path="/payment-history" element={<PaymentHistory customerId={customerId} />} />
-    <Route path="/history" element={<History />} />
-    <Route path="/profile" element={<Profile />} />
-  </>
-)}
+            <Route path="/change-password" element={<ResetPassword />} />
+            <Route path="/reset-password" element={<ResetPasswordFromEmail />} />
+            <Route path="/requestFormCivil" element={<ADNRequestFormCivil />} />
+            <Route path="/requesFormtLegal" element={<ADNRequestLegalForm />} />
+            <Route path="/civil-price" element={<CivilServicePricing />} />
+            <Route path="/legal-price" element={<LegalServicePricing />} />
+            <Route path="/all-price" element={<AllServicePricing />} />
 
-{/* Route kết quả VNPay (ai cũng vào được khi redirect từ VNPay) */}
-<Route path="/vnpay-return" element={<VNPayReturnPage />} />
-            {(!role || role === "customer") && <Route path="/" element={<Home />} />}
-
-            {role === "staff" && (
-              <Route
-                path="/"
-                element={
-                  <AdminLayout>
-                    
-                  </AdminLayout>
-                }
-              />
+            {(role === 'staff' || role === 'manager') && (
+              <>
+                <Route path="/ordersPageAdmin" element={<AdminLayout> <OrdersPage /> </AdminLayout>} />
+                <Route path="/serviceManagement" element={<AdminLayout> <ServiceManagement /> </AdminLayout>}/>
+                <Route path="/dashboard" element={<AdminLayout><Dashboard /></AdminLayout>}/>
+                <Route path="/admin/orders/:orderId" element={<AdminLayout><OrderDetailAdmin /></AdminLayout>} />
+                <Route path="/admin/enter-test-results/:orderId" element={<TestResultInput />} />
+              </>
             )}
 
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
+            {(!role || role === 'customer') && (
+              <Route path="/" element={<Home />} />
+            )}
 
+            {role === 'customer' && (
+              <>
+                <Route path="/profile" element={<Profile />} />
+                <Route path="/OrderHistory" element={<OrderHistory />} />
+                <Route path="/customer/orders/:orderId" element={<OrderDetailCustomer />} />
+
+              </>
+            )}  
+
+            <Route path="*" element={
+              (role === 'staff' || role === 'manager') ? (
+                <Navigate to="/ordersPageAdmin" replace />
+              ) : (
+                <Navigate to="/" replace />
+              )
+            } />
           </Routes>
         </main>
 
-        {role !== "staff" && <Footer />}
+        {(role !== 'staff' && role !== 'manager') && <Footer />}
       </div>
     </Router>
   );
