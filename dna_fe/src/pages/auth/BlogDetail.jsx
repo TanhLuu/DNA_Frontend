@@ -26,15 +26,15 @@ const BlogDetail = () => {
     <div className="container" style={{ maxWidth: 800, margin: 'auto', padding: 40 }}>
       <Link to="/blog" style={{ display: 'inline-block', marginBottom: 16 }}>← Quay lại danh sách</Link>
       <h1>{blog.title}</h1>
-      {blog.img && (
+      {blog.blogImg && (
         <img
-          src={blog.img}
+          src={blog.blogImg}
           alt={blog.title}
           style={{ width: '100%', maxHeight: 350, objectFit: 'cover', borderRadius: 10, marginBottom: 20 }}
         />
       )}
       <div style={{ color: '#888', marginBottom: 16 }}>
-        {blog.date && (new Date(blog.date)).toLocaleDateString('vi-VN')}
+        {blog.blogDate && (new Date(blog.blogDate)).toLocaleDateString('vi-VN')}
       </div>
       <div className="markdown-content">
         <ReactMarkdown>{blog.content}</ReactMarkdown>

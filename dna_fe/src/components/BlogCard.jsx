@@ -15,9 +15,9 @@ const BlogCard = ({ blog, isAdmin, onDelete }) => (
       height: "100%",
     }}
   >
-    {blog.img && (
+    {blog.blogImg && (
       <img
-        src={blog.img}
+        src={blog.blogImg}
         alt={blog.title}
         style={{
           width: "100%",

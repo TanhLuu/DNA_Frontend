@@ -79,7 +79,11 @@ const Header = () => {
           <a href="/services"><strong>Dịch vụ</strong></a>
           
           <a href="/pricing"><strong>Bảng giá</strong></a>
-
+           {localStorage.getItem("role") === "customer" && (
+  <li>
+    <Link to="/payment">Thanh toán</Link>
+  </li>
+)}
            {/* <Link to="/civil-price"><strong>Xét nghiệm Dân sự</strong></Link>
           <Link to="/legal-price"><strong>Xét nghiệm Pháp lý</strong></Link> */}
           {/* <Link to="/legal" className="nav-link">Hướng Dẫn Hành Chính</Link>
