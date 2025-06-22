@@ -4,7 +4,7 @@ import useCustomerOrders from '../../hooks/useCustomerOrders';
 import OrderFilterBar from '../../components/UI/Order/OrderFilterBar';
 import { useNavigate } from 'react-router-dom';
 
-const CustomerHistory = () => {
+const OrderHistory = () => {
   const {
     filteredOrders,
     isLoading,
@@ -13,25 +13,23 @@ const CustomerHistory = () => {
     handleFilterChange
   } = useCustomerOrders();
 
-  
-
-  const getStatusClass = (status) => ({
-    PENDING: 'status-pending',
-    PREPARING: 'status-preparing',
-    COLLECTING: 'status-collecting',
-    TRANSFERRING: 'status-transferring',
-    TESTING: 'status-testing',
-    COMPLETED: 'status-completed',
-  }[status] || '');
+  const STATUS_LABELS = {
+    PENDING: "Đặt lịch / Đăng ký",           // Đơn hàng vừa được tạo, chờ xử lý
+    SEND_KIT: "Đã gửi kit",                  // Đã gửi bộ kit lấy mẫu cho khách hàng
+    SEND_SAMPLE: "Đã gửi mẫu lại trung tâm", // Khách hàng đã gửi mẫu về trung tâm
+    COLLECT_SAMPLE: "Đã thu mẫu",            // Đã thu mẫu tại trung tâm hoặc tại nhà
+    TESTED: "Đã xét nghiệm",                 // Đã hoàn thành xét nghiệm
+    COMPLETED: "Hoàn thành"                  // Đã trả kết quả, hoàn tất đơn hàng
+  };
 
   const formatDate = (dateStr) => dateStr ? new Date(dateStr).toLocaleDateString('vi-VN') : 'N/A';
   const formatPrice = (amount) => amount ? amount.toLocaleString('vi-VN') + ' VNĐ' : 'N/A';
 
   const navigate = useNavigate();
 
-const handleViewDetails = (orderId) => {
-  navigate(`/customer/orders/${orderId}`);
-};
+  const handleViewDetails = (orderId) => {
+    navigate(`/customer/orders/${orderId}`);
+  };
 
   if (isLoading) return <div className="orders-loading">Đang tải dữ liệu...</div>;
   if (error) return <div className="orders-error text-red-500">{error}</div>;
@@ -63,21 +61,14 @@ const handleViewDetails = (orderId) => {
               <tr key={order.orderId}>
                 <td>{order.orderId}</td>
                 <td>{serviceData[order.serviceId]?.serviceName || 'N/A'}</td>
-                <td>{serviceData[order.serviceId]?.servicePurpose || 'N/A'}</td>
+                <td>{serviceData[order.serviceId]?.serviceType || 'N/A'}</td>
                 <td>{order.resultDeliverAddress || 'N/A'}</td>
                 <td><span className="pill">{order.sampleType === 'center' ? 'Tại trung tâm' : 'Tự lấy mẫu'}</span></td>
                 <td>{serviceData[order.serviceId]?.timeTest || 'N/A'} ngày</td>
                 <td>{formatDate(order.orderDate)}</td>
                 <td>{formatPrice(order.amount)}</td>
-                <td className={`status ${getStatusClass(order.orderStatus)}`}>
-                  {{
-                    PENDING: 'Đặt lịch/Đăng ký',
-                    PREPARING: 'Chuẩn bị lấy mẫu',
-                    COLLECTING: 'Thu thập mẫu',
-                    TRANSFERRING: 'Chuyển mẫu',
-                    TESTING: 'Xét nghiệm',
-                    COMPLETED: 'Hoàn thành'
-                  }[order.orderStatus] || 'N/A'}
+                <td className={`status ${order.orderStatus}`}>
+                  {STATUS_LABELS[order.orderStatus] || order.orderStatus}
                 </td>
                 <td>
                   <button className="action-btn" onClick={() => handleViewDetails(order.orderId)}>Chi tiết đơn</button>
@@ -91,4 +82,4 @@ const handleViewDetails = (orderId) => {
   );
 };
 
-export default CustomerHistory;
+export default OrderHistory;

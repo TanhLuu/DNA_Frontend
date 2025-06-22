@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import '../../styles/components/ADNRequestForm.css';
 
 const ADNRequestForm = ({
@@ -19,198 +19,6 @@ const ADNRequestForm = ({
   handleSubmit,
   calculateTotalPrice,
 }) => {
-  const [isFormValid, setIsFormValid] = useState(false);
-
-  useEffect(() => {
-    const checkFormValidity = () => {
-      if (!customer.requesterName || !formData.receiveAt || !formData.testType || !sampleCount) {
-        return false;
-      }
-
-      for (let i = 1; i <= sampleCount; i++) {
-        const prefix = `person${i}`;
-        if (
-          !formData[`${prefix}Name`] ||
-          !formData[`${prefix}Gender`] ||
-          !formData[`${prefix}SampleType`] ||
-          (!isCivil && !formData[`${prefix}SampleAmount`])
-        ) {
-          return false;
-        }
-      }
-      return true;
-    };
-
-    setIsFormValid(checkFormValidity());
-  }, [customer.requesterName, formData, sampleCount, isCivil]);
-
-  const renderSampleFields = () => {
-    const fields = [];
-    for (let i = 1; i <= sampleCount; i++) {
-      const index = i;
-      fields.push(
-        <div className="adn-sample-block" key={index}>
-          <h4 className="adn-sample-title">Người cần phân tích mẫu {index}</h4>
-
-          <label>Họ và tên:</label>
-          <input
-            type="text"
-            name={`person${index}Name`}
-            onChange={handleInputChange}
-            required
-          />
-
-          <label>Ngày sinh:</label>
-          <input
-            type="date"
-            name={`person${index}Dob`}
-            onChange={handleInputChange}
-          />
-
-          <label>Giới tính:</label>
-          <select
-            name={`person${index}Gender`}
-            onChange={handleInputChange}
-            required
-          >
-            <option value="">Chọn giới tính</option>
-            <option value="Nam">Nam</option>
-            <option value="Nữ">Nữ</option>
-          </select>
-
-          {isCivil ? (
-            <>
-              <label>Mối quan hệ:</label>
-              <input
-                type="text"
-                name={`person${index}Relationship`}
-                placeholder="Nhập mối quan hệ"
-                onChange={handleInputChange}
-              />
-            </>
-          ) : (
-            <>
-              <label>Địa chỉ:</label>
-              <input
-                type="text"
-                name={`person${index}Address`}
-                placeholder="Nhập địa chỉ"
-                onChange={handleInputChange}
-              />
-
-              <label>Quốc tịch:</label>
-              <input
-                type="text"
-                name={`person${index}Nationality`}
-                onChange={handleInputChange}
-              />
-
-              <label>Loại giấy tờ:</label>
-              <select
-                name={`person${index}DocumentType`}
-                onChange={handleInputChange}
-              >
-                <option value="">Chọn loại giấy tờ</option>
-                <option value="CCCD">CCCD</option>
-                <option value="Hộ chiếu">Hộ chiếu</option>
-                <option value="Giấy khai sinh">Giấy khai sinh</option>
-              </select>
-
-              <label>Số / Quyển số:</label>
-              <input
-                type="text"
-                name={`person${index}DocumentNumber`}
-                onChange={handleInputChange}
-              />
-
-              <div className="adn-flex-row">
-                <div>
-                  <label>Ngày cấp:</label>
-                  <input
-                    type="date"
-                    name={`person${index}IssueDate`}
-                    onChange={handleInputChange}
-                  />
-                </div>
-                <div>
-                  <label>Ngày hết hạn:</label>
-                  <input
-                    type="date"
-                    name={`person${index}ExpiryDate`}
-                    onChange={handleInputChange}
-                  />
-                </div>
-              </div>
-
-              <label>Nơi cấp:</label>
-              <input
-                type="text"
-                name={`person${index}IssuePlace`}
-                onChange={handleInputChange}
-              />
-
-              <label>Mối quan hệ:</label>
-              <input
-                type="text"
-                name={`person${index}Relationship`}
-                placeholder="Nhập mối quan hệ"
-                onChange={handleInputChange}
-              />
-            </>
-          )}
-
-          <label>Mẫu xét nghiệm:</label>
-          <select
-            name={`person${index}SampleType`}
-            onChange={handleInputChange}
-            required
-          >
-            <option value="">Chọn loại mẫu</option>
-            <option value="Tóc">Tóc</option>
-            <option value="Móng tay/chân">Móng tay/chân</option>
-            <option value="Máu">Máu</option>
-            <option value="Niêm mạc">Niêm mạc</option>
-          </select>
-
-          {isCivil ? null : (
-            <>
-              <label>Số mẫu xét nghiệm:</label>
-              <input
-                type="number"
-                name={`person${index}SampleAmount`}
-                placeholder="Nhập số mẫu xét nghiệm"
-                onChange={handleInputChange}
-                min="1"
-                required
-              />
-            </>
-          )}
-
-          <label>Có tiền sử bệnh về máu hoặc cấy ghép tủy và nhận máu trong 6 tháng gần đây?</label>
-          <div className="adn-radio-group">
-            <label>
-              <input
-                type="radio"
-                name={`person${index}BloodHistory`}
-                value="yes"
-                onChange={handleInputChange}
-              /> Có
-            </label>
-            <label>
-              <input
-                type="radio"
-                name={`person${index}BloodHistory`}
-                value="no"
-                onChange={handleInputChange}
-              /> Không
-            </label>
-          </div>
-        </div>
-      );
-    }
-    return fields;
-  };
-
   const totalPrice = calculateTotalPrice(isCivil);
 
   if (isLoading) return <div className="adn-loading">Đang tải thông tin...</div>;
@@ -319,16 +127,13 @@ const ADNRequestForm = ({
           ))}
         </select>
 
-        {sampleCount >= 2 && renderSampleFields()}
-
         <div className="adn-total-cost">
           TỔNG CHI PHÍ: {totalPrice !== null ? `${totalPrice.toLocaleString('vi-VN')} VNĐ` : '.........'}
         </div>
 
         <button
           type="submit"
-          className={`adn-submit-btn ${!isFormValid ? 'disabled' : ''}`}
-          disabled={!isFormValid}
+          className="adn-submit-btn"
         >
           Gửi Yêu Cầu
         </button>

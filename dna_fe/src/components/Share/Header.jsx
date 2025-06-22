@@ -98,7 +98,7 @@ const Header = () => {
               <a href="/legal-price">Pháp lý</a>
             </div>
           </div>
-          <a href="/A">Hướng dẫn</a>
+          <a href="/order-detail">Hướng dẫn</a>
           <a href="/news">Tin tức</a>
         </nav>
 

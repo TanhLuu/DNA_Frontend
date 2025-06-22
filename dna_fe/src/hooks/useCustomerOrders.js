@@ -18,7 +18,7 @@ const useCustomerOrders = () => {
         if (!customerId) throw new Error('Không tìm thấy thông tin khách hàng.');
 
         const res = await getOrdersByCustomerId(customerId);
-        const ordersData = res.data;
+        const ordersData = res;
         setOrders(ordersData);
 
         const account = await getAccountByCustomerId(customerId); // account đã là data

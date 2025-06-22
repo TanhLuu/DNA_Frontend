@@ -5,7 +5,7 @@ const BASE_URL = '/auth';
 // Đăng nhập
 export const loginUser = async (username, password) => {
   const response = await axiosInstance.post(`${BASE_URL}/login`, { username, password });
-  return response;
+  return response.data; // ✅ Sửa tại đây: Trả về trực tiếp { account, token }
 };
 
 // Đăng ký
@@ -20,7 +20,7 @@ export const forgotPassword = async (email) => {
   return response.data;
 };
 
-// Đặt lại mật khẩu từ email với token (không yêu cầu xác thực)
+// Đặt lại mật khẩu từ email với token
 export const resetPasswordWithToken = async (token, newPassword) => {
   const response = await axiosInstance.post(`${BASE_URL}/reset-password`, {
     token,
@@ -29,7 +29,7 @@ export const resetPasswordWithToken = async (token, newPassword) => {
   return response.data;
 };
 
-// Đổi mật khẩu khi đã đăng nhập (yêu cầu xác thực)
+// Đổi mật khẩu khi đã đăng nhập
 export const resetPasswordAuthenticated = async (newPassword) => {
   const token = localStorage.getItem('token');
   const response = await axiosInstance.post(`${BASE_URL}/reset-password`, {
@@ -39,6 +39,7 @@ export const resetPasswordAuthenticated = async (newPassword) => {
   return response.data;
 };
 
+// Tạo tài khoản nhân viên
 export const createStaff = async (staffData) => {
   const response = await axiosInstance.post('/auth/create-staff', staffData);
   return response.data;

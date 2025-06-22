@@ -1,6 +1,15 @@
 import { useState } from 'react';
-import { loginUser, registerUser, createStaff, resetPasswordAuthenticated, resetPasswordWithToken } from '../api/authApi';
-import { getCustomerByAccountId, getStaffByAccountId } from '../api/accountApi';
+import {
+  loginUser,
+  registerUser,
+  createStaff,
+  resetPasswordAuthenticated,
+  resetPasswordWithToken
+} from '../api/authApi';
+import {
+  getCustomerByAccountId,
+  getStaffByAccountId
+} from '../api/accountApi';
 import { useNavigate } from 'react-router-dom';
 
 export const useAuth = () => {
@@ -16,15 +25,13 @@ export const useAuth = () => {
     localStorage.setItem('fullName', account.fullName || '');
     localStorage.setItem('email', account.email || '');
     localStorage.setItem('phone', account.phone || '');
-
     window.dispatchEvent(new Event('storage'));
   };
 
   const login = async (username, password) => {
     setError('');
     try {
-      const res = await loginUser(username, password);
-      const { account, token } = res.data;
+      const { account, token } = await loginUser(username, password); // ✅ bỏ .data
 
       if (!token) throw new Error('Token không tồn tại');
       saveAccountToLocalStorage(account, token);
@@ -33,16 +40,9 @@ export const useAuth = () => {
 
       if (role === 'STAFF') {
         try {
-          const staffRes = await getStaffByAccountId(account.id);
-          const staffId = staffRes?.id;
-          const staffRole = staffRes?.role;
-
-          if (staffId) {
-            localStorage.setItem('staffId', staffId);
-          }
-          if (staffRole) {
-            localStorage.setItem('staffRole', staffRole); // ví dụ: LAB, TECHNICIAN
-          }
+          const staff = await getStaffByAccountId(account.id); // ✅ bỏ .data
+          if (staff?.id) localStorage.setItem('staffId', staff.id);
+          if (staff?.role) localStorage.setItem('staffRole', staff.role);
         } catch (err) {
           console.warn('Không thể lấy staffId hoặc staffRole', err);
         }
@@ -50,16 +50,13 @@ export const useAuth = () => {
         navigate('/ordersPageAdmin', { replace: true });
       } else if (role === 'CUSTOMER') {
         try {
-          const customerRes = await getCustomerByAccountId(account.id);
-          const customerId = customerRes?.data?.id;
-
-          if (customerId) {
-            localStorage.setItem('customerId', customerId);
+          const customer = await getCustomerByAccountId(account.id); // ✅ bỏ .data
+          if (customer?.id) {
+            localStorage.setItem('customerId', customer.id);
+            navigate('/', { replace: true });
+          } else {
+            navigate('/profile', { replace: true });
           }
-
-          customerId
-            ? navigate('/', { replace: true })
-            : navigate('/profile', { replace: true });
         } catch {
           navigate('/profile', { replace: true });
         }
@@ -71,12 +68,11 @@ export const useAuth = () => {
     }
   };
 
-
   const register = async (form) => {
     setError('');
     setSuccess('');
     try {
-      await registerUser(form);
+      await registerUser(form); // ✅ bỏ .data
       await login(form.username, form.password);
       setSuccess('Đăng ký thành công! Đang chuyển hướng...');
     } catch (err) {
@@ -88,7 +84,7 @@ export const useAuth = () => {
     setError('');
     setSuccess('');
     try {
-      await createStaff(form);
+      await createStaff(form); // ✅ bỏ .data
       setSuccess('Tạo tài khoản nhân viên thành công!');
       callback?.();
     } catch (err) {
@@ -100,7 +96,7 @@ export const useAuth = () => {
     setError('');
     setSuccess('');
     try {
-      const res = await resetPasswordAuthenticated(newPassword);
+      const res = await resetPasswordAuthenticated(newPassword); // ✅ bỏ .data
       setSuccess(res);
     } catch (err) {
       setError(err.response?.data || 'Đổi mật khẩu thất bại');
@@ -111,7 +107,7 @@ export const useAuth = () => {
     setError('');
     setSuccess('');
     try {
-      const res = await resetPasswordWithToken(token, newPassword);
+      const res = await resetPasswordWithToken(token, newPassword); // ✅ bỏ .data
       setSuccess(res);
       localStorage.removeItem('resetToken');
     } catch (err) {

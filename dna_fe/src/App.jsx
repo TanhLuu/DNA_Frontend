@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import './styles/global.css';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Header from './components/Share/Header';
 import Footer from './components/Share/Footer';
@@ -10,14 +11,15 @@ import OrdersPage from './pages/admin/OrdersPage';
 import Profile from './components/Profile';
 import ServiceManagement from './pages/admin/ServiceManagement';
 import Dashboard from './pages/admin/Dashboard';
-import './styles/global.css';
 import ADNRequestFormCivil from './components/ADN_Form/ADNRequestFormCivil';
 import ADNRequestLegalForm from './components/ADN_Form/ADNRequestLegalForm';
 import CivilServicePricing from './pages/Pricing/CivilServicePricing';
 import LegalServicePricing from './pages/Pricing/LegalServicePricing';
 import AllServicePricing from './pages/Pricing/AllServicePricing';
 import OrderHistory from './pages/customer/OrderHistory';
-import OrderDetail from './pages/customer/OrderDetail';
+import OrderDetailAdmin from './pages/admin/OrderDetailAdmin';
+import OrderDetailCustomer from './pages/customer/OrderDetailCustomer';
+import TestResultInput from "./pages/admin/TestResultInput";
 
 
 function App() {
@@ -62,7 +64,8 @@ function App() {
                 <Route path="/ordersPageAdmin" element={<AdminLayout> <OrdersPage /> </AdminLayout>} />
                 <Route path="/serviceManagement" element={<AdminLayout> <ServiceManagement /> </AdminLayout>}/>
                 <Route path="/dashboard" element={<AdminLayout><Dashboard /></AdminLayout>}/>
-              <Route path="/customer/orders/:orderId" element={<AdminLayout><OrderDetail /></AdminLayout>} />
+                <Route path="/admin/orders/:orderId" element={<AdminLayout><OrderDetailAdmin /></AdminLayout>} />
+                <Route path="/admin/enter-test-results/:orderId" element={<TestResultInput />} />
               </>
             )}
 
@@ -74,8 +77,8 @@ function App() {
               <>
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/OrderHistory" element={<OrderHistory />} />
-                <Route path="/customer/orders/:orderId" element={<OrderDetail />} />
-                <Route path="/customer/orders/:orderId" element={<OrderDetail />} />
+                <Route path="/customer/orders/:orderId" element={<OrderDetailCustomer />} />
+
               </>
             )}  
 
