@@ -204,8 +204,6 @@ function EditBlog() {
     <div className="edit-blog-container">
       <div className="edit-blog-header">
         <h2>Edit Blog</h2>
-        <p>Editing blog ID: <strong>{blogId}</strong></p>
-        <p>Logged in as: <strong>trihqse184859</strong></p>
         <p>Current time: {currentTime()} UTC</p>
       </div>
 

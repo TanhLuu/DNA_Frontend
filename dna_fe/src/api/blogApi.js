@@ -107,7 +107,26 @@ export const uploadBlogImage = async (file) => {
 // API mới để proxy ảnh từ URL bên ngoài
 export const proxyBlogImage = async (imageUrl) => {
   try {
-    const response = await axiosInstance.post('/api/blogs/proxy-image', { url: imageUrl });
+    // Xử lý Google URL redirect nếu có
+    let processedUrl = imageUrl;
+    if (imageUrl.includes('google.com/url') && imageUrl.includes('url=')) {
+      try {
+        const match = imageUrl.match(/url=([^&]+)/);
+        if (match && match[1]) {
+          processedUrl = decodeURIComponent(match[1]);
+          console.log('Extracted URL from Google redirect:', processedUrl);
+        }
+      } catch (e) {
+        console.error('Error extracting URL from Google redirect:', e);
+      }
+    }
+    
+    const response = await axiosInstance.post('/api/blogs/proxy-image', { 
+      url: processedUrl,
+      timestamp: new Date().toISOString(),
+      user: 'trihqse184859'  // Thêm thông tin user nếu cần
+    });
+    
     return response.data;
   } catch (error) {
     console.error('Error proxying blog image:', error);

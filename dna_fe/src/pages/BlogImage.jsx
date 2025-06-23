@@ -1,12 +1,58 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios'; // Đảm bảo bạn đã import axios
 
-const BlogImage = ({ src, alt, currentUser, currentTime }) => {
+// Hàm proxy hình ảnh từ URL bên ngoài (do không có blogService)
+const proxyBlogImage = async (imageUrl) => {
+  try {
+    // Xử lý Google URL redirect nếu có
+    let processedUrl = imageUrl;
+    if (imageUrl.includes('google.com/url') && imageUrl.includes('url=')) {
+      try {
+        const match = imageUrl.match(/url=([^&]+)/);
+        if (match && match[1]) {
+          processedUrl = decodeURIComponent(match[1]);
+          console.log('Extracted URL from Google redirect:', processedUrl);
+        }
+      } catch (e) {
+        console.error('Error extracting URL from Google redirect:', e);
+      }
+    }
+    
+    // Thử gọi API proxy của server nếu có
+    try {
+      const response = await axios.post('/api/blogs/proxy-image', { 
+        url: processedUrl,
+        timestamp: new Date().toISOString(),
+        user: 'trihqse184859'  // Thêm thông tin user nếu cần
+      });
+      
+      return response.data;
+    } catch (error) {
+      // Nếu server API không có, trả về URL gốc đã xử lý
+      console.error('Server proxy not available, using direct URL:', error);
+      return { fileUrl: processedUrl, error: true };
+    }
+  } catch (error) {
+    console.error('Error proxying blog image:', error);
+    return { fileUrl: imageUrl, error: true };
+  }
+};
+
+const BlogImage = ({ 
+  src, 
+  alt, 
+  currentUser, 
+  currentTime,
+  customStyle = {}, // Thêm prop để tùy chỉnh container style
+  imageStyle = {}, // Thêm prop để tùy chỉnh image style
+  hideDetails = false // Thêm prop để ẩn phần chi tiết URL
+}) => {
     const [error, setError] = useState(false);
     const [loading, setLoading] = useState(true);
     const [attempts, setAttempts] = useState(0);
     const [imageUrl, setImageUrl] = useState(null);
-    
-    // Định nghĩa hình ảnh fallback dạng Base64 để tránh phụ thuộc vào external services
+
+    // Định nghĩa hình ảnh fallback dạng Base64
     const fallbackImageBase64 = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAwIiBoZWlnaHQ9IjQwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iODAwIiBoZWlnaHQ9IjQwMCIgZmlsbD0iI2VlZWVlZSIvPjxwYXRoIGQ9Ik0zMjUgMTc1TDQ3NSAxNzVMNDAwIDI3NVoiIGZpbGw9IiNhYWFhYWEiLz48Y2lyY2xlIGN4PSIzMjUiIGN5PSIxMjUiIHI9IjI1IiBmaWxsPSIjYWFhYWFhIi8+PHRleHQgeD0iNDAwIiB5PSIyMDAiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iIzMzMzMzMyI+SW1hZ2UgQ291bGQgTm90IEJlIExvYWRlZDwvdGV4dD48L3N2Zz4=';
     
     // Pinterest fallback image
@@ -65,7 +111,13 @@ const BlogImage = ({ src, alt, currentUser, currentTime }) => {
     // Hàm xử lý đặc biệt cho Kenh14 URLs
     const processKenh14Url = (url) => {
         console.log('Using fallback for Kenh14 image due to CORS restrictions');
-        return fallbackImageBase64;
+        
+        // Thử sử dụng CORS proxy công cộng thay vì fallback ngay
+        try {
+          return `https://corsproxy.io/?${encodeURIComponent(url)}`;
+        } catch (e) {
+          return fallbackImageBase64;
+        }
     };
     
     // Tạo hình ảnh fallback với text tùy chỉnh
@@ -110,7 +162,7 @@ const BlogImage = ({ src, alt, currentUser, currentTime }) => {
 
     // Hàm xử lý URL hình ảnh nâng cao
     useEffect(() => {
-        const processImageUrl = () => {
+        const processImageUrl = async () => {
             if (!src) {
                 console.log('No source URL provided');
                 setImageUrl(fallbackImageBase64);
@@ -134,7 +186,6 @@ const BlogImage = ({ src, alt, currentUser, currentTime }) => {
                     }
                     else if (extractedUrl.includes('kenh14.vn')) {
                         processedUrl = processKenh14Url(extractedUrl);
-                        directlyUseFallback = true;
                     }
                     else {
                         processedUrl = extractedUrl;
@@ -160,7 +211,6 @@ const BlogImage = ({ src, alt, currentUser, currentTime }) => {
                 }
                 else if (src.includes('kenh14.vn')) {
                     processedUrl = processKenh14Url(src);
-                    directlyUseFallback = true;
                 }
             }
             
@@ -171,19 +221,19 @@ const BlogImage = ({ src, alt, currentUser, currentTime }) => {
                 return;
             }
             
-            // Nếu URL không phải là URL hình ảnh, thử sử dụng proxy CORS hoặc fallback
-            if (!isImageUrl(processedUrl) && !processedUrl.startsWith('data:')) {
-                console.warn('URL may not be an image URL:', processedUrl);
-                
-                // Một số URL không phải là URL hình ảnh trực tiếp, thử sử dụng proxy CORS
-                if (!processedUrl.includes('images.weserv.nl')) {
-                    const proxyUrl = `https://cors-anywhere.herokuapp.com/${processedUrl}`;
-                    console.log('Trying with CORS proxy:', proxyUrl);
-                    processedUrl = proxyUrl;
-                } else {
-                    // Nếu đã thử proxy mà vẫn không thành công, sử dụng fallback
-                    processedUrl = fallbackImageBase64;
-                    setLoading(false);
+            // Thử sử dụng proxy từ server nếu không phải base64
+            if (!processedUrl.startsWith('data:')) {
+                try {
+                    // Kiểm tra nếu URL là từ domain đã biết có vấn đề CORS
+                    const problematicDomains = ['kenh14.vn', 'pinterest.com', 'facebook.com', 'instagram.com'];
+                    const isProblematicDomain = problematicDomains.some(domain => processedUrl.includes(domain));
+                    
+                    // Sử dụng CORS proxy công cộng cho các domain có vấn đề
+                    if (isProblematicDomain) {
+                        processedUrl = `https://corsproxy.io/?${encodeURIComponent(processedUrl)}`;
+                    }
+                } catch (e) {
+                    console.error('Error processing URL:', e);
                 }
             }
             
@@ -214,15 +264,34 @@ const BlogImage = ({ src, alt, currentUser, currentTime }) => {
         }
     }, [src]);
 
+    // Combine default styles with custom styles
+    const containerStyle = {
+        marginBottom: '20px',
+        textAlign: 'center',
+        border: '1px solid #eee',
+        borderRadius: '8px',
+        padding: '10px',
+        backgroundColor: '#fff',
+        ...customStyle
+    };
+    
+    // Default image styles
+    const defaultImageStyle = {
+        maxWidth: '100%',
+        maxHeight: '500px',
+        borderRadius: '8px',
+        boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+        display: loading ? 'none' : 'block'
+    };
+    
+    // Combined image styles
+    const combinedImageStyle = {
+        ...defaultImageStyle,
+        ...imageStyle
+    };
+
     return (
-        <div style={{
-            marginBottom: '20px',
-            textAlign: 'center',
-            border: '1px solid #eee',
-            borderRadius: '8px',
-            padding: '10px',
-            backgroundColor: '#fff'
-        }}>
+        <div style={containerStyle}>
             {!error ? (
                 <>
                     {loading && (
@@ -266,10 +335,11 @@ const BlogImage = ({ src, alt, currentUser, currentTime }) => {
                                 // Nếu đây là URL bình thường (không phải base64 và chưa dùng proxy)
                                 if (!imageUrl.startsWith('data:') && 
                                     !imageUrl.includes('cors-anywhere') && 
-                                    !imageUrl.includes('images.weserv.nl')) {
+                                    !imageUrl.includes('images.weserv.nl') &&
+                                    !imageUrl.includes('corsproxy.io')) {
                                     
                                     // Thử sử dụng proxy thay thế
-                                    const corsProxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(imageUrl)}`;
+                                    const corsProxyUrl = `https://corsproxy.io/?${encodeURIComponent(imageUrl)}`;
                                     console.log('Trying with alternative CORS proxy:', corsProxyUrl);
                                     setImageUrl(corsProxyUrl);
                                 } else {
@@ -279,13 +349,7 @@ const BlogImage = ({ src, alt, currentUser, currentTime }) => {
                                     setImageUrl(fallbackImageBase64);
                                 }
                             }}
-                            style={{
-                                maxWidth: '100%',
-                                maxHeight: '500px',
-                                borderRadius: '8px',
-                                boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-                                display: loading ? 'none' : 'block'
-                            }}
+                            style={combinedImageStyle}
                             crossOrigin="anonymous"
                             referrerPolicy="no-referrer"
                         />
@@ -374,8 +438,9 @@ const BlogImage = ({ src, alt, currentUser, currentTime }) => {
                 </div>
             )}
 
-            <div style={{ marginTop: '10px', fontSize: '0.8rem', color: '#666' }}>
-                {src && (
+            {/* Hiển thị thông tin chi tiết nếu không bị ẩn */}
+            {!hideDetails && src && (
+                <div style={{ marginTop: '10px', fontSize: '0.8rem', color: '#666' }}>
                     <>
                         <div>
                             <strong>Original URL:</strong> {src.substring(0, 50)}{src.length > 50 ? '...' : ''}
@@ -393,20 +458,23 @@ const BlogImage = ({ src, alt, currentUser, currentTime }) => {
                             </div>
                         )}
                     </>
-                )}
-            </div>
+                </div>
+            )}
             
-            <div style={{ 
-                marginTop: '15px', 
-                fontSize: '0.75rem', 
-                color: '#999', 
-                textAlign: 'right',
-                borderTop: '1px solid #eee',
-                paddingTop: '5px' 
-            }}>
-                <span>User: {user}</span>
-                <span style={{ marginLeft: '15px' }}>Time: {time}</span>
-            </div>
+            {/* Thông tin người dùng và thời gian - cũng bị ẩn nếu hideDetails=true */}
+            {!hideDetails && (
+                <div style={{ 
+                    marginTop: '15px', 
+                    fontSize: '0.75rem', 
+                    color: '#999', 
+                    textAlign: 'right',
+                    borderTop: '1px solid #eee',
+                    paddingTop: '5px' 
+                }}>
+                    <span>User: {user}</span>
+                    <span style={{ marginLeft: '15px' }}>Time: {time}</span>
+                </div>
+            )}
         </div>
     );
 };
