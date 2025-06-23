@@ -129,6 +129,41 @@
   border-radius: 4px;
   text-align: center;
 }
+/* Thêm vào file blogdetail.css */
+.blog-detail-image {
+  width: 100%;
+  margin: 20px 0 30px;
+  text-align: center;
+}
+
+.blog-detail-image img {
+  max-width: 100%;
+  max-height: 800px !important; /* !important để ghi đè các style khác */
+  width: auto;
+  margin: 0 auto;
+  display: block;
+  border-radius: 8px;
+  box-shadow: 0 2px 15px rgba(0,0,0,0.15);
+}
+
+/* Thêm style cho wrapper hình ảnh blog detail */
+.blog-detail-image-wrapper {
+  width: 100%;
+  margin: 30px 0;
+  padding: 20px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background-color: #fff;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+  text-align: center;
+  overflow: hidden;
+}
+
+/* Thêm hiệu ứng hover cho hình ảnh */
+.blog-detail-image-wrapper:hover {
+  box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+  transition: box-shadow 0.3s ease;
+}
 
 /* Responsive styles */
 @media (max-width: 768px) {

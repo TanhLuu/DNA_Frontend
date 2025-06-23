@@ -137,7 +137,7 @@ function BlogDetail() {
     // Tạo thời gian hiện tại theo định dạng YYYY-MM-DD HH:MM:SS
     const currentDateTime = new Date().toISOString().replace('T', ' ').substring(0, 19);
 
-    return (
+     return (
         <div className="blog-detail-container">
             <div className="blog-detail-header">
                 <button
@@ -173,11 +173,31 @@ function BlogDetail() {
             </div>
 
             {blog.urlImage && (
-                <BlogImage 
-                    src={blog.urlImage}
-                    alt={blog.blogName}
-                    currentTime={currentDateTime}
-                />
+                <div className="blog-detail-image-wrapper">
+                    <BlogImage 
+                        src={blog.urlImage}
+                        alt={blog.blogName}
+                        currentTime={currentDateTime}
+                        customStyle={{
+                            margin: '0',
+                            border: 'none',
+                            borderRadius: '0',
+                            padding: '0',
+                            backgroundColor: 'transparent',
+                            boxShadow: 'none',
+                        }}
+                        imageStyle={{
+                            maxWidth: '100%',
+                            maxHeight: '900px',
+                            width: 'auto',
+                            display: 'block',
+                            margin: '0 auto',
+                            objectFit: 'contain',
+                            borderRadius: '4px',
+                        }}
+                        hideDetails={true}
+                    />
+                </div>
             )}
 
             <div className="blog-content">

@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import BlogImage from './BlogImage';
 import '../styles/bloglist.css';
 
-const BlogList = () => {
+function BlogList() {
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -16,42 +16,45 @@ const BlogList = () => {
   }, []);
 
   // Fetch tất cả blogs từ API
-  const fetchBlogs = async () => {
+  function fetchBlogs() {
     setLoading(true);
-    try {
-      const data = await getAllBlogs();
-      console.log('Fetched blogs:', data);
-      setBlogs(data);
-      setError(null);
-    } catch (err) {
-      console.error('Error fetching blogs:', err);
-      setError('Failed to load blogs. Please try again later.');
-    } finally {
-      setLoading(false);
-    }
-  };
+    getAllBlogs()
+      .then(data => {
+        console.log('Fetched blogs:', data);
+        setBlogs(data);
+        setError(null);
+      })
+      .catch(err => {
+        console.error('Error fetching blogs:', err);
+        setError('Failed to load blogs. Please try again later.');
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }
 
   // Xử lý delete blog
-  const handleDelete = async (id) => {
+  function handleDelete(id) {
     if (window.confirm('Are you sure you want to delete this blog?')) {
-      try {
-        await deleteBlog(id);
-        // Cập nhật state sau khi xóa thành công
-        setBlogs(blogs.filter(blog => blog.blogId !== id));
-      } catch (err) {
-        console.error('Error deleting blog:', err);
-        alert('Failed to delete blog. Please try again.');
-      }
+      deleteBlog(id)
+        .then(() => {
+          // Cập nhật state sau khi xóa thành công
+          setBlogs(blogs.filter(blog => blog.blogId !== id));
+        })
+        .catch(err => {
+          console.error('Error deleting blog:', err);
+          alert('Failed to delete blog. Please try again.');
+        });
     }
-  };
+  }
 
   // Xử lý edit blog
-  const handleEdit = (id) => {
+  function handleEdit(id) {
     navigate(`/edit-blog/${id}`);
-  };
+  }
 
   // Format date để hiển thị
-  const formatDate = (dateString) => {
+  function formatDate(dateString) {
     if (!dateString) return 'N/A';
     
     try {
@@ -65,14 +68,7 @@ const BlogList = () => {
       console.error('Error formatting date:', e);
       return dateString;
     }
-  };
-
-  // Truncate text để hiển thị preview
-  const truncateText = (text, maxLength = 150) => {
-    if (!text) return '';
-    if (text.length <= maxLength) return text;
-    return text.substr(0, maxLength) + '...';
-  };
+  }
 
   return (
     <div className="blog-list-container">
@@ -157,10 +153,6 @@ const BlogList = () => {
               <div className="blog-date">
                 {formatDate(blog.blogDate)}
               </div>
-              
-              {/* <p className="blog-excerpt">
-                {truncateText(blog.blogContent)}
-              </p> */}
             </div>
             
             <div className="blog-actions">
@@ -192,6 +184,6 @@ const BlogList = () => {
       </div>
     </div>
   );
-};
+}
 
 export default BlogList;
