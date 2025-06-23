@@ -32,9 +32,11 @@ import FormStep5 from './components/FormStep5';
 import DichVu from './pages/DichVu';
 import BangGia from './pages/BangGia';
 import FormStep6 from './components/FormStep6';
-import Blog  from './pages/Blog';
+import Blog from './pages/Blog';
 import BlogList from './pages/BlogList';
 import BlogDetail from './pages/BlogDetail';
+import EditBlog from './pages/EditBlog';
+import DeleteBlog from './pages/DeleteBlog';
 function App() {
   const [role, setRole] = useState(localStorage.getItem('role')?.toLowerCase());
   useEffect(() => {
@@ -113,6 +115,11 @@ function App() {
         <Route path="/blogs" element={<BlogList />} />
         <Route path="/blog/:id" element={<BlogDetail />} />
         <Route path="/create-blog" element={<Blog />} />
+        <Route path="/blog/:id/edit" element={<EditBlog />} />
+        <Route path="/edit-blog/:id" element={<EditBlog />} />
+        {/* Add this new route for deleting blogs */}
+        <Route path="/delete-blog/:id" element={<DeleteBlog />} />
+        <Route path="/blog/:id/delete" element={<DeleteBlog />} />
       </Routes>
     </Router>
   );

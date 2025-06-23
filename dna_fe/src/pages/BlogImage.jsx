@@ -9,11 +9,14 @@ const BlogImage = ({ src, alt, currentUser, currentTime }) => {
     // Định nghĩa hình ảnh fallback dạng Base64 để tránh phụ thuộc vào external services
     const fallbackImageBase64 = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAwIiBoZWlnaHQ9IjQwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iODAwIiBoZWlnaHQ9IjQwMCIgZmlsbD0iI2VlZWVlZSIvPjxwYXRoIGQ9Ik0zMjUgMTc1TDQ3NSAxNzVMNDAwIDI3NVoiIGZpbGw9IiNhYWFhYWEiLz48Y2lyY2xlIGN4PSIzMjUiIGN5PSIxMjUiIHI9IjI1IiBmaWxsPSIjYWFhYWFhIi8+PHRleHQgeD0iNDAwIiB5PSIyMDAiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iIzMzMzMzMyI+SW1hZ2UgQ291bGQgTm90IEJlIExvYWRlZDwvdGV4dD48L3N2Zz4=';
     
+    // Pinterest fallback image
+    const pinterestFallbackBase64 = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAwIiBoZWlnaHQ9IjQwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iODAwIiBoZWlnaHQ9IjQwMCIgZmlsbD0iI2U2MDAyMyIvPjxjaXJjbGUgY3g9IjQwMCIgY3k9IjIwMCIgcj0iODAiIGZpbGw9IiNmZmZmZmYiLz48Y2lyY2xlIGN4PSI0MDAiIGN5PSIyMDAiIHI9IjYwIiBmaWxsPSIjZTYwMDIzIi8+PHRleHQgeD0iNDAwIiB5PSIzMjAiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iI2ZmZmZmZiI+UGludGVyZXN0IEltYWdlIChDT1JTIFByb3RlY3RlZCk8L3RleHQ+PC9zdmc+';
+    
     // Sử dụng props nếu được cung cấp, hoặc giá trị mặc định
     const user = currentUser || 'trihqse184859';
     const time = currentTime || new Date().toISOString().replace('T', ' ').substring(0, 19);
 
-    // Cải thiện hàm kiểm tra URL hình ảnh
+    // Kiểm tra xem một URL có phải là URL hình ảnh hay không
     const isImageUrl = (url) => {
         if (!url) return false;
         
@@ -37,9 +40,13 @@ const BlogImage = ({ src, alt, currentUser, currentTime }) => {
             
             // Kiểm tra các domain image hosting phổ biến
             const imageHostingDomains = ['i.imgur.com', 'i.pinimg.com', 'images.unsplash.com', 'img.youtube.com'];
-            const urlObj = new URL(url);
-            if (imageHostingDomains.some(domain => urlObj.hostname === domain)) {
-                return true;
+            try {
+                const urlObj = new URL(url);
+                if (imageHostingDomains.some(domain => urlObj.hostname === domain)) {
+                    return true;
+                }
+            } catch (e) {
+                // URL parsing error, ignore
             }
             
             return false;
@@ -49,43 +56,19 @@ const BlogImage = ({ src, alt, currentUser, currentTime }) => {
         }
     };
 
-    // Cải thiện xử lý Pinterest và sử dụng proxy CORS
+    // Xử lý Pinterest URLs - sử dụng fallback ngay lập tức vì biết sẽ có vấn đề CORS
     const processPinterestUrl = (url) => {
-        try {
-            // Cố gắng trích xuất ID của pin từ URL Pinterest
-            const pinMatch = url.match(/\/pin\/(\d+)/);
-            if (pinMatch && pinMatch[1]) {
-                const pinId = pinMatch[1];
-                // Thử tạo URL trực tiếp đến ảnh Pinterest dựa trên ID
-                // Lưu ý: Pinterest có thể thay đổi cấu trúc URL, vì vậy đây chỉ là nỗ lực tốt nhất
-                return `https://i.pinimg.com/originals/pin/${pinId}.jpg`;
-            }
-            
-            // Thử sử dụng CORS proxy (ví dụ với proxy giả định)
-            // Lưu ý: Đây là ví dụ, bạn cần thay thế bằng proxy CORS thực tế
-            const corsProxyUrl = `https://images.weserv.nl/?url=${encodeURIComponent(url)}`;
-            console.log('Using CORS proxy for Pinterest URL:', corsProxyUrl);
-            return corsProxyUrl;
-        } catch (e) {
-            console.error('Error processing Pinterest URL:', e);
-            return generateFallbackImage('Pinterest Image (CORS Blocked)');
-        }
+        console.log('Using Pinterest fallback image due to CORS restrictions');
+        return pinterestFallbackBase64;
     };
     
-    // Cải thiện xử lý URL từ Kenh14
+    // Hàm xử lý đặc biệt cho Kenh14 URLs
     const processKenh14Url = (url) => {
-        try {
-            // Thử sử dụng CORS proxy
-            const corsProxyUrl = `https://images.weserv.nl/?url=${encodeURIComponent(url)}`;
-            console.log('Using CORS proxy for Kenh14 URL:', corsProxyUrl);
-            return corsProxyUrl;
-        } catch (e) {
-            console.error('Error processing Kenh14 URL:', e);
-            return generateFallbackImage('Kenh14 Image (CORS Blocked)');
-        }
+        console.log('Using fallback for Kenh14 image due to CORS restrictions');
+        return fallbackImageBase64;
     };
     
-    // Cải thiện hàm tạo hình ảnh fallback với text tùy chỉnh
+    // Tạo hình ảnh fallback với text tùy chỉnh
     const generateFallbackImage = (text) => {
         // Tạo SVG với text tùy chỉnh
         const svgText = `<svg width="800" height="400" xmlns="http://www.w3.org/2000/svg">
@@ -96,13 +79,38 @@ const BlogImage = ({ src, alt, currentUser, currentTime }) => {
         </svg>`;
         
         // Chuyển đổi sang base64
-        const encodedSvg = btoa(svgText);
-        return `data:image/svg+xml;base64,${encodedSvg}`;
+        return `data:image/svg+xml;base64,${btoa(unescape(encodeURIComponent(svgText)))}`;
+    };
+    
+    // Hàm xử lý URL chuyển hướng của Google
+    const extractGoogleRedirectUrl = (googleUrl) => {
+        try {
+            const match = googleUrl.match(/url=([^&]+)/);
+            if (match && match[1]) {
+                return decodeURIComponent(match[1]);
+            }
+        } catch (e) {
+            console.error('Error extracting URL from Google redirect:', e);
+        }
+        return null;
+    };
+    
+    // Hàm xử lý URL Google Image
+    const extractGoogleImageUrl = (googleUrl) => {
+        try {
+            const match = googleUrl.match(/imgurl=([^&]+)/);
+            if (match && match[1]) {
+                return decodeURIComponent(match[1]);
+            }
+        } catch (e) {
+            console.error('Error extracting URL from Google Image:', e);
+        }
+        return null;
     };
 
-    // Cải thiện hàm xử lý URL hình ảnh
+    // Hàm xử lý URL hình ảnh nâng cao
     useEffect(() => {
-        const processImageUrl = async () => {
+        const processImageUrl = () => {
             if (!src) {
                 console.log('No source URL provided');
                 setImageUrl(fallbackImageBase64);
@@ -110,95 +118,76 @@ const BlogImage = ({ src, alt, currentUser, currentTime }) => {
                 return;
             }
 
-            try {
-                let processedUrl = src;
+            let processedUrl = src;
+            let directlyUseFallback = false;
 
-                // Xử lý URL redirect từ Google
-                if (src.includes('google.com/url') && src.includes('url=')) {
-                    try {
-                        const match = src.match(/url=([^&]+)/);
-                        if (match && match[1]) {
-                            const decodedUrl = decodeURIComponent(match[1]);
-                            console.log('Extracted direct URL from Google redirect:', decodedUrl);
-                            
-                            // Xử lý đặc biệt cho Pinterest
-                            if (decodedUrl.includes('pinterest.com')) {
-                                processedUrl = processPinterestUrl(decodedUrl);
-                                console.log('Processed Pinterest URL to:', processedUrl);
-                            }
-                            // Xử lý đặc biệt cho Kenh14
-                            else if (decodedUrl.includes('kenh14.vn')) {
-                                processedUrl = processKenh14Url(decodedUrl);
-                                console.log('Processed Kenh14 URL to:', processedUrl);
-                            }
-                            // Kiểm tra nếu URL trích xuất là URL bài viết, không phải hình ảnh
-                            else if (!isImageUrl(decodedUrl)) {
-                                console.warn('Extracted URL is not an image URL:', decodedUrl);
-                                // Thử sử dụng CORS proxy
-                                processedUrl = `https://images.weserv.nl/?url=${encodeURIComponent(decodedUrl)}`;
-                            } else {
-                                processedUrl = decodedUrl;
-                            }
-                        }
-                    } catch (e) {
-                        console.error('Error extracting URL from Google redirect:', e);
-                        processedUrl = fallbackImageBase64;
+            // Kiểm tra xem URL có phải là URL chuyển hướng Google không
+            if (src.includes('google.com/url') && src.includes('url=')) {
+                const extractedUrl = extractGoogleRedirectUrl(src);
+                if (extractedUrl) {
+                    console.log('Extracted direct URL from Google redirect:', extractedUrl);
+                    
+                    // Xử lý đặc biệt cho các domain đã biết có vấn đề CORS
+                    if (extractedUrl.includes('pinterest.com')) {
+                        processedUrl = processPinterestUrl(extractedUrl);
+                        directlyUseFallback = true;
+                    }
+                    else if (extractedUrl.includes('kenh14.vn')) {
+                        processedUrl = processKenh14Url(extractedUrl);
+                        directlyUseFallback = true;
+                    }
+                    else {
+                        processedUrl = extractedUrl;
                     }
                 }
-                
-                // Xử lý Google Image URL
-                else if (src.includes('google.com/imgres') && src.includes('imgurl=')) {
-                    try {
-                        const match = src.match(/imgurl=([^&]+)/);
-                        if (match && match[1]) {
-                            processedUrl = decodeURIComponent(match[1]);
-                            console.log('Extracted direct URL from Google Image:', processedUrl);
-                        }
-                    } catch (e) {
-                        console.error('Error extracting URL from Google Image:', e);
-                        processedUrl = fallbackImageBase64;
-                    }
-                }
-                
-                // Xử lý direct URLs
-                else {
-                    // Xử lý đặc biệt cho các domain có vấn đề CORS
-                    if (src.includes('pinterest.com')) {
-                        processedUrl = processPinterestUrl(src);
-                    }
-                    else if (src.includes('kenh14.vn')) {
-                        processedUrl = processKenh14Url(src);
-                    }
-                    // Kiểm tra xem URL có hợp lệ không
-                    else if (!isImageUrl(src)) {
-                        console.warn('Source URL does not appear to be an image URL:', src);
-                        // Thử sử dụng CORS proxy
-                        processedUrl = `https://images.weserv.nl/?url=${encodeURIComponent(src)}`;
-                    }
-                }
-                
-                // Kiểm tra trạng thái của ảnh trước khi hiển thị (pre-flight check)
-                if (!processedUrl.startsWith('data:')) {
-                    try {
-                        // Thêm timestamp để tránh cache
-                        const timestamp = new Date().getTime();
-                        const urlWithTimestamp = processedUrl.includes('?') 
-                            ? `${processedUrl}&_t=${timestamp}` 
-                            : `${processedUrl}?_t=${timestamp}`;
-                        
-                        setImageUrl(urlWithTimestamp);
-                    } catch (e) {
-                        console.error('Error during pre-flight check:', e);
-                        setImageUrl(fallbackImageBase64);
-                    }
-                } else {
-                    setImageUrl(processedUrl);
-                }
-            } catch (error) {
-                console.error('Error processing image URL:', error);
-                setImageUrl(fallbackImageBase64);
-                setLoading(false);
             }
+            
+            // Xử lý URL Google Image
+            else if (src.includes('google.com/imgres') && src.includes('imgurl=')) {
+                const extractedUrl = extractGoogleImageUrl(src);
+                if (extractedUrl) {
+                    console.log('Extracted direct URL from Google Image:', extractedUrl);
+                    processedUrl = extractedUrl;
+                }
+            }
+            
+            // Xử lý URL trực tiếp
+            else {
+                // Xử lý đặc biệt cho các domain có vấn đề CORS
+                if (src.includes('pinterest.com')) {
+                    processedUrl = processPinterestUrl(src);
+                    directlyUseFallback = true;
+                }
+                else if (src.includes('kenh14.vn')) {
+                    processedUrl = processKenh14Url(src);
+                    directlyUseFallback = true;
+                }
+            }
+            
+            // Nếu đã xác định sử dụng fallback, không cần thử tải ảnh
+            if (directlyUseFallback) {
+                setImageUrl(processedUrl);
+                setLoading(false);
+                return;
+            }
+            
+            // Nếu URL không phải là URL hình ảnh, thử sử dụng proxy CORS hoặc fallback
+            if (!isImageUrl(processedUrl) && !processedUrl.startsWith('data:')) {
+                console.warn('URL may not be an image URL:', processedUrl);
+                
+                // Một số URL không phải là URL hình ảnh trực tiếp, thử sử dụng proxy CORS
+                if (!processedUrl.includes('images.weserv.nl')) {
+                    const proxyUrl = `https://cors-anywhere.herokuapp.com/${processedUrl}`;
+                    console.log('Trying with CORS proxy:', proxyUrl);
+                    processedUrl = proxyUrl;
+                } else {
+                    // Nếu đã thử proxy mà vẫn không thành công, sử dụng fallback
+                    processedUrl = fallbackImageBase64;
+                    setLoading(false);
+                }
+            }
+            
+            setImageUrl(processedUrl);
         };
 
         processImageUrl();
@@ -274,13 +263,19 @@ const BlogImage = ({ src, alt, currentUser, currentTime }) => {
                                 console.error("Failed to load image:", imageUrl);
                                 setLoading(false);
                                 
-                                // Thử với CORS proxy nếu chưa phải là ảnh Base64
-                                if (!imageUrl.startsWith('data:') && !imageUrl.includes('images.weserv.nl')) {
-                                    console.log('Trying with CORS proxy...');
-                                    setImageUrl(`https://images.weserv.nl/?url=${encodeURIComponent(imageUrl)}`);
+                                // Nếu đây là URL bình thường (không phải base64 và chưa dùng proxy)
+                                if (!imageUrl.startsWith('data:') && 
+                                    !imageUrl.includes('cors-anywhere') && 
+                                    !imageUrl.includes('images.weserv.nl')) {
+                                    
+                                    // Thử sử dụng proxy thay thế
+                                    const corsProxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(imageUrl)}`;
+                                    console.log('Trying with alternative CORS proxy:', corsProxyUrl);
+                                    setImageUrl(corsProxyUrl);
                                 } else {
+                                    // Nếu đã thử tất cả các cách mà vẫn thất bại, hiển thị lỗi
                                     setError(true);
-                                    // Tự động sử dụng fallback nếu lỗi
+                                    // Sử dụng fallback
                                     setImageUrl(fallbackImageBase64);
                                 }
                             }}
@@ -373,6 +368,7 @@ const BlogImage = ({ src, alt, currentUser, currentTime }) => {
                             <li>Google redirect URLs often don't work directly</li>
                             <li>The image might not allow access from other websites (CORS)</li>
                             <li>The image URL might be invalid or the file deleted</li>
+                            <li>Pinterest and some other sites restrict direct image access</li>
                         </ul>
                     </div>
                 </div>
@@ -393,6 +389,7 @@ const BlogImage = ({ src, alt, currentUser, currentTime }) => {
                         {imageUrl && imageUrl.startsWith('data:') && (
                             <div style={{ marginTop: '5px' }}>
                                 <strong>Processed URL:</strong> [Base64 Image]
+                                {imageUrl === pinterestFallbackBase64 && ' (Pinterest Placeholder)'}
                             </div>
                         )}
                     </>

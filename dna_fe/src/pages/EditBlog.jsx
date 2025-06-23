@@ -1,26 +1,68 @@
-import React, { useState } from 'react';
-import { createBlog } from '../api/blogApi';
-import '../styles/blog.css';
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { getBlogById, updateBlog } from '../api/blogApi';
+import '../styles/editblog.css';
 
-function Blog() {
-  // Luôn sử dụng ngày hiện tại ở định dạng chuẩn
-  function getCurrentDate() {
-    return new Date().toISOString().split('T')[0]; // YYYY-MM-DD
-  }
+function EditBlog() {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const blogId = id;
 
+  // State for form data
   const [formData, setFormData] = useState({
     blogName: '',
     blogContent: '',
     urlImage: '',
-    blogDate: getCurrentDate()
+    blogDate: ''
   });
 
+  // State for UI feedback
   const [loading, setLoading] = useState(false);
+  const [fetchingBlog, setFetchingBlog] = useState(true);
   const [message, setMessage] = useState({ type: '', text: '' });
   const [errors, setErrors] = useState({});
+  const [apiResponse, setApiResponse] = useState(null);
+
+  // Fetch blog data on component mount
+  useEffect(() => {
+    const fetchBlogData = async () => {
+      if (!blogId) {
+        setFetchingBlog(false);
+        setMessage({
+          type: 'error',
+          text: 'No blog ID provided'
+        });
+        return;
+      }
+
+      try {
+        setFetchingBlog(true);
+        const blogData = await getBlogById(blogId);
+        
+        setFormData({
+          blogName: blogData.blogName || '',
+          blogContent: blogData.blogContent || '',
+          urlImage: blogData.urlImage || '',
+          blogDate: blogData.blogDate ? new Date(blogData.blogDate).toISOString().split('T')[0] : new Date().toISOString().split('T')[0]
+        });
+        
+        setMessage({ type: '', text: '' });
+      } catch (error) {
+        console.error('Error fetching blog:', error);
+        setMessage({
+          type: 'error',
+          text: `Failed to load blog: ${error.message || 'Unknown error'}`
+        });
+      } finally {
+        setFetchingBlog(false);
+      }
+    };
+
+    fetchBlogData();
+  }, [blogId]);
 
   // Handle input changes
-  function handleChange(e) {
+  const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
@@ -34,10 +76,10 @@ function Blog() {
         [name]: ''
       }));
     }
-  }
+  };
 
   // Validate form data
-  function validateForm() {
+  const validateForm = () => {
     const newErrors = {};
 
     if (!formData.blogName.trim()) {
@@ -66,20 +108,20 @@ function Blog() {
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-  }
+  };
 
   // Check if URL is valid
-  function isValidUrl(string) {
+  const isValidUrl = (string) => {
     try {
       new URL(string);
       return true;
     } catch (_) {
       return false;
     }
-  }
+  };
 
   // Handle form submission
-  async function handleSubmit(e) {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
     if (!validateForm()) {
@@ -92,32 +134,35 @@ function Blog() {
 
     setLoading(true);
     setMessage({ type: '', text: '' });
+    setApiResponse(null);
 
     try {
+      // Prepare blog data
       const blogData = {
         blogName: formData.blogName.trim(),
         blogContent: formData.blogContent.trim(),
         urlImage: formData.urlImage.trim() || null,
-        blogDate: formData.blogDate // Date is already in YYYY-MM-DD format
+        blogDate: formData.blogDate
       };
       
-      const result = await createBlog(blogData);
+      // Pass blogId and blogData as separate parameters
+      const result = await updateBlog(blogId, blogData);
+      setApiResponse(result);
       
       setMessage({
         type: 'success',
-        text: `Blog created successfully! ID: ${result.blogId}`
+        text: 'Blog updated successfully!'
       });
 
-      // Reset form after successful submission
-      setFormData({
-        blogName: '',
-        blogContent: '',
-        urlImage: '',
-        blogDate: getCurrentDate()
-      });
+      // Navigate after successful update
+      setTimeout(() => {
+        navigate(`/blog/${blogId}`);
+      }, 1500);
 
     } catch (error) {
-      let errorMessage = 'Failed to create blog. Please try again.';
+      console.error('Error updating blog:', error);
+      
+      let errorMessage = 'Failed to update blog. Please try again.';
       
       if (error.response && error.response.data) {
         if (typeof error.response.data === 'string') {
@@ -138,35 +183,34 @@ function Blog() {
     } finally {
       setLoading(false);
     }
-  }
-
-  // Handle reset form
-  function handleReset() {
-    setFormData({
-      blogName: '',
-      blogContent: '',
-      urlImage: '',
-      blogDate: getCurrentDate()
-    });
-    setErrors({});
-    setMessage({ type: '', text: '' });
-  }
+  };
 
   // Get current user time
-  function currentTime() {
+  const currentTime = () => {
     const now = new Date();
     return now.toISOString().replace('T', ' ').substring(0, 19);
+  };
+
+  // If still loading blog data, show loading indicator
+  if (fetchingBlog) {
+    return (
+      <div className="loading-container">
+        <h2>Loading blog data...</h2>
+      </div>
+    );
   }
 
   return (
-    <div className="blog-form-container">
-      <div className="form-header">
-        <h2>Create New Blog</h2>
+    <div className="edit-blog-container">
+      <div className="edit-blog-header">
+        <h2>Edit Blog</h2>
+        <p>Editing blog ID: <strong>{blogId}</strong></p>
+        <p>Logged in as: <strong>trihqse184859</strong></p>
         <p>Current time: {currentTime()} UTC</p>
       </div>
 
       {message.text && (
-        <div className={`form-message ${message.type}`}>
+        <div className={`message ${message.type}`}>
           {message.text}
         </div>
       )}
@@ -187,9 +231,9 @@ function Blog() {
             maxLength="255"
           />
           {errors.blogName && (
-            <span className="form-error">{errors.blogName}</span>
+            <span className="error-text">{errors.blogName}</span>
           )}
-          <small className="form-helper">
+          <small className="helper-text">
             {formData.blogName.length}/255 characters
           </small>
         </div>
@@ -208,9 +252,9 @@ function Blog() {
             className={`form-textarea ${errors.blogContent ? 'error' : ''}`}
           />
           {errors.blogContent && (
-            <span className="form-error">{errors.blogContent}</span>
+            <span className="error-text">{errors.blogContent}</span>
           )}
-          <small className="form-helper">
+          <small className="helper-text">
             {formData.blogContent.length} characters
           </small>
         </div>
@@ -229,7 +273,7 @@ function Blog() {
             className={`form-input ${errors.urlImage ? 'error' : ''}`}
           />
           {errors.urlImage && (
-            <span className="form-error">{errors.urlImage}</span>
+            <span className="error-text">{errors.urlImage}</span>
           )}
           
           {formData.urlImage && isValidUrl(formData.urlImage) && (
@@ -263,35 +307,42 @@ function Blog() {
             className={`form-input ${errors.blogDate ? 'error' : ''}`}
           />
           {errors.blogDate && (
-            <span className="form-error">{errors.blogDate}</span>
+            <span className="error-text">{errors.blogDate}</span>
           )}
-          <small className="form-helper">
+          <small className="helper-text">
             Format: YYYY-MM-DD (Current value: {formData.blogDate})
           </small>
         </div>
 
-        <div className="form-actions">
+        <div className="button-container">
           <button
             type="button"
-            onClick={handleReset}
+            onClick={() => navigate(-1)}
             className="btn btn-secondary"
             disabled={loading}
           >
-            Reset
+            Cancel
           </button>
           <button
             type="submit"
             className="btn btn-primary"
             disabled={loading}
           >
-            {loading ? 'Creating...' : 'Create Blog'}
+            {loading ? 'Updating...' : 'Update Blog'}
           </button>
         </div>
       </form>
 
-      
+      {apiResponse && (
+        <div className="api-response">
+          <h3>API Response:</h3>
+          <pre className="response-code">
+            {JSON.stringify(apiResponse, null, 2)}
+          </pre>
+        </div>
+      )}
     </div>
   );
 }
 
-export default Blog;
+export default EditBlog;

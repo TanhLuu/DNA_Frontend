@@ -86,3 +86,31 @@ export const deleteBlog = async (id) => {
     throw error;
   }
 };
+export const uploadBlogImage = async (file) => {
+  try {
+    const formData = new FormData();
+    formData.append('file', file);
+    
+    const response = await axiosInstance.post('/api/blogs/upload-image', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+    
+    return response.data;
+  } catch (error) {
+    console.error('Error uploading blog image:', error);
+    throw error;
+  }
+};
+
+// API mới để proxy ảnh từ URL bên ngoài
+export const proxyBlogImage = async (imageUrl) => {
+  try {
+    const response = await axiosInstance.post('/api/blogs/proxy-image', { url: imageUrl });
+    return response.data;
+  } catch (error) {
+    console.error('Error proxying blog image:', error);
+    throw error;
+  }
+};
