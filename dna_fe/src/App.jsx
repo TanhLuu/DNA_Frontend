@@ -20,10 +20,14 @@ import OrderHistory from './pages/customer/OrderHistory';
 import OrderDetailAdmin from './pages/admin/OrderDetailAdmin';
 import OrderDetailCustomer from './pages/customer/OrderDetailCustomer';
 import TestResultInput from "./pages/admin/TestResultInput";
+import PaymentPage from './pages/customer/PaymentPage';
+import VNPayReturnPage from './pages/customer/VNPayReturnPage';
+import PaymentHistory from './pages/customer/PaymentHistory';
 
 
 function App() {
   const [role, setRole] = useState(localStorage.getItem('role')?.toLowerCase());
+   const customerId = localStorage.getItem('customerId'); 
   useEffect(() => {
     const checkRole = () => {
       const currentRole = localStorage.getItem('role')?.toLowerCase();
@@ -58,7 +62,10 @@ function App() {
             <Route path="/civil-price" element={<CivilServicePricing />} />
             <Route path="/legal-price" element={<LegalServicePricing />} />
             <Route path="/all-price" element={<AllServicePricing />} />
-
+            <Route path="/payment" element={<PaymentPage />} />
+            <Route path="/payment-history" element={<PaymentHistory customerId={customerId} />} />
+            
+            <Route path="/vnpay-return" element={<VNPayReturnPage />} />
             {(role === 'staff' || role === 'manager') && (
               <>
                 <Route path="/ordersPageAdmin" element={<AdminLayout> <OrdersPage /> </AdminLayout>} />

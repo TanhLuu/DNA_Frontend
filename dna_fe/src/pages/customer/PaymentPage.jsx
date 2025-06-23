@@ -1,12 +1,22 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import axios from 'axios';
-import '../../styles/customer/payment.css'; 
 
 const PaymentPage = () => {
+  const location = useLocation();
   const [orderId, setOrderId] = useState('');
   const [customerId, setCustomerId] = useState('');
   const [amount, setAmount] = useState('');
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (location.state) {
+      const { orderId, customerId, amount } = location.state;
+      setOrderId(orderId);
+      setCustomerId(customerId);
+      setAmount(amount);
+    }
+  }, [location.state]);
 
   const handlePayment = async () => {
     if (!orderId || !customerId || !amount) {
@@ -15,16 +25,13 @@ const PaymentPage = () => {
     }
 
     setLoading(true);
-
     try {
       const res = await axios.post('http://localhost:8080/api/payments/create-payment', {
         orderId,
         customerId,
         amount: parseInt(amount),
       });
-
-      const paymentUrl = res.data.paymentUrl;
-      window.location.href = paymentUrl;
+      window.location.href = res.data.paymentUrl;
     } catch (error) {
       alert('Tạo thanh toán thất bại.');
       console.error(error);
@@ -38,27 +45,15 @@ const PaymentPage = () => {
       <h2>Thanh toán VNPay</h2>
       <div>
         <label>Order ID:</label>
-        <input
-          type="text"
-          value={orderId}
-          onChange={(e) => setOrderId(e.target.value)}
-        />
+        <input value={orderId} readOnly />
       </div>
       <div>
         <label>Customer ID:</label>
-        <input
-          type="text"
-          value={customerId}
-          onChange={(e) => setCustomerId(e.target.value)}
-        />
+        <input value={customerId} readOnly />
       </div>
       <div>
         <label>Số tiền (VNĐ):</label>
-        <input
-          type="number"
-          value={amount}
-          onChange={(e) => setAmount(e.target.value)}
-        />
+        <input value={amount} readOnly />
       </div>
       <button onClick={handlePayment} disabled={loading}>
         {loading ? 'Đang xử lý...' : 'Thanh toán qua VNPay'}
