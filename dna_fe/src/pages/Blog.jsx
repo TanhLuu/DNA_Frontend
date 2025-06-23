@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 import { createBlog } from '../api/blogApi';
+import { useNavigate } from 'react-router-dom';
 import '../styles/blog.css';
 
 function Blog() {
+  const navigate = useNavigate(); // Hook để điều hướng trang
+
   // Luôn sử dụng ngày hiện tại ở định dạng chuẩn
   function getCurrentDate() {
     return new Date().toISOString().split('T')[0]; // YYYY-MM-DD
@@ -116,6 +119,11 @@ function Blog() {
         blogDate: getCurrentDate()
       });
 
+      // Chuyển hướng về trang BlogList sau khi tạo thành công
+      setTimeout(() => {
+        navigate('/blogs'); // Thay đổi đường dẫn này nếu route của BlogList khác
+      }, 1500); // Đợi 1.5 giây để người dùng thấy thông báo thành công
+
     } catch (error) {
       let errorMessage = 'Failed to create blog. Please try again.';
       
@@ -168,6 +176,9 @@ function Blog() {
       {message.text && (
         <div className={`form-message ${message.type}`}>
           {message.text}
+          {message.type === 'success' && (
+            <div className="redirect-message">Redirecting to blogs list...</div>
+          )}
         </div>
       )}
 
@@ -289,7 +300,15 @@ function Blog() {
         </div>
       </form>
 
-      
+      <div className="form-footer">
+        <button
+          onClick={() => navigate('/blogs')}
+          className="btn btn-link"
+          type="button"
+        >
+          ← Back to All Blogs
+        </button>
+      </div>
     </div>
   );
 }

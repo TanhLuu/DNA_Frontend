@@ -158,9 +158,9 @@ const BlogList = () => {
                 {formatDate(blog.blogDate)}
               </div>
               
-              <p className="blog-excerpt">
+              {/* <p className="blog-excerpt">
                 {truncateText(blog.blogContent)}
-              </p>
+              </p> */}
             </div>
             
             <div className="blog-actions">

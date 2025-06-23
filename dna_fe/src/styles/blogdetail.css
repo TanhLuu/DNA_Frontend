@@ -62,12 +62,20 @@
 }
 
 /* Nội dung blog */
+/* Nội dung blog - cải tiến */
 .blog-content {
   line-height: 1.8;
   color: #333;
   font-size: 1.1rem;
-  white-space: pre-wrap;
+  white-space: pre-wrap;       /* CSS3 */
+  white-space: -moz-pre-wrap;  /* Firefox */
+  white-space: -pre-wrap;      /* Opera <7 */
+  white-space: -o-pre-wrap;    /* Opera 7 */
+  word-wrap: break-word;       /* IE */
+  overflow-wrap: break-word;
+  text-align: justify;
   margin-top: 20px;
+  padding: 10px 0;
 }
 
 /* Footer với thông tin thời gian */

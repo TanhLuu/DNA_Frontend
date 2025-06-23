@@ -4,7 +4,7 @@ import { getBlogById, deleteBlog } from '../api/blogApi';
 import BlogImage from './BlogImage';
 import '../styles/blogdetail.css';
 
-const BlogDetail = () => {
+function BlogDetail() {
     const { id } = useParams();
     const navigate = useNavigate();
     const [blog, setBlog] = useState(null);
@@ -16,6 +16,16 @@ const BlogDetail = () => {
             setLoading(true);
             try {
                 const data = await getBlogById(id);
+                
+                // Nếu nội dung blog quá dài mà không có xuống dòng, thêm xuống dòng sau mỗi câu
+                if (data && data.blogContent) {
+                    // Thêm xuống dòng sau dấu chấm, hỏi, chấm than nếu theo sau là khoảng trắng và chữ cái viết hoa
+                    const formattedContent = data.blogContent
+                        .replace(/([.!?])\s+([A-Z])/g, "$1\n\n$2");
+                    
+                    data.blogContent = formattedContent;
+                }
+                
                 setBlog(data);
                 setError(null);
             } catch (err) {
@@ -29,20 +39,21 @@ const BlogDetail = () => {
         fetchBlog();
     }, [id]);
 
-    const handleDelete = async () => {
+    function handleDelete() {
         if (window.confirm('Are you sure you want to delete this blog?')) {
-            try {
-                await deleteBlog(id);
-                navigate('/blogs');
-            } catch (err) {
-                console.error('Error deleting blog:', err);
-                alert('Failed to delete blog. Please try again.');
-            }
+            deleteBlog(id)
+                .then(() => {
+                    navigate('/blogs');
+                })
+                .catch((err) => {
+                    console.error('Error deleting blog:', err);
+                    alert('Failed to delete blog. Please try again.');
+                });
         }
-    };
+    }
 
     // Format date
-    const formatDate = (dateString) => {
+    function formatDate(dateString) {
         if (!dateString) return 'N/A';
 
         try {
@@ -55,7 +66,34 @@ const BlogDetail = () => {
         } catch (e) {
             return dateString;
         }
-    };
+    }
+
+    // Format content to add paragraph breaks
+    function formatContent(content) {
+        if (!content) return '';
+        
+        // Nếu nội dung không chứa thẻ HTML, xử lý văn bản thường
+        if (!/<\/?[a-z][\s\S]*>/i.test(content)) {
+            // Tách nội dung thành các đoạn dựa trên ký tự xuống dòng
+            const paragraphs = content.split(/\n+/);
+            
+            if (paragraphs.length === 1 && paragraphs[0].length > 100) {
+                // Nếu chỉ có một đoạn dài, thêm xuống dòng sau các dấu câu
+                return content
+                    .replace(/([.!?])\s+/g, "$1\n\n")
+                    .split(/\n+/)
+                    .map((p, index) => <p key={index}>{p}</p>);
+            }
+            
+            // Tạo các thẻ đoạn văn
+            return paragraphs.map((p, index) => 
+                <p key={index} className="blog-paragraph">{p}</p>
+            );
+        }
+        
+        // Nếu nội dung có thẻ HTML, trả về như vậy
+        return content;
+    }
 
     if (loading) {
         return (
@@ -143,12 +181,10 @@ const BlogDetail = () => {
             )}
 
             <div className="blog-content">
-                {blog.blogContent}
+                {formatContent(blog.blogContent)}
             </div>
-            
-          
         </div>
     );
-};
+}
 
 export default BlogDetail;
