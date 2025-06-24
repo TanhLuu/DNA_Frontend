@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, Form } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Header from './components/Share/Header';
 import Footer from './components/Share/Footer';
 import AdminLayout from './components/Share/AdminLayout';
@@ -37,8 +37,10 @@ import BlogList from './pages/BlogList';
 import BlogDetail from './pages/BlogDetail';
 import EditBlog from './pages/EditBlog';
 import DeleteBlog from './pages/DeleteBlog';
+
 function App() {
   const [role, setRole] = useState(localStorage.getItem('role')?.toLowerCase());
+
   useEffect(() => {
     const checkRole = () => {
       const currentRole = localStorage.getItem('role')?.toLowerCase();
@@ -46,7 +48,6 @@ function App() {
         setRole(currentRole);
       }
     };
-
     const interval = setInterval(checkRole, 100);
     return () => clearInterval(interval);
   }, [role]);
@@ -60,67 +61,69 @@ function App() {
   }, []);
 
   return (
-    /*
     <Router>
       <div className="app">
         {(role !== 'staff' && role !== 'manager') && <Header />}
 
         <main className="main-content">
           <Routes>
-            
+            {/* Auth routes */}
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/change-password" element={<ResetPassword />} />
             <Route path="/reset-password" element={<ResetPasswordFromEmail />} />
+
+            {/* Form & pricing routes */}
             <Route path="/requestFormCivil" element={<ADNRequestFormCivil />} />
             <Route path="/requesFormtLegal" element={<ADNRequestLegalForm />} />
             <Route path="/civil-price" element={<CivilServicePricing />} />
             <Route path="/legal-price" element={<LegalServicePricing />} />
             <Route path="/all-price" element={<AllServicePricing />} />
 
+            {/* Admin routes */}
             {(role === 'staff' || role === 'manager') && (
               <>
-                <Route path="/ordersPageAdmin" element={<AdminLayout> <OrdersPage /> </AdminLayout>} />
-                <Route path="/serviceManagement" element={<AdminLayout> <ServiceManagement /> </AdminLayout>}/>
-                <Route path="/dashboard" element={<AdminLayout><Dashboard /></AdminLayout>}/>
+                <Route path="/ordersPageAdmin" element={<AdminLayout><OrdersPage /></AdminLayout>} />
+                <Route path="/serviceManagement" element={<AdminLayout><ServiceManagement /></AdminLayout>} />
+                <Route path="/dashboard" element={<AdminLayout><Dashboard /></AdminLayout>} />
               </>
             )}
 
+            {/* Blog routes */}
+            <Route path="/blogs" element={<BlogList role={role} />} />
+            <Route path="/blog/:blogId" element={<BlogDetail />} />
+            {/* Chỉ staff mới vào được các route này */}
+            {role === 'staff' && (
+              <>
+                <Route path="/edit-blog/:id" element={<EditBlog />} />
+                <Route path="/create-blog" element={<Blog />} />
+              </>
+            )}
+            {/* Xóa Blog (tùy option, có thể kiểm tra quyền bên trong DeleteBlog) */}
+            {role === 'staff' && (
+              <Route path="/delete-blog/:id" element={<DeleteBlog />} />
+            )}
+
+            {/* Các route khác */}
             {(!role || role === 'customer') && (
               <Route path="/" element={<Home />} />
             )}
-
             {role === 'customer' && (
               <Route path="/profile" element={<Profile />} />
             )}
 
+            {/* 404 và điều hướng */}
             <Route path="*" element={
-              (role === 'staff' || role === 'manager') ? (
-                <Navigate to="/ordersPageAdmin" replace />
-              ) : (
-                <Navigate to="/" replace />
-              )
+              (role === 'staff' || role === 'manager')
+                ? <Navigate to="/ordersPageAdmin" replace />
+                : <Navigate to="/" replace />
             } />
           </Routes>
         </main>
 
         {(role !== 'staff' && role !== 'manager') && <Footer />}
       </div>
-    </Router>
-    */
-    <Router>
-      <Routes>
-        <Route path="/" element={<Navigate to="/blogs" replace />} />
-        <Route path="/blogs" element={<BlogList />} />
-        <Route path="/blog/:id" element={<BlogDetail />} />
-        <Route path="/create-blog" element={<Blog />} />
-        <Route path="/blog/:id/edit" element={<EditBlog />} />
-        <Route path="/edit-blog/:id" element={<EditBlog />} />
-        {/* Add this new route for deleting blogs */}
-        <Route path="/delete-blog/:id" element={<DeleteBlog />} />
-        <Route path="/blog/:id/delete" element={<DeleteBlog />} />
-      </Routes>
     </Router>
   );
 }

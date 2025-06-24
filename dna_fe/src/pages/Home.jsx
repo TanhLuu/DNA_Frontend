@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import '../styles/Home.css';
 import * as asset from '../assets';
 import AdnBooking from '../components/UI/AdnBooking';
-
+import BlogList from './BlogList';
 const images = [asset.banner001, asset.banner002, asset.banner003];
 
 const Home = () => {
@@ -174,8 +174,7 @@ const Home = () => {
 
 
 
-
-
+  <BlogList role={role} /> {/* nhớ truyền role nếu BlogList cần */}
 
 
 
