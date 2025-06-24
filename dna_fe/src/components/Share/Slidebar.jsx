@@ -2,7 +2,7 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useStaffInfo } from '../../hooks/useStaffInfo';
 import '../../styles/components/shared/slidebar.css';
-
+import BlogList from '../../pages/BlogList';
 const Sidebar = () => {
   const navigate = useNavigate();
   const { name, role } = useStaffInfo();
@@ -25,7 +25,7 @@ const Sidebar = () => {
           <Link to="/ordersPageAdmin">Đơn xét nghiệm</Link>
           <Link to="/serviceManagement">Quản lý dịch vụ</Link>
           <Link to="/dashboard">Dashboard</Link>
-          <Link to="#">Quản lý feedback</Link>
+          {/* thêm phần này */} <Link to="/blogs">Quản lý tin tức</Link>
         </nav>
       </div>
       <div className="admin-controls">

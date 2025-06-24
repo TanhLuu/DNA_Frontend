@@ -3,9 +3,9 @@ import { getAllBlogs, deleteBlog } from '../api/blogApi';
 import { useNavigate } from 'react-router-dom';
 import BlogImage from './BlogImage';
 import '../styles/bloglist.css';
-
-// Nhận props role hoặc lấy từ context
-function BlogList({ role }) {
+import Sidebar from '../components/Share/Slidebar';
+function BlogList({ role: propRole }) {
+  const role = propRole || localStorage.getItem('role')?.toLowerCase();
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -28,7 +28,9 @@ function BlogList({ role }) {
       .finally(() => setLoading(false));
   }
 
-  function handleDelete(id) {
+  function handleDelete(id, e) {
+    e.stopPropagation();
+    
     if (window.confirm('Are you sure you want to delete this blog?')) {
       deleteBlog(id)
         .then(() => setBlogs(blogs.filter(blog => blog.blogId !== id)))
@@ -36,8 +38,13 @@ function BlogList({ role }) {
     }
   }
 
-  function handleEdit(id) {
+  function handleEdit(id, e) {
+    e.stopPropagation();
     navigate(`/edit-blog/${id}`);
+  }
+
+  function handleBlogClick(id) {
+    navigate(`/blog/${id}`);
   }
 
   function formatDate(dateString) {
@@ -54,51 +61,63 @@ function BlogList({ role }) {
     }
   }
 
-  // Chỉ cho staff hiện các nút tạo, sửa, xóa
   const isStaff = role === 'staff';
 
-  return (
-    <div className="blog-list-container">
-      <div className="blog-list-header">
-        <h1 className="blog-list-title">All Blogs</h1>
-      </div>
-      <div className="blog-list-actions">
-        {isStaff && (
+  // Blog list content component
+  const BlogListContent = () => (
+    <div className="blog-list-content">
+      {isStaff && (
+        <div className="blog-list-header">
+          <h1 className="blog-list-title">All Blogs</h1>
+        </div>
+      )}
+      
+      {isStaff && (
+        <div className="blog-list-actions">
           <button 
             onClick={() => navigate('/create-blog')} 
             className="create-button"
           >
             Create New Blog
           </button>
-        )}
-        <button 
-          onClick={fetchBlogs}
-          className="refresh-button"
-        >
-          Refresh Blogs
-        </button>
-      </div>
+          <button 
+            onClick={fetchBlogs}
+            className="refresh-button"
+          >
+            Refresh Blogs
+          </button>
+        </div>
+      )}
+      
       {loading && (
         <div className="loading-container">
           <div className="loading-spinner"></div>
           <p>Loading blogs...</p>
         </div>
       )}
+      
       {error && (
         <div className="error-container">
           {error}
           <button onClick={fetchBlogs} className="retry-button">Try Again</button>
         </div>
       )}
+      
       {!loading && !error && blogs.length === 0 && (
         <div className="empty-container">
           <h3>No blogs found</h3>
           <p>Be the first to create a blog!</p>
         </div>
       )}
+      
       <div className="blog-grid">
         {blogs.map(blog => (
-          <div key={blog.blogId} className="blog-card">
+          <div 
+            key={blog.blogId} 
+            className="blog-card"
+            onClick={() => handleBlogClick(blog.blogId)}
+            style={{ cursor: 'pointer' }}
+          >
             {blog.urlImage && (
               <div className="blog-image-container">
                 <BlogImage 
@@ -126,35 +145,43 @@ function BlogList({ role }) {
               <h2 className="blog-title">{blog.blogName}</h2>
               <div className="blog-date">{formatDate(blog.blogDate)}</div>
             </div>
-            <div className="blog-actions">
-              <button 
-                onClick={() => navigate(`/blog/${blog.blogId}`)}
-                className="view-button"
-              >
-                View
-              </button>
-              {isStaff && (
-                <div>
-                  <button 
-                    onClick={() => handleEdit(blog.blogId)}
-                    className="edit-button"
-                  >
-                    Edit
-                  </button>
-                  <button 
-                    onClick={() => handleDelete(blog.blogId)}
-                    className="delete-button"
-                  >
-                    Delete
-                  </button>
-                </div>
-              )}
-            </div>
+            
+            {isStaff && (
+              <div className="blog-actions">
+                <button 
+                  onClick={(e) => handleEdit(blog.blogId, e)}
+                  className="edit-button"
+                >
+                  Edit
+                </button>
+                <button 
+                  onClick={(e) => handleDelete(blog.blogId, e)}
+                  className="delete-button"
+                >
+                  Delete
+                </button>
+              </div>
+            )}
           </div>
         ))}
       </div>
     </div>
   );
+
+  // Nếu là staff, hiển thị layout với sidebar
+  if (isStaff) {
+    return (
+      <div className="admin-layout">
+        <Sidebar />
+        <div className="admin-main-content">
+          <BlogListContent />
+        </div>
+      </div>
+    );
+  }
+
+  // Nếu không phải staff, chỉ hiển thị nội dung blog
+  return <div className="blog-list-container"><BlogListContent /></div>;
 }
 
 export default BlogList;

@@ -87,23 +87,27 @@ function App() {
                 <Route path="/ordersPageAdmin" element={<AdminLayout><OrdersPage /></AdminLayout>} />
                 <Route path="/serviceManagement" element={<AdminLayout><ServiceManagement /></AdminLayout>} />
                 <Route path="/dashboard" element={<AdminLayout><Dashboard /></AdminLayout>} />
+
               </>
             )}
 
-            {/* Blog routes */}
-            <Route path="/blogs" element={<BlogList role={role} />} />
-            <Route path="/blog/:blogId" element={<BlogDetail />} />
-            {/* Chỉ staff mới vào được các route này */}
-            {role === 'staff' && (
+
+            {(role === 'staff' || role === 'manager') && (
               <>
+                <Route path="/ordersPageAdmin" element={<AdminLayout><OrdersPage /></AdminLayout>} />
+                <Route path="/serviceManagement" element={<AdminLayout><ServiceManagement /></AdminLayout>} />
+                <Route path="/dashboard" element={<AdminLayout><Dashboard /></AdminLayout>} />
+                {/* thêm phần này*/}
+                {/* Admin Blog routes */}
                 <Route path="/edit-blog/:id" element={<EditBlog />} />
                 <Route path="/create-blog" element={<Blog />} />
+                <Route path="/delete-blog/:id" element={<DeleteBlog />} />
               </>
             )}
-            {/* Xóa Blog (tùy option, có thể kiểm tra quyền bên trong DeleteBlog) */}
-            {role === 'staff' && (
-              <Route path="/delete-blog/:id" element={<DeleteBlog />} />
-            )}
+            {/* thêm phần này*/}
+            {/* Public Blog routes */}
+            <Route path="/blogs" element={<BlogList />} />
+            <Route path="/blog/:blogId" element={<BlogDetail />} />
 
             {/* Các route khác */}
             {(!role || role === 'customer') && (
