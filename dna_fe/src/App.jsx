@@ -20,10 +20,10 @@ import OrderHistory from './pages/customer/OrderHistory';
 import OrderDetailAdmin from './pages/admin/OrderDetailAdmin';
 import OrderDetailCustomer from './pages/customer/OrderDetailCustomer';
 import TestResultInput from "./pages/admin/TestResultInput";
-import PaymentPage from './pages/customer/PaymentPage';
-import VNPayReturnPage from './pages/customer/VNPayReturnPage';
-import PaymentHistory from './pages/customer/PaymentHistory';
-import TestPayment from './components/testPayment'; // Import component test mới
+import PaymentPage from './pages/payment/PaymentPage';
+import VNPayReturnPage from './pages/payment/VNPayReturnPage';
+import PaymentHistory from './pages/payment/PaymentHistory';
+import TestPayment from './components/payment/testPayment'; // Import component test mới
 
 function App() {
   const [role, setRole] = useState(localStorage.getItem('role')?.toLowerCase());

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import '../../styles/customer/payment.css'; 
+import '../../styles/payment/payment.css'; 
 
 const VNPayReturnPage = () => {
   const [searchParams] = useSearchParams();
