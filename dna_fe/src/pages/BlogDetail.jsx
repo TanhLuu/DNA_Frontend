@@ -177,7 +177,7 @@ function BlogDetail() {
                 <div className="blog-detail-image-wrapper">
                     <BlogImage
                         src={blog.urlImage}
-                        alt={blog.blogName}
+                        alt=''
                         currentTime={currentDateTime}
                         isDetailView={true} // Thêm prop này để kích hoạt chế độ hiển thị chi tiết
                         hideDetails={true}

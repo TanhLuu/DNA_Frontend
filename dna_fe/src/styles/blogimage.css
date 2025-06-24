@@ -1,33 +1,139 @@
-/* Container chính */
-.blog-image-container {
-  margin-bottom: 20px;
-  text-align: center;
-  border: 1px solid #eee;
-  border-radius: 8px;
-  padding: 10px;
-  background-color: #fff;
-}
-
-/* Container loading */
-.blog-image-loading {
-  padding: 40px;
-  background-color: #f8f9fa;
-  border-radius: 8px;
-  margin-bottom: 10px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-/* Spinner loading */
-.blog-image-spinner {
-  border: 3px solid #f3f3f3;
-  border-top: 3px solid #3498db;
-  border-radius: 50%;
-  width: 30px;
-  height: 30px;
-  animation: spin 1s linear infinite;
+/* Blog detail container and layout */
+.blog-detail-container {
+  max-width: 900px;
   margin: 0 auto;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+}
+
+.blog-detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.blog-detail-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.back-button, .edit-button, .delete-button {
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+}
+
+.back-button {
+  background-color: #f0f0f0;
+  color: #333;
+}
+
+.edit-button {
+  background-color: #2196f3;
+  color: white;
+}
+
+.delete-button {
+  background-color: #f44336;
+  color: white;
+}
+
+.back-button:hover, .edit-button:hover, .delete-button:hover {
+  opacity: 0.9;
+  transform: translateY(-2px);
+}
+
+/* Blog content styling */
+.blog-title {
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+  line-height: 1.2;
+  color: #333;
+}
+
+.blog-date {
+  font-size: 0.9rem;
+  color: #777;
+  margin-bottom: 25px;
+  font-style: italic;
+}
+
+.blog-content {
+  line-height: 1.8;
+  font-size: 1.1rem;
+  color: #444;
+}
+
+.blog-paragraph {
+  margin-bottom: 20px;
+}
+
+/* Image wrapper with improved aesthetics */
+.blog-detail-image-wrapper {
+  width: 100%;
+  margin: 30px auto 40px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+  position: relative;
+  background-color: #f9f9f9;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.blog-detail-image-wrapper:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.2);
+}
+
+/* Image container and styling */
+.blog-detail-image-container {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
+.blog-detail-image-container img {
+  width: 100%;
+  height: auto;
+  display: block;
+  transition: transform 0.5s ease;
+}
+
+.blog-detail-image-container:hover img {
+  transform: scale(1.02);
+}
+
+/* Image caption */
+.blog-detail-image-caption-static {
+  padding: 15px;
+  background-color: rgba(0,0,0,0.03);
+  color: #555;
+  font-style: italic;
+  text-align: center;
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+}
+
+/* Loading and error states */
+.loading-container, .error-container, .not-found-container {
+  text-align: center;
+  padding: 50px 0;
+}
+
+.loading-spinner {
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-radius: 50%;
+  border-top: 4px solid #3498db;
+  width: 40px;
+  height: 40px;
+  margin: 0 auto 20px;
+  animation: spin 1s linear infinite;
 }
 
 @keyframes spin {
@@ -35,194 +141,21 @@
   100% { transform: rotate(360deg); }
 }
 
-.blog-image-loading-text {
-  margin-top: 10px;
-  color: #666;
-}
-
-/* Hình ảnh */
-.blog-image {
-  max-width: 100%;
-  max-height: 800px; /* Tăng từ 500px lên 800px */
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  display: block;
-  margin: 0 auto;
-  object-fit: contain; /* Đảm bảo ảnh không bị méo */
-}
-
-/* Nếu muốn chiều cao cố định thay vì max-height */
-.blog-image-fixed-height {
-  width: auto;
-  height: 800px; /* Chiều cao cố định */
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  display: block;
-  margin: 0 auto;
-}
-
-/* Container hiển thị lỗi */
-.blog-image-error {
-  padding: 30px;
-  background-color: #f8f9fa;
-  border: 1px dashed #ccc;
-  border-radius: 8px;
-  margin-bottom: 10px;
-  text-align: center;
-}
-
-.blog-image-error-icon {
-  margin: 0 auto;
-  display: block;
-}
-
-.blog-image-error-text {
-  text-align: center;
-  color: #dc3545;
-  margin-top: 10px;
-}
-
-.blog-image-buttons {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  margin-top: 15px;
-  flex-wrap: wrap;
-}
-
-.blog-image-retry {
-  padding: 8px 16px;
-  background-color: #17a2b8;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.blog-image-fallback {
-  padding: 8px 16px;
-  background-color: #6c757d;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.blog-image-info {
-  margin-top: 15px;
-  font-size: 0.9rem;
-  color: #666;
-}
-
-.blog-image-info ul {
-  text-align: left;
-  padding-left: 20px;
-  margin: 10px 0;
-}
-
-.blog-image-info li {
-  margin-bottom: 5px;
-}
-
-/* Thông tin URL */
-.blog-image-details {
-  margin-top: 10px;
-  font-size: 0.8rem;
-  color: #666;
-  text-align: left;
-}
-
-.blog-image-details-processed {
-  margin-top: 5px;
-}
-
-/* Thông tin thời gian */
-.blog-image-time-info {
-  margin-top: 15px;
-  font-size: 0.75rem;
-  color: #999;
-  text-align: right;
-  border-top: 1px solid #eee;
-  padding-top: 5px;
-}
-/* Thêm vào file blogimage.css */
-
-/* Styles đặc biệt cho blog detail image container */
-.blog-detail-image-container {
-  position: relative;
-  overflow: hidden;
-  border-radius: 12px;
-  background-color: #f9f9f9;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.blog-detail-image-container:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 25px rgba(0,0,0,0.25);
-}
-
-/* Style cho hình ảnh chi tiết */
-.blog-detail-image {
-  width: 100%;
-  height: auto;
-  max-height: 700px;
-  object-fit: contain;
-  display: block;
-  transition: transform 0.5s ease, opacity 0.3s ease;
-}
-
-.blog-detail-image-container:hover .blog-detail-image {
-  transform: scale(1.02);
-}
-
-/* Caption cho blog detail image */
-.blog-detail-image-caption {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
-  color: white;
-  padding: 20px;
-  text-align: center;
-  font-size: 16px;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.blog-detail-image-container:hover .blog-detail-image-caption {
-  opacity: 1;
-}
-
-/* Đảm bảo không ảnh hưởng đến blog list */
-.blog-list .blog-image-container,
-.blog-list .blog-image {
-  box-shadow: none !important;
-  transform: none !important;
-  transition: none !important;
-}
-
-.blog-list .blog-image-container:hover {
-  transform: none !important;
-  box-shadow: none !important;
-}
-
-.blog-list .blog-image-container:hover .blog-image {
-  transform: none !important;
-}
-
-/* Spinner cải tiến */
-.blog-image-spinner {
-  border: 3px solid rgba(0, 0, 0, 0.1);
-  border-radius: 50%;
-  border-top: 3px solid #3498db;
-  width: 40px;
-  height: 40px;
-  animation: blog-image-spin 1s linear infinite;
-  margin: 0 auto;
-}
-
-@keyframes blog-image-spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+/* Responsive design */
+@media (max-width: 768px) {
+  .blog-detail-container {
+    padding: 15px;
+  }
+  
+  .blog-title {
+    font-size: 1.8rem;
+  }
+  
+  .blog-content {
+    font-size: 1rem;
+  }
+  
+  .blog-detail-image-wrapper {
+    margin: 20px auto 30px;
+  }
 }

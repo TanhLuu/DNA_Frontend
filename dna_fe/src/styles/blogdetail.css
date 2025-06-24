@@ -1,99 +1,179 @@
-/* Thay thế hoặc cập nhật các style trong blogdetail.css */
+/* Blog detail container and layout */
+.blog-detail-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+  overflow: hidden; /* Prevent content overflow */
+}
 
-/* Wrapper cho hình ảnh blog detail với hiệu ứng nổi bật */
+.blog-detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.blog-detail-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.back-button, .edit-button, .delete-button {
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+}
+
+.back-button {
+  background-color: #f0f0f0;
+  color: #333;
+}
+
+.edit-button {
+  background-color: #2196f3;
+  color: white;
+}
+
+.delete-button {
+  background-color: #f44336;
+  color: white;
+}
+
+.back-button:hover, .edit-button:hover, .delete-button:hover {
+  opacity: 0.9;
+  transform: translateY(-2px);
+}
+
+/* Blog content styling */
+.blog-title {
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+  line-height: 1.2;
+  color: #333;
+  word-wrap: break-word; /* Handle long words */
+}
+
+.blog-date {
+  font-size: 0.9rem;
+  color: #777;
+  margin-bottom: 25px;
+  font-style: italic;
+}
+
+.blog-content {
+  line-height: 1.8;
+  font-size: 1.1rem;
+  color: #444;
+  word-wrap: break-word; /* Ensure text wraps properly */
+  overflow-wrap: break-word;
+  max-width: 100%; /* Constrain content width */
+}
+
+.blog-paragraph {
+  margin-bottom: 20px;
+  max-width: 100%; /* Ensure paragraphs don't overflow */
+}
+
+/* Image wrapper with improved aesthetics */
 .blog-detail-image-wrapper {
   width: 100%;
   margin: 30px auto 40px;
-  padding: 0;
-  border: none;
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 5px 25px rgba(0,0,0,0.2);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
   position: relative;
   background-color: #f9f9f9;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  max-height: none; /* Remove height restriction */
 }
 
-/* Hiệu ứng hover cho wrapper */
 .blog-detail-image-wrapper:hover {
   transform: translateY(-5px);
-  box-shadow: 0 8px 30px rgba(0,0,0,0.25);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.2);
 }
 
-/* Container cho hình ảnh với tỷ lệ cố định */
+/* Image container and styling - UPDATED FOR BETTER DISPLAY */
 .blog-detail-image-container {
   position: relative;
   width: 100%;
-  padding-top: 56.25%; /* Tỷ lệ 16:9 */
   overflow: hidden;
+  padding-top: 0; /* Remove fixed aspect ratio */
+  height: auto;
 }
 
-/* Style cho hình ảnh chính */
 .blog-detail-image-container img {
-  position: absolute;
-  top: 0;
-  left: 0;
   width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.5s ease;
-}
-
-/* Hiệu ứng zoom khi hover */
-.blog-detail-image-container:hover img {
-  transform: scale(1.03);
-}
-
-/* Tùy chọn hiển thị đầy đủ chiều cao */
-.blog-detail-fullheight {
-  padding-top: 0 !important;
-  height: auto;
-  max-height: 700px;
-}
-
-.blog-detail-fullheight img {
-  position: relative;
-  height: auto;
-  max-height: 700px;
-  width: auto;
   max-width: 100%;
-  margin: 0 auto;
+  height: auto;
+  max-height: none; /* Allow full height display */
   display: block;
+  margin: 0 auto;
+  transition: transform 0.5s ease;
+  object-fit: contain; /* Keep the image's aspect ratio */
 }
 
-/* Lớp overlay cho caption hoặc thông tin ảnh (tùy chọn) */
-.blog-detail-image-overlay {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
-  color: white;
-  padding: 20px;
-  opacity: 0;
-  transition: opacity 0.3s ease;
+.blog-detail-image-container:hover img {
+  transform: scale(1.02);
 }
 
-.blog-detail-image-container:hover .blog-detail-image-overlay {
-  opacity: 1;
+/* For BlogImage component when used in detail view */
+.blog-image {
+  max-height: none !important; /* Override any existing max-height */
 }
 
-/* Đảm bảo CSS này không ảnh hưởng đến bloglist */
-.blog-list .blog-image,
-.blog-list img {
-  /* Giữ nguyên các style cho bloglist */
-  max-height: initial;
-  transform: none;
-  box-shadow: none;
+/* Image caption */
+.blog-detail-image-caption-static {
+  padding: 15px;
+  background-color: rgba(0,0,0,0.03);
+  color: #555;
+  font-style: italic;
+  text-align: center;
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
 }
 
-/* Style cho các thiết bị di động */
+/* Loading and error states */
+.loading-container, .error-container, .not-found-container {
+  text-align: center;
+  padding: 50px 0;
+}
+
+.loading-spinner {
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-radius: 50%;
+  border-top: 4px solid #3498db;
+  width: 40px;
+  height: 40px;
+  margin: 0 auto 20px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Responsive design */
 @media (max-width: 768px) {
-  .blog-detail-image-wrapper {
-    margin: 20px auto 30px;
+  .blog-detail-container {
+    padding: 15px;
   }
   
-  .blog-detail-fullheight img {
-    max-height: 500px;
+  .blog-title {
+    font-size: 1.8rem;
+  }
+  
+  .blog-content {
+    font-size: 1rem;
+  }
+  
+  .blog-detail-image-wrapper {
+    margin: 20px auto 30px;
   }
 }
