@@ -23,11 +23,12 @@ import TestResultInput from "./pages/admin/TestResultInput";
 import PaymentPage from './pages/customer/PaymentPage';
 import VNPayReturnPage from './pages/customer/VNPayReturnPage';
 import PaymentHistory from './pages/customer/PaymentHistory';
-
+import TestPayment from './components/testPayment'; // Import component test mới
 
 function App() {
   const [role, setRole] = useState(localStorage.getItem('role')?.toLowerCase());
-   const customerId = localStorage.getItem('customerId'); 
+  const customerId = localStorage.getItem('customerId'); 
+  
   useEffect(() => {
     const checkRole = () => {
       const currentRole = localStorage.getItem('role')?.toLowerCase();
@@ -65,7 +66,14 @@ function App() {
             <Route path="/payment" element={<PaymentPage />} />
             <Route path="/payment-history" element={<PaymentHistory customerId={customerId} />} />
             
+            {/* Route để test thanh toán */}
+            <Route path="/test-payment" element={<TestPayment />} />
+            
+            {/* Các route cho VNPay return */}
             <Route path="/vnpay-return" element={<VNPayReturnPage />} />
+            <Route path="/api/payments/vnpay-return" element={<VNPayReturnPage />} />
+            <Route path="/payment/result" element={<VNPayReturnPage />} />
+            
             {(role === 'staff' || role === 'manager') && (
               <>
                 <Route path="/ordersPageAdmin" element={<AdminLayout> <OrdersPage /> </AdminLayout>} />
@@ -85,7 +93,6 @@ function App() {
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/OrderHistory" element={<OrderHistory />} />
                 <Route path="/customer/orders/:orderId" element={<OrderDetailCustomer />} />
-
               </>
             )}  
 
