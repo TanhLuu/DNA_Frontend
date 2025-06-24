@@ -2,13 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../../styles/components/shared/header.css';
 import logo from '../../assets/logo.jpg';
-import ResetPassword from '../UI/Auth/ResetPassword';
-import Login from '../UI/Auth/Login';
-import Register from '../UI/Auth/Register';
-import ForgotPassword from '../UI/Auth/ForgotPassword';
 
 const Header = () => {
-  const [formType, setFormType] = useState(null);
   const [fullName, setFullName] = useState('');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isResetOpen, setIsResetOpen] = useState(false);
@@ -61,6 +56,12 @@ const Header = () => {
 
   const getInitial = (name) => name ? name.charAt(0).toUpperCase() : 'U';
 
+  const redirectToAuth = (form) => {
+    const url = new URL(window.location.origin + '/auth');
+    url.searchParams.set('form', form);
+    window.location.href = url.toString();
+  };
+
   return (
     <header className="header-outer">
       <div className="top-bar">
@@ -99,7 +100,7 @@ const Header = () => {
             </div>
           </div>
           <a href="/order-detail">Hướng dẫn</a>
-          <a href="/news">Tin tức</a>
+          <a href="/auth">Tin tức</a>
         </nav>
 
         <div className={`auth-links ${isDropdownOpen ? 'active' : ''}`}>
@@ -117,38 +118,14 @@ const Header = () => {
               </div>
             </div>
           ) : (
-            <div className="auth-options">
-              <button className="register-link" onClick={() => setFormType('register')}>Đăng ký</button>
-              <button className="login-link" onClick={() => setFormType('login')}>Đăng nhập</button>
+            <div className="auth-buttons">
+              <button className="auth-slide-button" onClick={() => redirectToAuth('login')}>
+                Đăng nhập / Đăng ký
+              </button>
             </div>
           )}
         </div>
       </div>
-
-      {!fullName && (
-        <>
-          <Login
-            isOpen={formType === 'login'}
-            onClose={() => setFormType(null)}
-            onSwitch={() => setFormType('register')}
-            onForgot={() => setFormType('forgot')}
-          />
-          <Register
-            isOpen={formType === 'register'}
-            onClose={() => setFormType(null)}
-            onSwitch={() => setFormType('login')}
-          />
-          <ForgotPassword
-            isOpen={formType === 'forgot'}
-            onClose={() => setFormType(null)}
-          />
-        </>
-      )}
-
-      <ResetPassword
-        isOpen={isResetOpen}
-        onClose={() => setIsResetOpen(false)}
-      />
     </header>
   );
 };

@@ -20,7 +20,7 @@
   overflow: hidden;
 }
 
-.contact-info span{
+.contact-info span {
   padding: 0 5px;
 }
 
@@ -265,10 +265,11 @@
     margin-top: 12px;
   }
 
-  .auth-options {
-    flex-direction: column;
-    gap: 6px;
-    width: 100%;
+  button.auth-slide-button {
+    padding: 0px 20px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
   }
 
   .user-menu {

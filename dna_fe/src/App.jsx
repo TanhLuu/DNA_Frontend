@@ -4,8 +4,6 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Header from './components/Share/Header';
 import Footer from './components/Share/Footer';
 import AdminLayout from './components/Share/AdminLayout';
-import ResetPasswordFromEmail from './pages/auth/ResetPasswordFromEmail';
-import ResetPassword from './components/UI/Auth/ResetPassword';
 import Home from './pages/Home';
 import OrdersPage from './pages/admin/OrdersPage';
 import Profile from './components/Profile';
@@ -20,6 +18,7 @@ import OrderHistory from './pages/customer/OrderHistory';
 import OrderDetailAdmin from './pages/admin/OrderDetailAdmin';
 import OrderDetailCustomer from './pages/customer/OrderDetailCustomer';
 import TestResultInput from './pages/admin/TestResultInput';
+import DoubleSliderAuth from './pages/auth/DoubleSliderAuth';
 
 
 function App() {
@@ -51,13 +50,13 @@ function App() {
 
         <main className="main-content">
           <Routes>
-            <Route path="/change-password" element={<ResetPassword />} />
-            <Route path="/reset-password" element={<ResetPasswordFromEmail />} />
+            <Route path="/reset-password" element={<DoubleSliderAuth />} />
             <Route path="/requestFormCivil" element={<ADNRequestFormCivil />} />
             <Route path="/requesFormtLegal" element={<ADNRequestLegalForm />} />
             <Route path="/civil-price" element={<CivilServicePricing />} />
             <Route path="/legal-price" element={<LegalServicePricing />} />
             <Route path="/all-price" element={<AllServicePricing />} />
+            <Route path="/auth" element={<DoubleSliderAuth />} />
 
             {(role === 'staff' || role === 'manager') && (
               <>

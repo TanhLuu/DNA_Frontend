@@ -4,7 +4,7 @@ import {
   registerUser,
   createStaff,
   resetPasswordAuthenticated,
-  resetPasswordWithToken
+  resetPasswordWithToken,
 } from '../api/authApi';
 import {
   getCustomerByAccountId,
