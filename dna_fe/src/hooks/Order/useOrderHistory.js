@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { getAccountByCustomerId, getServiceById, getOrdersByCustomerId } from '../api/accountApi';
+import {getAccountByCustomerId, getOrdersByCustomerId } from '../../api/customerOrderApi';
+import { getServiceById } from '../../api/customerOrderApi';
 
 const useCustomerOrders = () => {
   const [orders, setOrders] = useState([]);

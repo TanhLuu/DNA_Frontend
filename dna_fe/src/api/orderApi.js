@@ -5,22 +5,12 @@ export const getAllTestOrders = async () => {
   return response.data;
 };
 
-export const getAccountByCustomerId = async (customerId) => {
-  const response = await axiosInstance.get(`/api/customers/${customerId}`);
+export const createTestOrder = async (orderData) => {
+  const response = await axiosInstance.post('/api/testorders', orderData);
   return response.data;
 };
 
-export const getServiceById = async (serviceId) => {
-  const response = await axiosInstance.get(`/api/services/${serviceId}`);
-  return response.data;
-};
-
-export const updateOrderStatus = async (orderId, updateData) => {
-  const response = await axiosInstance.put(`/api/testorders/${orderId}`, updateData);
-  return response.data;
-};
-
-export const getTestOrderById = async (orderId) => {
-  const response = await axiosInstance.get(`/api/testorders/${orderId}`);
+export const deleteTestOrder = async (orderId) => {
+  const response = await axiosInstance.delete(`/api/testorders/${orderId}`);
   return response.data;
 };

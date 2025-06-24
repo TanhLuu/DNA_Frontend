@@ -91,7 +91,7 @@ const useADNRequestForm = (getServices) => {
         serviceId: parseInt(formData.testType),
         orderDate: formData.orderDate || new Date().toISOString().split('T')[0],
         orderStatus: 'PENDING',
-        sampleType: formData.method || '',
+        sampleMethod: formData.method || '',
         resultDeliveryMethod: formData.receiveAt || '',
         resultDeliverAddress: formData.resultAddress || '',
         sampleQuantity: parseInt(sampleCount) || 2,

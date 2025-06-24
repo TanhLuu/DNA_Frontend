@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
 import {
   fetchAccountInfo,
-  updateAccountInfo,
   getCustomerByAccountId,
   createCustomer,
   updateCustomer
 } from '../api/accountApi';
+
+import { updateAccountInfo } from '../api/customerOrderApi';
+
 
 const formatDate = (iso) => iso?.split('T')[0] || '';
 
@@ -24,7 +26,7 @@ export const useCustomerProfile = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const acc = await fetchAccountInfo(); // ❌ bỏ .data
+        const acc = await fetchAccountInfo(); 
         setAccountId(acc.id);
         setAccount({
           fullName: acc.fullName || '',
@@ -33,7 +35,7 @@ export const useCustomerProfile = () => {
         });
 
         try {
-          const cus = await getCustomerByAccountId(acc.id); // ❌ bỏ .data
+          const cus = await getCustomerByAccountId(acc.id); 
           setCustomerId(cus.id);
           localStorage.setItem('customerId', cus.id);
 
@@ -79,7 +81,7 @@ export const useCustomerProfile = () => {
         await updateCustomer(customerId, customerData);
       } else {
         try {
-          const res = await createCustomer(customerData); // ❌ bỏ res.data.id vì đã trả về trực tiếp
+          const res = await createCustomer(customerData); 
           setCustomerId(res.id);
           localStorage.setItem('customerId', res.id);
         } catch (err) {

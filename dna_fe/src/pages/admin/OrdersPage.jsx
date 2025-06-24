@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import useOrders from '../../hooks/useOrders';
-import OrderFilterBar from '../../components/UI/Order/OrderFilterBar';
+import useOrders from '../../hooks/Order/useOrdersPage';
+import OrderFilterBar from '../../components/Order/OrderFilterBar';
 import '../../styles/admin/ordersPage.css';
 
 const OrdersPage = () => {
@@ -67,7 +67,7 @@ const OrdersPage = () => {
                 <td>{serviceData[order.serviceId]?.serviceName || 'N/A'}</td>
                 <td>{serviceData[order.serviceId]?.serviceType || 'N/A'}</td>
                 <td>{order.resultDeliverAddress || 'N/A'}</td>
-                <td><span className="pill">{order.sampleType === 'center' ? 'Tại trung tâm' : 'Tự lấy mẫu'}</span></td>
+                <td><span className="pill">{order.sampleMethod === 'center' ? 'Tại trung tâm' : 'Tự lấy mẫu'}</span></td>
                 <td>{serviceData[order.serviceId]?.timeTest || 'N/A'} ngày</td>
                 <td>{formatDate(order.orderDate)}</td>
                 <td>{formatPrice(order.amount)}</td>

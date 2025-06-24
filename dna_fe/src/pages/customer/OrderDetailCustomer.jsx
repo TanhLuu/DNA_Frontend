@@ -1,14 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
 import {
+  getTestOrderById,
+  getTestSamplesByOrderId,
+  getTestResultsByOrderId,
+  getTestResultSamplesByOrderId,
   getAccountByCustomerId,
   getCustomerById,
   getServiceById,
-  getTestSamplesByOrderId,
-  getStaffById,
-  getAccountById,
-} from "../../api/accountApi";
+  updateAccountInfo,
+  updateTestOrder,
+  updateTestSample,
+} from "../../api/customerOrderApi";
+import { getStaffById, getAccountById } from "../../api/adminOrderApi";
+import OrderInfoSections from "../../components/Order/OrderInfoSections";
+import TestResultsAndSamples from "../../components/Order/TestResultsAndSamples";
 
 const OrderDetailCustomer = () => {
   const { orderId } = useParams();
@@ -18,6 +24,8 @@ const OrderDetailCustomer = () => {
   const [service, setService] = useState(null);
   const [loading, setLoading] = useState(true);
   const [testSamples, setTestSamples] = useState([]);
+  const [testResults, setTestResults] = useState([]);
+  const [testResultSamples, setTestResultSamples] = useState([]);
   const [updateError, setUpdateError] = useState(null);
   const [registrationStaff, setRegistrationStaff] = useState(null);
   const [testingStaff, setTestingStaff] = useState(null);
@@ -37,20 +45,12 @@ const OrderDetailCustomer = () => {
   const shouldShowFullFields = () => service?.serviceType === "Hành chính";
 
   const shouldShowKitCode =
-    service?.serviceType === "Dân sự" && order?.sampleType === "home";
+    service?.serviceType === "Dân sự" && order?.sampleMethod === "home";
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axios.get(
-          `http://localhost:8080/api/testorders/${orderId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
-        );
-        const orderData = res.data;
+        const orderData = await getTestOrderById(orderId);
         setOrder(orderData);
 
         const accountInfo = await getAccountByCustomerId(orderData.customerId);
@@ -67,22 +67,27 @@ const OrderDetailCustomer = () => {
         setService(serviceInfo);
 
         if (orderData.registrationStaffId) {
-          const regStaffInfo = await getStaffById(orderData.registrationStaffId);
-          const regAccountInfo = await getAccountById(regStaffInfo.accountId);
-          setRegistrationStaff(regAccountInfo);
-        }
-
-        if (orderData.testingStaffId) {
-          const testStaffInfo = await getStaffById(orderData.testingStaffId);
-          const testAccountInfo = await getAccountById(testStaffInfo.accountId);
-          setTestingStaff(testAccountInfo);
-        }
+  const regStaffInfo = await getStaffById(orderData.registrationStaffId);
+  const regAccountInfo = await getAccountById(regStaffInfo.accountId);
+  setRegistrationStaff(regAccountInfo);
+}
+if (orderData.testingStaffId) {
+  const testStaffInfo = await getStaffById(orderData.testingStaffId);
+  const testAccountInfo = await getAccountById(testStaffInfo.accountId);
+  setTestingStaff(testAccountInfo);
+}
 
         const existingSamples = await getTestSamplesByOrderId(orderData.orderId);
         setTestSamples(existingSamples);
         if (orderData.orderStatus !== "SEND_KIT") {
           setIsSubmitted(true);
         }
+
+        const resultsResponse = await getTestResultsByOrderId(orderId);
+        setTestResults(resultsResponse);
+
+        const resultSamplesResponse = await getTestResultSamplesByOrderId(orderId);
+        setTestResultSamples(resultSamplesResponse);
       } catch (err) {
         console.error("Lỗi khi tải dữ liệu:", err);
         setUpdateError("Đã xảy ra lỗi khi tải dữ liệu đơn hàng.");
@@ -120,42 +125,18 @@ const OrderDetailCustomer = () => {
 
     try {
       for (const sample of testSamples) {
-        await axios.put(
-          `http://localhost:8080/api/testSamples/${sample.id}`,
-          sample,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
-        );
+        await updateTestSample(sample.id, sample);
       }
 
-      await axios.put(
-        `http://localhost:8080/api/account/${account?.id}`,
-        {
-          fullName: userInfo.fullName,
-          phone: userInfo.phone,
-          email: userInfo.email,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
+      await updateAccountInfo(account?.id, {
+        fullName: userInfo.fullName,
+        phone: userInfo.phone,
+        email: userInfo.email,
+      });
 
-      await axios.put(
-        `http://localhost:8080/api/testorders/${orderId}`,
-        {
-          orderStatus: "SEND_SAMPLE",
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
+      await updateTestOrder(orderId, {
+        orderStatus: "SEND_SAMPLE",
+      });
 
       setOrder({ ...order, orderStatus: "SEND_SAMPLE" });
       setIsSubmitted(true);
@@ -180,6 +161,17 @@ const OrderDetailCustomer = () => {
 
   const handleBack = () => navigate(-1);
 
+  const uniqueSamples = [
+    ...new Set(testResultSamples.map((sample) => sample.testSampleId)),
+  ].map((id) => {
+    const sample = testSamples.find((s) => s.id === id);
+    return { id, name: sample?.name || "N/A" };
+  });
+
+  const uniqueLoci = [
+    ...new Set(testResultSamples.map((sample) => sample.locusName)),
+  ];
+
   if (loading) return <div className="text-center text-lg">Đang tải...</div>;
   if (!order) return <div className="text-center text-red-500">Không tìm thấy đơn hàng</div>;
 
@@ -188,52 +180,17 @@ const OrderDetailCustomer = () => {
       {updateError && <div className="text-red-500 mb-4 text-center">{updateError}</div>}
       <h2 className="text-2xl font-bold mb-6">Chi tiết đơn hàng #{order.orderId}</h2>
 
-      {/* ✅ Thông tin khách hàng, dịch vụ, đơn hàng, nhân viên */}
-      <section className="mb-6">
-        <h3 className="text-xl font-semibold mb-2">Thông tin khách hàng</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <p><strong>Họ tên:</strong> {account?.fullName}</p>
-          <p><strong>SĐT:</strong> {account?.phone}</p>
-          <p><strong>Email:</strong> {account?.email}</p>
-          <p><strong>Giới tính:</strong> {customer?.gender}</p>
-          <p><strong>Ngày sinh:</strong> {formatDate(customer?.dateOfBirth)}</p>
-          <p><strong>Địa chỉ:</strong> {customer?.address}</p>
-          <p><strong>Loại giấy tờ:</strong> {customer?.documentType}</p>
-          <p><strong>Số giấy tờ:</strong> {customer?.cccd}</p>
-          <p><strong>Nơi cấp:</strong> {customer?.placeOfIssue}</p>
-          <p><strong>Ngày cấp:</strong> {formatDate(customer?.dateOfIssue)}</p>
-        </div>
-      </section>
-
-      <section className="mb-6">
-        <h3 className="text-xl font-semibold mb-2">Thông tin dịch vụ</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <p><strong>Tên dịch vụ:</strong> {service?.serviceName}</p>
-          <p><strong>Loại dịch vụ:</strong> {service?.serviceType}</p>
-          <p><strong>Thời gian xét nghiệm:</strong> {service?.timeTest} ngày</p>
-        </div>
-      </section>
-
-      <section className="mb-6">
-        <h3 className="text-xl font-semibold mb-2">Thông tin đơn hàng</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <p><strong>Trạng thái:</strong> {STATUS_LABELS[order?.orderStatus]}</p>
-          <p><strong>Ngày đặt:</strong> {formatDate(order?.orderDate)}</p>
-          <p><strong>Hình thức thu mẫu:</strong> {order?.sampleType === "center" ? "Tại trung tâm" : "Tại nhà"}</p>
-          <p><strong>Số lượng mẫu:</strong> {order?.sampleQuantity}</p>
-          <p><strong>Phương thức nhận kết quả:</strong> {order?.resultDeliveryMethod}</p>
-          <p><strong>Địa chỉ nhận kết quả:</strong> {order?.resultDeliverAddress}</p>
-          <p><strong>Giá:</strong> {formatPrice(order?.amount)}</p>
-        </div>
-      </section>
-
-      <section className="mb-6">
-        <h3 className="text-xl font-semibold mb-2">Thông tin nhân viên phụ trách</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <p><strong>Nhân viên đăng ký:</strong> {registrationStaff?.fullName || "Chưa có"}</p>
-          <p><strong>Nhân viên xét nghiệm:</strong> {testingStaff?.fullName || "Chưa có"}</p>
-        </div>
-      </section>
+      <OrderInfoSections
+        account={account}
+        customer={customer}
+        service={service}
+        order={order}
+        registrationStaff={registrationStaff}
+        testingStaff={testingStaff}
+        formatDate={formatDate}
+        formatPrice={formatPrice}
+        STATUS_LABELS={STATUS_LABELS}
+      />
 
       <section className="mb-6">
         <h3 className="text-xl font-semibold mb-2">Thông tin mẫu xét nghiệm</h3>
@@ -243,29 +200,141 @@ const OrderDetailCustomer = () => {
             <h4 className="font-medium mb-2">Mẫu #{idx + 1}</h4>
             {shouldShowKitCode && <p><strong>Mã kit:</strong> {sample.kitCode || "N/A"}</p>}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <input type="text" value={sample.name || ""} onChange={(e) => handleSampleInputChange(idx, "name", e.target.value)} placeholder="Họ tên" className="border p-2 rounded" disabled={isSubmitted} />
-              <input type="text" value={sample.gender || ""} onChange={(e) => handleSampleInputChange(idx, "gender", e.target.value)} placeholder="Giới tính" className="border p-2 rounded" disabled={isSubmitted} />
-              <input type="date" value={sample.dateOfBirth || ""} onChange={(e) => handleSampleInputChange(idx, "dateOfBirth", e.target.value)} className="border p-2 rounded" disabled={isSubmitted} />
-              <input type="text" value={sample.relationship || ""} onChange={(e) => handleSampleInputChange(idx, "relationship", e.target.value)} placeholder="Quan hệ" className="border p-2 rounded" disabled={isSubmitted} />
-              <input type="text" value={sample.sampleType || ""} onChange={(e) => handleSampleInputChange(idx, "sampleType", e.target.value)} placeholder="Loại mẫu" className="border p-2 rounded" disabled={isSubmitted} />
+              <input
+                type="text"
+                value={sample.name || ""}
+                onChange={(e) => handleSampleInputChange(idx, "name", e.target.value)}
+                placeholder="Họ tên"
+                className="border p-2 rounded"
+                disabled={isSubmitted}
+              />
+              <input
+                type="text"
+                value={sample.gender || ""}
+                onChange={(e) => handleSampleInputChange(idx, "gender", e.target.value)}
+                placeholder="Giới tính"
+                className="border p-2 rounded"
+                disabled={isSubmitted}
+              />
+              <input
+                type="date"
+                value={sample.dateOfBirth || ""}
+                onChange={(e) => handleSampleInputChange(idx, "dateOfBirth", e.target.value)}
+                className="border p-2 rounded"
+                disabled={isSubmitted}
+              />
+              <input
+                type="text"
+                value={sample.relationship || ""}
+                onChange={(e) => handleSampleInputChange(idx, "relationship", e.target.value)}
+                placeholder="Quan hệ"
+                className="border p-2 rounded"
+                disabled={isSubmitted}
+              />
+              <input
+                type="text"
+                value={sample.sampleType || ""}
+                onChange={(e) => handleSampleInputChange(idx, "sampleType", e.target.value)}
+                placeholder="Loại mẫu"
+                className="border p-2 rounded"
+                disabled={isSubmitted}
+              />
               {shouldShowFullFields() && (
                 <>
-                  <input type="text" value={sample.sampleNumber || ""} onChange={(e) => handleSampleInputChange(idx, "sampleNumber", e.target.value)} placeholder="Số mẫu" className="border p-2 rounded" disabled={isSubmitted} />
-                  <input type="text" value={sample.address || ""} onChange={(e) => handleSampleInputChange(idx, "address", e.target.value)} placeholder="Địa chỉ" className="border p-2 rounded" disabled={isSubmitted} />
-                  <input type="text" value={sample.documentType || ""} onChange={(e) => handleSampleInputChange(idx, "documentType", e.target.value)} placeholder="Loại giấy tờ" className="border p-2 rounded" disabled={isSubmitted} />
-                  <input type="text" value={sample.documentNumber || ""} onChange={(e) => handleSampleInputChange(idx, "documentNumber", e.target.value)} placeholder="Số giấy tờ" className="border p-2 rounded" disabled={isSubmitted} />
-                  <input type="date" value={sample.dateOfIssue || ""} onChange={(e) => handleSampleInputChange(idx, "dateOfIssue", e.target.value)} className="border p-2 rounded" disabled={isSubmitted} />
-                  <input type="date" value={sample.expirationDate || ""} onChange={(e) => handleSampleInputChange(idx, "expirationDate", e.target.value)} className="border p-2 rounded" disabled={isSubmitted} />
-                  <input type="text" value={sample.placeOfIssue || ""} onChange={(e) => handleSampleInputChange(idx, "placeOfIssue", e.target.value)} placeholder="Nơi cấp" className="border p-2 rounded" disabled={isSubmitted} />
-                  <input type="text" value={sample.nationality || ""} onChange={(e) => handleSampleInputChange(idx, "nationality", e.target.value)} placeholder="Quốc tịch" className="border p-2 rounded" disabled={isSubmitted} />
-                  <input type="text" value={sample.fingerprint || ""} onChange={(e) => handleSampleInputChange(idx, "fingerprint", e.target.value)} placeholder="Vân tay" className="border p-2 rounded" disabled={isSubmitted} />
+                  <input
+                    type="text"
+                    value={sample.sampleNumber || ""}
+                    onChange={(e) => handleSampleInputChange(idx, "sampleNumber", e.target.value)}
+                    placeholder="Số mẫu"
+                    className="border p-2 rounded"
+                    disabled={isSubmitted}
+                  />
+                  <input
+                    type="text"
+                    value={sample.address || ""}
+                    onChange={(e) => handleSampleInputChange(idx, "address", e.target.value)}
+                    placeholder="Địa chỉ"
+                    className="border p-2 rounded"
+                    disabled={isSubmitted}
+                  />
+                  <input
+                    type="text"
+                    value={sample.documentType || ""}
+                    onChange={(e) => handleSampleInputChange(idx, "documentType", e.target.value)}
+                    placeholder="Loại giấy tờ"
+                    className="border p-2 rounded"
+                    disabled={isSubmitted}
+                  />
+                  <input
+                    type="text"
+                    value={sample.documentNumber || ""}
+                    onChange={(e) => handleSampleInputChange(idx, "documentNumber", e.target.value)}
+                    placeholder="Số giấy tờ"
+                    className="border p-2 rounded"
+                    disabled={isSubmitted}
+                  />
+                  <input
+                    type="date"
+                    value={sample.dateOfIssue || ""}
+                    onChange={(e) => handleSampleInputChange(idx, "dateOfIssue", e.target.value)}
+                    className="border p-2 rounded"
+                    disabled={isSubmitted}
+                  />
+                  <input
+                    type="date"
+                    value={sample.expirationDate || ""}
+                    onChange={(e) => handleSampleInputChange(idx, "expirationDate", e.target.value)}
+                    className="border p-2 rounded"
+                    disabled={isSubmitted}
+                  />
+                  <input
+                    type="text"
+                    value={sample.placeOfIssue || ""}
+                    onChange={(e) => handleSampleInputChange(idx, "placeOfIssue", e.target.value)}
+                    placeholder="Nơi cấp"
+                    className="border p-2 rounded"
+                    disabled={isSubmitted}
+                  />
+                  <input
+                    type="text"
+                    value={sample.nationality || ""}
+                    onChange={(e) => handleSampleInputChange(idx, "nationality", e.target.value)}
+                    placeholder="Quốc tịch"
+                    className="border p-2 rounded"
+                    disabled={isSubmitted}
+                  />
+                  <input
+                    type="text"
+                    value={sample.fingerprint || ""}
+                    onChange={(e) => handleSampleInputChange(idx, "fingerprint", e.target.value)}
+                    placeholder="Vân tay"
+                    className="border p-2 rounded"
+                    disabled={isSubmitted}
+                  />
                 </>
               )}
-              <input type="text" value={sample.medicalHistory || ""} onChange={(e) => handleSampleInputChange(idx, "medicalHistory", e.target.value)} placeholder="Tiền sử bệnh" className="border p-2 rounded col-span-full" disabled={isSubmitted} />
+              <input
+                type="text"
+                value={sample.medicalHistory || ""}
+                onChange={(e) => handleSampleInputChange(idx, "medicalHistory", e.target.value)}
+                placeholder="Tiền sử bệnh"
+                className="border p-2 rounded col-span-full"
+                disabled={isSubmitted}
+              />
             </div>
           </div>
         ))}
       </section>
+
+      {order.orderStatus === "COMPLETED" && (
+      <TestResultsAndSamples
+        testResults={testResults}
+        testResultSamples={testResultSamples}
+        testSamples={testSamples}
+        uniqueSamples={uniqueSamples}
+        uniqueLoci={uniqueLoci}
+      />
+    )}
 
       {order.orderStatus === "SEND_KIT" && !isSubmitted && (
         <div className="flex justify-center mb-6">
@@ -282,8 +351,6 @@ const OrderDetailCustomer = () => {
           </button>
         </div>
       )}
-
-      
 
       <div className="flex justify-center">
         <button

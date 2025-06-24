@@ -1,7 +1,7 @@
 import React from 'react';
 import '../../styles/customer/OrderHistory.css';
-import useCustomerOrders from '../../hooks/useCustomerOrders';
-import OrderFilterBar from '../../components/UI/Order/OrderFilterBar';
+import useCustomerOrders from '../../hooks/Order/useOrderHistory';
+import OrderFilterBar from '../../components/Order/OrderFilterBar';
 import { useNavigate } from 'react-router-dom';
 
 const OrderHistory = () => {
@@ -63,7 +63,7 @@ const OrderHistory = () => {
                 <td>{serviceData[order.serviceId]?.serviceName || 'N/A'}</td>
                 <td>{serviceData[order.serviceId]?.serviceType || 'N/A'}</td>
                 <td>{order.resultDeliverAddress || 'N/A'}</td>
-                <td><span className="pill">{order.sampleType === 'center' ? 'Tại trung tâm' : 'Tự lấy mẫu'}</span></td>
+                <td><span className="pill">{order.sampleMethod === 'center' ? 'Tại trung tâm' : 'Tự lấy mẫu'}</span></td>
                 <td>{serviceData[order.serviceId]?.timeTest || 'N/A'} ngày</td>
                 <td>{formatDate(order.orderDate)}</td>
                 <td>{formatPrice(order.amount)}</td>

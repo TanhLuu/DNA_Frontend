@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { getAccountByCustomerId, getServiceById } from '../api/accountApi';
+import { getServiceById } from '../../api/customerOrderApi';
+import { getAccountByCustomerId } from '../../api/customerOrderApi';
 
 const useOrders = () => {
   const [orders, setOrders] = useState([]);
