@@ -1,5 +1,5 @@
 import React from 'react';
-import '../styles/components/profile.css';
+import '../styles/components/Profile.css';
 import { useCustomerProfile } from '../hooks/useCustomerProfile';
 
 const genderOptions = ['Nam', 'Nữ', 'Khác'];

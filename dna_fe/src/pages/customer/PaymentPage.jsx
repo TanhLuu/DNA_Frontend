@@ -10,11 +10,22 @@ const PaymentPage = () => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (location.state) {
-      const { orderId, customerId, amount } = location.state;
+    // Lấy dữ liệu từ location.state hoặc localStorage
+    const state = location.state;
+    if (state) {
+      const { orderId, customerId, amount } = state;
       setOrderId(orderId);
       setCustomerId(customerId);
       setAmount(amount);
+      localStorage.setItem('paymentData', JSON.stringify({ orderId, customerId, amount }));
+    } else {
+      const saved = localStorage.getItem('paymentData');
+      if (saved) {
+        const data = JSON.parse(saved);
+        setOrderId(data.orderId);
+        setCustomerId(data.customerId);
+        setAmount(data.amount);
+      }
     }
   }, [location.state]);
 
@@ -41,23 +52,33 @@ const PaymentPage = () => {
   };
 
   return (
-    <div style={{ maxWidth: '500px', margin: 'auto' }}>
-      <h2>Thanh toán VNPay</h2>
-      <div>
-        <label>Order ID:</label>
-        <input value={orderId} readOnly />
-      </div>
-      <div>
-        <label>Customer ID:</label>
-        <input value={customerId} readOnly />
-      </div>
-      <div>
-        <label>Số tiền (VNĐ):</label>
-        <input value={amount} readOnly />
-      </div>
-      <button onClick={handlePayment} disabled={loading}>
-        {loading ? 'Đang xử lý...' : 'Thanh toán qua VNPay'}
-      </button>
+    <div style={{ maxWidth: '500px', margin: 'auto', paddingTop: '100px' }}>
+      <h2 className="text-xl font-bold mb-4">Thanh toán VNPay</h2>
+      {!orderId || !customerId || !amount ? (
+        <p className="text-red-500">Không có thông tin thanh toán.</p>
+      ) : (
+        <>
+          <div className="mb-2">
+            <label>Order ID:</label>
+            <input value={orderId} readOnly className="border w-full p-2" />
+          </div>
+          <div className="mb-2">
+            <label>Customer ID:</label>
+            <input value={customerId} readOnly className="border w-full p-2" />
+          </div>
+          <div className="mb-4">
+            <label>Số tiền (VNĐ):</label>
+            <input value={amount} readOnly className="border w-full p-2" />
+          </div>
+          <button
+            onClick={handlePayment}
+            disabled={loading}
+            className="bg-blue-500 text-white px-4 py-2 rounded"
+          >
+            {loading ? 'Đang xử lý...' : 'Thanh toán qua VNPay'}
+          </button>
+        </>
+      )}
     </div>
   );
 };
