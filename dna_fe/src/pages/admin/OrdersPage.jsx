@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import useOrders from '../../hooks/Order/useOrdersPage';
-import OrderFilterBar from '../../components/Order/OrderFilterBar';
+
 import '../../styles/admin/ordersPage.css';
 
 const OrdersPage = () => {
@@ -16,6 +16,7 @@ const OrdersPage = () => {
   } = useOrders();
 
   const getStatusClass = status => ({
+    CONFIRM: 'status-confirm',
     PENDING: 'status-pending',
     SEND_KIT: 'status-send-kit',
     SEND_SAMPLE: 'status-send-sample',
@@ -37,7 +38,7 @@ const OrdersPage = () => {
 
   return (
     <div className="orders-container">
-      <OrderFilterBar handleFilterChange={handleFilterChange} />
+      
       <div className="orders-table-wrapper">
         <table className="orders-table">
           <thead>
@@ -73,7 +74,8 @@ const OrdersPage = () => {
                 <td>{formatPrice(order.amount)}</td>
                 <td className={`status ${getStatusClass(order.orderStatus)}`}>
                   {{
-                    PENDING: 'Đặt lịch/Đăng ký',
+                    PENDING: 'Đang chờ thanh toán',
+                    CONFIRM: 'Đặt lịch/Đăng ký',
                     SEND_KIT: 'Trung tâm đã gửi kit',
                     SEND_SAMPLE: 'Khách hàng đã gửi mẫu',
                     COLLECT_SAMPLE: 'Trung tâm đã nhận mẫu',

@@ -151,7 +151,7 @@ if (orderData.testingStaffId) {
     userInfo.fullName.trim() && userInfo.phone.trim() && userInfo.email.trim();
 
   const STATUS_LABELS = {
-    PENDING: "Đặt lịch / Đăng ký",
+    CONFIRM: "Đặt lịch / Đăng ký",
     SEND_KIT: "Đã gửi kit",
     SEND_SAMPLE: "Đã gửi mẫu lại trung tâm",
     COLLECT_SAMPLE: "Đã thu mẫu",

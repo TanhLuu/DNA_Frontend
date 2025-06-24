@@ -90,7 +90,7 @@ const useADNRequestForm = (getServices) => {
         staffId: null,
         serviceId: parseInt(formData.testType),
         orderDate: formData.orderDate || new Date().toISOString().split('T')[0],
-        orderStatus: 'PENDING',
+        orderStatus: '',
         sampleMethod: formData.method || '',
         resultDeliveryMethod: formData.receiveAt || '',
         resultDeliverAddress: formData.resultAddress || '',

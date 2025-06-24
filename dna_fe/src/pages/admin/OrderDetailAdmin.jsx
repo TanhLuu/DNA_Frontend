@@ -39,11 +39,11 @@ const OrderDetailAdmin = () => {
   const formatPrice = (p) => (p ? p.toLocaleString("vi-VN") + " VNĐ" : "N/A");
 
   const getNextStatus = (currentStatus) => {
-    if (order?.sampleMethod === "center" && currentStatus === "PENDING") {
+    if (order?.sampleMethod === "center" && currentStatus === "CONFIRM") {
       return "COLLECT_SAMPLE";
     }
     const flow = [
-      "PENDING",
+      "CONFIRM",
       "SEND_KIT",
       "SEND_SAMPLE",
       "COLLECT_SAMPLE",
@@ -60,7 +60,7 @@ const OrderDetailAdmin = () => {
       if (status === "SEND_KIT" && nextStatus === "SEND_SAMPLE") return false;
       if (status === "COLLECT_SAMPLE" && nextStatus === "TESTED") return false;
       const normal = [
-        "PENDING",
+        "CONFIRM",
         "SEND_KIT",
         "SEND_SAMPLE",
         "COLLECT_SAMPLE",
@@ -82,7 +82,7 @@ const OrderDetailAdmin = () => {
   const isCivilHomePending =
     service?.serviceType === "Dân sự" &&
     order?.sampleMethod === "home" &&
-    order?.orderStatus === "PENDING";
+    order?.orderStatus === "CONFIRM";
 
   useEffect(() => {
     const fetchData = async () => {
@@ -228,7 +228,8 @@ const OrderDetailAdmin = () => {
   };
 
   const STATUS_LABELS = {
-    PENDING: "Đặt lịch / Đăng ký",
+    PENDING: "Đang chờ thanh toán",
+    CONFIRM: "Đặt lịch / Đăng ký",
     SEND_KIT: "Đã gửi kit",
     SEND_SAMPLE: "Đã gửi mẫu lại trung tâm",
     COLLECT_SAMPLE: "Đã thu mẫu",

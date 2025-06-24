@@ -1,7 +1,7 @@
 import React from 'react';
 import '../../styles/customer/OrderHistory.css';
 import useCustomerOrders from '../../hooks/Order/useOrderHistory';
-import OrderFilterBar from '../../components/Order/OrderFilterBar';
+
 import { useNavigate } from 'react-router-dom';
 
 const OrderHistory = () => {
@@ -14,7 +14,8 @@ const OrderHistory = () => {
   } = useCustomerOrders();
 
   const STATUS_LABELS = {
-    PENDING: "Đặt lịch / Đăng ký",           // Đơn hàng vừa được tạo, chờ xử lý
+    PENDING: "Đang chờ thanh toán",                  // Đơn hàng mới tạo, chưa xử lý
+    CONFIRM: "Đặt lịch / Đăng ký",           // Đơn hàng vừa được tạo, chờ xử lý
     SEND_KIT: "Đã gửi kit",                  // Đã gửi bộ kit lấy mẫu cho khách hàng
     SEND_SAMPLE: "Đã gửi mẫu lại trung tâm", // Khách hàng đã gửi mẫu về trung tâm
     COLLECT_SAMPLE: "Đã thu mẫu",            // Đã thu mẫu tại trung tâm hoặc tại nhà
@@ -38,7 +39,7 @@ const OrderHistory = () => {
     <div className="customer-orders-container">
       <h2 className="text-2xl font-bold mb-4">Đơn hàng</h2>
 
-      <OrderFilterBar handleFilterChange={handleFilterChange} />
+      
 
       <div className="orders-table-wrapper">
         <table className="orders-table">
