@@ -10,22 +10,22 @@ function BlogDetail() {
     const [blog, setBlog] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    
+
     useEffect(() => {
         const fetchBlog = async () => {
             setLoading(true);
             try {
                 const data = await getBlogById(id);
-                
+
                 // Nếu nội dung blog quá dài mà không có xuống dòng, thêm xuống dòng sau mỗi câu
                 if (data && data.blogContent) {
                     // Thêm xuống dòng sau dấu chấm, hỏi, chấm than nếu theo sau là khoảng trắng và chữ cái viết hoa
                     const formattedContent = data.blogContent
                         .replace(/([.!?])\s+([A-Z])/g, "$1\n\n$2");
-                    
+
                     data.blogContent = formattedContent;
                 }
-                
+
                 setBlog(data);
                 setError(null);
             } catch (err) {
@@ -71,12 +71,12 @@ function BlogDetail() {
     // Format content to add paragraph breaks
     function formatContent(content) {
         if (!content) return '';
-        
+
         // Nếu nội dung không chứa thẻ HTML, xử lý văn bản thường
         if (!/<\/?[a-z][\s\S]*>/i.test(content)) {
             // Tách nội dung thành các đoạn dựa trên ký tự xuống dòng
             const paragraphs = content.split(/\n+/);
-            
+
             if (paragraphs.length === 1 && paragraphs[0].length > 100) {
                 // Nếu chỉ có một đoạn dài, thêm xuống dòng sau các dấu câu
                 return content
@@ -84,13 +84,13 @@ function BlogDetail() {
                     .split(/\n+/)
                     .map((p, index) => <p key={index}>{p}</p>);
             }
-            
+
             // Tạo các thẻ đoạn văn
-            return paragraphs.map((p, index) => 
+            return paragraphs.map((p, index) =>
                 <p key={index} className="blog-paragraph">{p}</p>
             );
         }
-        
+
         // Nếu nội dung có thẻ HTML, trả về như vậy
         return content;
     }
@@ -137,7 +137,7 @@ function BlogDetail() {
     // Tạo thời gian hiện tại theo định dạng YYYY-MM-DD HH:MM:SS
     const currentDateTime = new Date().toISOString().replace('T', ' ').substring(0, 19);
 
-     return (
+    return (
         <div className="blog-detail-container">
             <div className="blog-detail-header">
                 <button
@@ -172,29 +172,14 @@ function BlogDetail() {
                 Posted on {formatDate(blog.blogDate)}
             </div>
 
+            
             {blog.urlImage && (
                 <div className="blog-detail-image-wrapper">
-                    <BlogImage 
+                    <BlogImage
                         src={blog.urlImage}
                         alt={blog.blogName}
                         currentTime={currentDateTime}
-                        customStyle={{
-                            margin: '0',
-                            border: 'none',
-                            borderRadius: '0',
-                            padding: '0',
-                            backgroundColor: 'transparent',
-                            boxShadow: 'none',
-                        }}
-                        imageStyle={{
-                            maxWidth: '100%',
-                            maxHeight: '900px',
-                            width: 'auto',
-                            display: 'block',
-                            margin: '0 auto',
-                            objectFit: 'contain',
-                            borderRadius: '4px',
-                        }}
+                        isDetailView={true} // Thêm prop này để kích hoạt chế độ hiển thị chi tiết
                         hideDetails={true}
                     />
                 </div>

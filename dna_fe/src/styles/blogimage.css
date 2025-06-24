@@ -145,3 +145,84 @@
   border-top: 1px solid #eee;
   padding-top: 5px;
 }
+/* Thêm vào file blogimage.css */
+
+/* Styles đặc biệt cho blog detail image container */
+.blog-detail-image-container {
+  position: relative;
+  overflow: hidden;
+  border-radius: 12px;
+  background-color: #f9f9f9;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.blog-detail-image-container:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.25);
+}
+
+/* Style cho hình ảnh chi tiết */
+.blog-detail-image {
+  width: 100%;
+  height: auto;
+  max-height: 700px;
+  object-fit: contain;
+  display: block;
+  transition: transform 0.5s ease, opacity 0.3s ease;
+}
+
+.blog-detail-image-container:hover .blog-detail-image {
+  transform: scale(1.02);
+}
+
+/* Caption cho blog detail image */
+.blog-detail-image-caption {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+  color: white;
+  padding: 20px;
+  text-align: center;
+  font-size: 16px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.blog-detail-image-container:hover .blog-detail-image-caption {
+  opacity: 1;
+}
+
+/* Đảm bảo không ảnh hưởng đến blog list */
+.blog-list .blog-image-container,
+.blog-list .blog-image {
+  box-shadow: none !important;
+  transform: none !important;
+  transition: none !important;
+}
+
+.blog-list .blog-image-container:hover {
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.blog-list .blog-image-container:hover .blog-image {
+  transform: none !important;
+}
+
+/* Spinner cải tiến */
+.blog-image-spinner {
+  border: 3px solid rgba(0, 0, 0, 0.1);
+  border-radius: 50%;
+  border-top: 3px solid #3498db;
+  width: 40px;
+  height: 40px;
+  animation: blog-image-spin 1s linear infinite;
+  margin: 0 auto;
+}
+
+@keyframes blog-image-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
