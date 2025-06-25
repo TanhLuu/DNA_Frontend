@@ -11,6 +11,7 @@ export const createBlog = async (blogData) => {
       blogData = { ...blogData, blogDate: formattedDate };
     }
     
+    // Không cần ánh xạ nữa vì đã đồng bộ tên trường
     console.log('Sending formatted data:', blogData);
     
     const response = await axiosInstance.post('/api/blogs', blogData);
@@ -20,16 +21,12 @@ export const createBlog = async (blogData) => {
     console.error('Error in createBlog API call:');
     
     if (error.response) {
-      // The request was made and the server responded with a status code
-      // that falls out of the range of 2xx
       console.error('Response data:', error.response.data);
       console.error('Response status:', error.response.status);
       console.error('Response headers:', error.response.headers);
     } else if (error.request) {
-      // The request was made but no response was received
       console.error('No response received:', error.request);
     } else {
-      // Something happened in setting up the request
       console.error('Error message:', error.message);
     }
     
@@ -41,6 +38,7 @@ export const createBlog = async (blogData) => {
 export const getAllBlogs = async () => {
   try {
     const response = await axiosInstance.get('/api/blogs');
+    // Không cần ánh xạ nữa vì đã đồng bộ tên trường
     return response.data;
   } catch (error) {
     console.error('Error fetching blogs:', error);
@@ -52,6 +50,7 @@ export const getAllBlogs = async () => {
 export const getBlogById = async (id) => {
   try {
     const response = await axiosInstance.get(`/api/blogs/${id}`);
+    // Không cần ánh xạ nữa vì đã đồng bộ tên trường
     return response.data;
   } catch (error) {
     console.error(`Error fetching blog with ID ${id}:`, error);
@@ -67,6 +66,9 @@ export const updateBlog = async (id, blogData) => {
       const formattedDate = new Date(blogData.blogDate).toISOString().split('T')[0];
       blogData = { ...blogData, blogDate: formattedDate };
     }
+    
+    // Không cần ánh xạ nữa vì đã đồng bộ tên trường
+    console.log('Updating blog with data:', blogData);
     
     const response = await axiosInstance.put(`/api/blogs/${id}`, blogData);
     return response.data;
@@ -86,6 +88,7 @@ export const deleteBlog = async (id) => {
     throw error;
   }
 };
+
 export const uploadBlogImage = async (file) => {
   try {
     const formData = new FormData();
@@ -124,7 +127,6 @@ export const proxyBlogImage = async (imageUrl) => {
     const response = await axiosInstance.post('/api/blogs/proxy-image', { 
       url: processedUrl,
       timestamp: new Date().toISOString(),
-      user: 'trihqse184859'  // Thêm thông tin user nếu cần
     });
     
     return response.data;

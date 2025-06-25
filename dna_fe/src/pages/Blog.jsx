@@ -15,12 +15,27 @@ function Blog() {
     blogName: '',
     blogContent: '',
     urlImage: '',
-    blogDate: getCurrentDate()
+    blogDate: getCurrentDate(),
+    blogType: '' // Đổi từ typeBlog thành blogType
   });
 
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
   const [errors, setErrors] = useState({});
+
+  // Danh sách các loại blog để hiển thị trong dropdown
+  const blogTypes = [
+    { value: 'news', label: 'News' },
+    { value: 'technology', label: 'Technology' },
+    { value: 'lifestyle', label: 'Lifestyle' },
+    { value: 'travel', label: 'Travel' },
+    { value: 'food', label: 'Food & Cooking' },
+    { value: 'health', label: 'Health & Wellness' },
+    { value: 'business', label: 'Business' },
+    { value: 'education', label: 'Education' },
+    { value: 'entertainment', label: 'Entertainment' },
+    { value: 'other', label: 'Other' }
+  ];
 
   // Handle input changes
   function handleChange(e) {
@@ -67,6 +82,11 @@ function Blog() {
       newErrors.urlImage = 'Please enter a valid URL';
     }
 
+    // Validate blog type
+    if (!formData.blogType) {  // Đổi từ typeBlog thành blogType
+      newErrors.blogType = 'Please select a blog type';  // Đổi từ typeBlog thành blogType
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   }
@@ -101,10 +121,15 @@ function Blog() {
         blogName: formData.blogName.trim(),
         blogContent: formData.blogContent.trim(),
         urlImage: formData.urlImage.trim() || null,
-        blogDate: formData.blogDate // Date is already in YYYY-MM-DD format
+        blogDate: formData.blogDate, // Date is already in YYYY-MM-DD format
+        blogType: formData.blogType // Đổi từ typeBlog thành blogType
       };
       
+      console.log('Sending blog data:', blogData);
+      
       const result = await createBlog(blogData);
+      
+      console.log('Blog creation response:', result);
       
       setMessage({
         type: 'success',
@@ -116,7 +141,8 @@ function Blog() {
         blogName: '',
         blogContent: '',
         urlImage: '',
-        blogDate: getCurrentDate()
+        blogDate: getCurrentDate(),
+        blogType: ''  // Đổi từ typeBlog thành blogType
       });
 
       // Chuyển hướng về trang BlogList sau khi tạo thành công
@@ -125,6 +151,8 @@ function Blog() {
       }, 1500); // Đợi 1.5 giây để người dùng thấy thông báo thành công
 
     } catch (error) {
+      console.error('Error creating blog:', error);
+      
       let errorMessage = 'Failed to create blog. Please try again.';
       
       if (error.response && error.response.data) {
@@ -154,7 +182,8 @@ function Blog() {
       blogName: '',
       blogContent: '',
       urlImage: '',
-      blogDate: getCurrentDate()
+      blogDate: getCurrentDate(),
+      blogType: ''  // Đổi từ typeBlog thành blogType
     });
     setErrors({});
     setMessage({ type: '', text: '' });
@@ -162,8 +191,7 @@ function Blog() {
 
   // Get current user time
   function currentTime() {
-    const now = new Date();
-    return now.toISOString().replace('T', ' ').substring(0, 19);
+    return '2025-06-25 09:17:01'; // Lấy thời gian từ thông tin bạn cung cấp
   }
 
   return (
@@ -171,6 +199,7 @@ function Blog() {
       <div className="form-header">
         <h2>Create New Blog</h2>
         <p>Current time: {currentTime()} UTC</p>
+        <p>User: trihqse184859</p>
       </div>
 
       {message.text && (
@@ -203,6 +232,30 @@ function Blog() {
           <small className="form-helper">
             {formData.blogName.length}/255 characters
           </small>
+        </div>
+
+        {/* Blog Type dropdown - đổi từ typeBlog thành blogType */}
+        <div className="form-group">
+          <label htmlFor="blogType" className="form-label">
+            Blog Type <span className="required">*</span>
+          </label>
+          <select
+            id="blogType"
+            name="blogType"
+            value={formData.blogType}
+            onChange={handleChange}
+            className={`form-select ${errors.blogType ? 'error' : ''}`}
+          >
+            <option value="">-- Select Blog Type --</option>
+            {blogTypes.map(type => (
+              <option key={type.value} value={type.value}>
+                {type.label}
+              </option>
+            ))}
+          </select>
+          {errors.blogType && (
+            <span className="form-error">{errors.blogType}</span>
+          )}
         </div>
 
         <div className="form-group">

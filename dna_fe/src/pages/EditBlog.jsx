@@ -13,8 +13,23 @@ function EditBlog() {
     blogName: '',
     blogContent: '',
     urlImage: '',
-    blogDate: ''
+    blogDate: '',
+    blogType: '' // Đổi từ typeBlog thành blogType
   });
+
+  // Danh sách các loại blog để hiển thị trong dropdown
+  const blogTypes = [
+    { value: 'news', label: 'News' },
+    { value: 'technology', label: 'Technology' },
+    { value: 'lifestyle', label: 'Lifestyle' },
+    { value: 'travel', label: 'Travel' },
+    { value: 'food', label: 'Food & Cooking' },
+    { value: 'health', label: 'Health & Wellness' },
+    { value: 'business', label: 'Business' },
+    { value: 'education', label: 'Education' },
+    { value: 'entertainment', label: 'Entertainment' },
+    { value: 'other', label: 'Other' }
+  ];
 
   // State for UI feedback
   const [loading, setLoading] = useState(false);
@@ -39,11 +54,14 @@ function EditBlog() {
         setFetchingBlog(true);
         const blogData = await getBlogById(blogId);
         
+        console.log('Received blog data:', blogData);
+        
         setFormData({
           blogName: blogData.blogName || '',
           blogContent: blogData.blogContent || '',
           urlImage: blogData.urlImage || '',
-          blogDate: blogData.blogDate ? new Date(blogData.blogDate).toISOString().split('T')[0] : new Date().toISOString().split('T')[0]
+          blogDate: blogData.blogDate ? new Date(blogData.blogDate).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+          blogType: blogData.blogType || '' // Đổi từ typeBlog thành blogType
         });
         
         setMessage({ type: '', text: '' });
@@ -106,6 +124,11 @@ function EditBlog() {
       newErrors.urlImage = 'Please enter a valid URL';
     }
 
+    // Validate blog type
+    if (!formData.blogType) {  // Đổi từ typeBlog thành blogType
+      newErrors.blogType = 'Please select a blog type';  // Đổi từ typeBlog thành blogType
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -142,12 +165,17 @@ function EditBlog() {
         blogName: formData.blogName.trim(),
         blogContent: formData.blogContent.trim(),
         urlImage: formData.urlImage.trim() || null,
-        blogDate: formData.blogDate
+        blogDate: formData.blogDate,
+        blogType: formData.blogType // Đổi từ typeBlog thành blogType
       };
+      
+      console.log('Sending update data:', blogData);
       
       // Pass blogId and blogData as separate parameters
       const result = await updateBlog(blogId, blogData);
       setApiResponse(result);
+      
+      console.log('Update response:', result);
       
       setMessage({
         type: 'success',
@@ -187,8 +215,7 @@ function EditBlog() {
 
   // Get current user time
   const currentTime = () => {
-    const now = new Date();
-    return now.toISOString().replace('T', ' ').substring(0, 19);
+    return '2025-06-25 09:17:01'; // Lấy thời gian từ thông tin bạn cung cấp
   };
 
   // If still loading blog data, show loading indicator
@@ -205,6 +232,7 @@ function EditBlog() {
       <div className="edit-blog-header">
         <h2>Edit Blog</h2>
         <p>Current time: {currentTime()} UTC</p>
+        <p>Editor: trihqse184859</p>
       </div>
 
       {message.text && (
@@ -234,6 +262,30 @@ function EditBlog() {
           <small className="helper-text">
             {formData.blogName.length}/255 characters
           </small>
+        </div>
+
+        {/* Blog Type dropdown - đổi từ typeBlog thành blogType */}
+        <div className="form-group">
+          <label htmlFor="blogType" className="form-label">
+            Blog Type <span className="required">*</span>
+          </label>
+          <select
+            id="blogType"
+            name="blogType"
+            value={formData.blogType}
+            onChange={handleChange}
+            className={`form-select ${errors.blogType ? 'error' : ''}`}
+          >
+            <option value="">-- Select Blog Type --</option>
+            {blogTypes.map(type => (
+              <option key={type.value} value={type.value}>
+                {type.label}
+              </option>
+            ))}
+          </select>
+          {errors.blogType && (
+            <span className="error-text">{errors.blogType}</span>
+          )}
         </div>
 
         <div className="form-group">
