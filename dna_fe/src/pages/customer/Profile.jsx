@@ -1,8 +1,8 @@
 // src/pages/Profile.jsx
 import React, { useState } from 'react';
-import '../styles/components/profile.css';
-import { useCustomerProfile } from '../hooks/useCustomerProfile';
-import { useAuth } from '../hooks/useAuth';
+import '../../styles/components/profile.css';
+import { useCustomerProfile } from '../../hooks/Account/useCustomerProfile';
+import { useAuth } from '../../hooks/Account/useAuth';
 
 const genderOptions = ['Nam', 'Nữ', 'Khác'];
 const documentOptions = ['CCCD', 'Giấy khai sinh', 'Hộ chiếu'];
@@ -46,6 +46,7 @@ const Profile = () => {
   if (isLoading) return <div style={{ padding: '2rem' }}>Đang tải dữ liệu...</div>;
 
   return (
+    <div className="profile-page">
     <div className="profile-container">
       <div className="profile-card">
         <div className="profile-header">
@@ -126,6 +127,7 @@ const Profile = () => {
           </div>
         </div>
       )}
+    </div>
     </div>
   );
 };

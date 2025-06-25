@@ -6,11 +6,11 @@ import Footer from './components/Share/Footer';
 import AdminLayout from './components/Share/AdminLayout';
 import Home from './pages/Home';
 import OrdersPage from './pages/admin/OrdersPage';
-import Profile from './components/Profile';
+import Profile from './pages/customer/Profile';
 import ServiceManagement from './pages/admin/ServiceManagement';
 import Dashboard from './pages/admin/Dashboard';
-import ADNRequestFormCivil from './components/ADN_Form/ADNRequestFormCivil';
-import ADNRequestLegalForm from './components/ADN_Form/ADNRequestLegalForm';
+import ADNRequestFormCivil from './components/OrderForm/ADNRequestFormCivil';
+import ADNRequestLegalForm from './components/OrderForm/ADNRequestLegalForm';
 import CivilServicePricing from './pages/Pricing/CivilServicePricing';
 import LegalServicePricing from './pages/Pricing/LegalServicePricing';
 import AllServicePricing from './pages/Pricing/AllServicePricing';
@@ -21,7 +21,6 @@ import TestResultInput from './pages/admin/TestResultInput';
 import DoubleSliderAuth from './pages/auth/DoubleSliderAuth';
 import PaymentPage from './pages/payment/PaymentPage';
 import VNPayReturnPage from './pages/payment/VNPayReturnPage';
-import PaymentHistory from './pages/payment/PaymentHistory';
 
 
 function App() {
@@ -86,7 +85,6 @@ function App() {
                 <Route path="/api/payments/vnpay-return" element={<VNPayReturnPage />} />
                 <Route path="/payment/result" element={<VNPayReturnPage />} />
                 <Route path="/payment" element={<PaymentPage />} />
-                <Route path="/payment-history" element={<PaymentHistory customerId={customerId} />} />
               </>
             )}  
 

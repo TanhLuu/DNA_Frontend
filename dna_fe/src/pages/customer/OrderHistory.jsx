@@ -1,7 +1,6 @@
 import React from 'react';
 import '../../styles/customer/OrderHistory.css';
 import useCustomerOrders from '../../hooks/Order/useOrderHistory';
-
 import { useNavigate } from 'react-router-dom';
 
 const OrderHistory = () => {
@@ -35,11 +34,12 @@ const OrderHistory = () => {
   if (isLoading) return <div className="orders-loading">Đang tải dữ liệu...</div>;
   if (error) return <div className="orders-error text-red-500">{error}</div>;
 
+  // Lọc các đơn hàng có trạng thái khác PENDING
+  const nonPendingOrders = filteredOrders.filter(order => order.orderStatus !== 'PENDING');
+
   return (
     <div className="customer-orders-container">
       <h2 className="text-2xl font-bold mb-4">Đơn hàng</h2>
-
-      
 
       <div className="orders-table-wrapper">
         <table className="orders-table">
@@ -58,7 +58,7 @@ const OrderHistory = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredOrders.map((order) => (
+            {nonPendingOrders.map((order) => (
               <tr key={order.orderId}>
                 <td>{order.orderId}</td>
                 <td>{serviceData[order.serviceId]?.serviceName || 'N/A'}</td>

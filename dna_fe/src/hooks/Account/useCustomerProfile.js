@@ -4,9 +4,9 @@ import {
   getCustomerByAccountId,
   createCustomer,
   updateCustomer
-} from '../api/accountApi';
+} from '../../api/accountApi';
 
-import { updateAccountInfo } from '../api/customerOrderApi';
+import { updateAccountInfo } from '../../api/customerOrderApi';
 
 
 const formatDate = (iso) => iso?.split('T')[0] || '';

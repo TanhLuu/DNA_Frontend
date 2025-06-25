@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { getStaffByAccountId } from '../api/accountApi';
+import { getStaffByAccountId } from '../../api/accountApi';
 
 export const useStaffInfo = () => {
   const [staffInfo, setStaffInfo] = useState({

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useAuth } from '../../../hooks/useAuth';
+import { useAuth } from '../../../hooks/Account/useAuth';
 import '../../../styles/auth/register.css';
 
 const CreateStaff = ({ onClose }) => {

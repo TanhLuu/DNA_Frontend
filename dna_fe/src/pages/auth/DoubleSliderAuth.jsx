@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import '../../styles/auth/DoubleSliderAuth.css';
-import { useAuth } from '../../hooks/useAuth';
+import { useAuth } from '../../hooks/Account/useAuth';
 
 const DoubleSliderAuth = () => {
   const [mode, setMode] = useState('login');

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useStaffInfo } from '../../hooks/useStaffInfo';
+import { useStaffInfo } from '../../hooks/Account/useStaffInfo';
 import '../../styles/components/shared/slidebar.css';
 
 const Sidebar = () => {

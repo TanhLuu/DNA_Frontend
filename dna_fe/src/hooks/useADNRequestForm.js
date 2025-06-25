@@ -4,7 +4,7 @@ import { fetchAccountInfo, getCustomerByAccountId } from '../api/accountApi';
 import { useNavigate } from 'react-router-dom';
 
 const useADNRequestForm = (getServices) => {
-  const navigate = useNavigate(); // ✅ Gọi đúng chỗ
+  const navigate = useNavigate();
 
   const [customer, setCustomer] = useState({
     requesterName: '',
@@ -52,7 +52,6 @@ const useADNRequestForm = (getServices) => {
 
         setServices(servicesData || []);
 
-        // ✅ Tự động chọn dịch vụ đầu tiên nếu có
         if (Array.isArray(servicesData) && servicesData.length > 0) {
           setSelectedService(servicesData[0]);
         }
@@ -125,11 +124,12 @@ const useADNRequestForm = (getServices) => {
       setFormData({});
       setSampleCount('');
 
-      // ✅ Chuyển trang sau khi thành công
+      // Chuyển trang sau khi thành công, bao gồm customerName
       navigate('/payment', {
         state: {
           orderId,
           customerId,
+          customerName: customer.requesterName, // Truyền tên khách hàng
           amount
         }
       });

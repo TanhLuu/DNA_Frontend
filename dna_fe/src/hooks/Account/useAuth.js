@@ -5,11 +5,11 @@ import {
   createStaff,
   resetPasswordAuthenticated,
   resetPasswordWithToken,
-} from '../api/authApi';
+} from '../../api/authApi';
 import {
   getCustomerByAccountId,
   getStaffByAccountId
-} from '../api/accountApi';
+} from '../../api/accountApi';
 import { useNavigate } from 'react-router-dom';
 
 export const useAuth = () => {
