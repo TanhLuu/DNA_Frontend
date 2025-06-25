@@ -19,11 +19,15 @@ import OrderDetailAdmin from './pages/admin/OrderDetailAdmin';
 import OrderDetailCustomer from './pages/customer/OrderDetailCustomer';
 import TestResultInput from './pages/admin/TestResultInput';
 import DoubleSliderAuth from './pages/auth/DoubleSliderAuth';
+import PaymentPage from './pages/payment/PaymentPage';
 import VNPayReturnPage from './pages/payment/VNPayReturnPage';
+import PaymentHistory from './pages/payment/PaymentHistory';
 
 
 function App() {
+
   const [role, setRole] = useState(localStorage.getItem('role')?.toLowerCase());
+  const customerId = localStorage.getItem('customerId');
   useEffect(() => {
     const checkRole = () => {
       const currentRole = localStorage.getItem('role')?.toLowerCase();
@@ -81,6 +85,8 @@ function App() {
                 <Route path="/vnpay-return" element={<VNPayReturnPage />} />
                 <Route path="/api/payments/vnpay-return" element={<VNPayReturnPage />} />
                 <Route path="/payment/result" element={<VNPayReturnPage />} />
+                <Route path="/payment" element={<PaymentPage />} />
+                <Route path="/payment-history" element={<PaymentHistory customerId={customerId} />} />
               </>
             )}  
 

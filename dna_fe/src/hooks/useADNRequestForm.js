@@ -1,8 +1,11 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { fetchAccountInfo, getCustomerByAccountId } from '../api/accountApi';
+import { useNavigate } from 'react-router-dom';
 
 const useADNRequestForm = (getServices) => {
+  const navigate = useNavigate(); // ✅ Gọi đúng chỗ
+
   const [customer, setCustomer] = useState({
     requesterName: '',
     gender: 'Nam',
@@ -30,8 +33,8 @@ const useADNRequestForm = (getServices) => {
         setIsLoading(true);
 
         const [acc, servicesData] = await Promise.all([
-          fetchAccountInfo(), // Trả về data trực tiếp
-          getServices()       // Trả về data trực tiếp
+          fetchAccountInfo(),
+          getServices()
         ]);
 
         const cus = await getCustomerByAccountId(acc.id);
@@ -48,6 +51,11 @@ const useADNRequestForm = (getServices) => {
         });
 
         setServices(servicesData || []);
+
+        // ✅ Tự động chọn dịch vụ đầu tiên nếu có
+        if (Array.isArray(servicesData) && servicesData.length > 0) {
+          setSelectedService(servicesData[0]);
+        }
       } catch (err) {
         console.error('Error fetching data:', err);
         setError('Không thể tải thông tin khách hàng hoặc dịch vụ.');
@@ -85,33 +93,46 @@ const useADNRequestForm = (getServices) => {
         throw new Error('Không tìm thấy ID khách hàng. Vui lòng đăng nhập.');
       }
 
+      const amount = calculateTotalPrice(isCivil) || 0;
+
       const orderData = {
         customerId: parseInt(customerId),
         staffId: null,
-        serviceId: parseInt(formData.testType),
+        serviceId: selectedService?.serviceID || parseInt(formData.testType),
         orderDate: formData.orderDate || new Date().toISOString().split('T')[0],
-        orderStatus: '',
+        orderStatus: 'PENDING',
         sampleMethod: formData.method || '',
         resultDeliveryMethod: formData.receiveAt || '',
         resultDeliverAddress: formData.resultAddress || '',
         sampleQuantity: parseInt(sampleCount) || 2,
-        amount: calculateTotalPrice(isCivil) || 0,
+        amount: amount
       };
 
       if (!orderData.serviceId || !orderData.resultDeliveryMethod || !orderData.sampleQuantity) {
         throw new Error('Vui lòng điền đầy đủ thông tin: Loại xét nghiệm, hình thức nhận kết quả, và số người cần phân tích.');
       }
 
-      await axios.post('http://localhost:8080/api/testorders', orderData, {
+      const res = await axios.post('http://localhost:8080/api/testorders', orderData, {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${localStorage.getItem('token')}`
-        },
+        }
       });
+
+      const orderId = res.data.orderId || res.data.id;
 
       setSuccess('Tạo đơn hàng thành công!');
       setFormData({});
       setSampleCount('');
+
+      // ✅ Chuyển trang sau khi thành công
+      navigate('/payment', {
+        state: {
+          orderId,
+          customerId,
+          amount
+        }
+      });
     } catch (err) {
       setError(err.response?.data?.message || err.message || 'Tạo đơn hàng thất bại.');
       console.error('Submit error:', err);
@@ -132,7 +153,7 @@ const useADNRequestForm = (getServices) => {
     handleInputChange,
     handleSubmit,
     calculateTotalPrice,
-    formatDate,
+    formatDate
   };
 };
 
