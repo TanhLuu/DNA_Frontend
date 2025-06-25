@@ -1,0 +1,93 @@
+.footer {
+  background-color: #333333;
+  color: #fff;
+  padding: 25px 20px 5px;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.footer-container {
+  max-width: 1200px;
+  margin: auto;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 40px;
+}
+
+.footer-brand {
+  max-width: 300px;
+  text-align: left;
+}
+
+.footer-logo-group {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 15px;
+}
+
+.footer-logo {
+  height: 50px;
+}
+
+.footer-brand-name {
+  font-size: 30px;
+  font-weight: 700;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.footer-tagline {
+  font-size: 15px;
+  color: #ccc;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.footer-logo {
+  height: 100px;
+  margin-bottom: 15px;
+}
+
+.footer-brand p {
+  font-size: 20px;
+  line-height: 1.5;
+  margin-bottom: 20px;
+  font-weight: bold;
+}
+
+.footer-links {
+  display: flex;
+  gap: 60px;
+  flex-wrap: wrap;
+}
+
+.footer-links h4 {
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+.footer-links ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer-links ul li a {
+  color: #ccc;
+  text-decoration: none;
+  font-size: 14px;
+  display: block;
+  margin-bottom: 8px;
+  transition: color 0.3s;
+}
+
+.footer-links ul li a:hover {
+  color: #fff;
+}
+
+.footer-bottom {
+  text-align: center;
+  color: #888;
+  font-size: 13px;
+}

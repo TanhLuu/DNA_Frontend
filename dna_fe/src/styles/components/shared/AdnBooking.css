@@ -1,0 +1,88 @@
+.adn-booking-container {
+  background-color: #333333;
+  padding: 80px 20px;
+  color: #fff;
+  text-align: center;
+}
+
+.adn-booking-title {
+  font-size: 28px;
+  color: white;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+.adn-booking-subtitle {
+  font-size: 16px;
+  color: #ccc;
+  margin-bottom: 40px;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.6;
+}
+
+.adn-booking {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 40px;
+}
+
+.adn-card {
+  background-color: #7d7878;
+  border-radius: 16px;
+  padding: 30px 25px;
+  width: 350px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.adn-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.5);
+}
+
+.adn-card h3 {
+  font-size: 20px;
+  color: white;
+  margin-bottom: 15px;
+  text-transform: uppercase;
+}
+
+.adn-description {
+  font-size: 14px;
+  color: #ccc;
+  margin-bottom: 20px;
+  line-height: 1.6;
+}
+
+.adn-features {
+  text-align: left;
+  margin-bottom: 30px;
+  padding-left: 18px;
+  color: #eee;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.adn-features li {
+  margin-bottom: 10px;
+  list-style-type: disc;
+}
+
+.adn-button {
+  background-color: #e53935;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  font-size: 14px;
+  font-weight: bold;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.adn-button:hover {
+  background-color: #c62828;
+}

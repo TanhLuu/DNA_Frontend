@@ -1,0 +1,159 @@
+/* src/styles/auth/DoubleSliderAuth.css */
+@import url('https://fonts.googleapis.com/css2?family=Mulish:wght@200;300;400;500;600;700;800&display=swap');
+
+.auth-all {
+    background: linear-gradient(135deg, #4b4b4b, #837b7b);
+    width: 100%;
+    padding: 100px 0;
+}
+
+.container-auth {
+    width: 1000px;
+    height: 600px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+    display: flex;
+    margin: 140px auto 0;
+    background-color: #fff;
+}
+
+.form-container {
+    width: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    transition: all 0.6s ease-in-out;
+    position: absolute;
+    height: 100%;
+    top: 0;
+    z-index: 2;
+}
+
+.sign-in-container {
+    left: 0;
+}
+
+.sign-up-container {
+    left: 0;
+    opacity: 0;
+    z-index: 1;
+}
+
+.container.active .sign-up-container {
+    transform: translateX(100%);
+    opacity: 1;
+    z-index: 5;
+}
+
+.container.active .sign-in-container {
+    transform: translateX(100%);
+    opacity: 0;
+    z-index: 1;
+}
+
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 80%;
+}
+
+.auth-title {
+    margin-bottom: 10px;
+    font-size: 32px;
+    color: #333;
+}
+
+.auth-input {
+    width: 100%;
+    padding: 12px 15px;
+    margin: 8px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.auth-btn {
+    margin-top: 15px;
+    padding: 12px 30px;
+    background: linear-gradient(135deg, #d21a1a, #433c49);
+    color: #fff;
+    font-weight: bold;
+    border: none;
+    border-radius: 22px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.auth-btn:hover {
+    background: linear-gradient(264deg, #d52626, #433c49);
+}
+
+.auth-switch-btn {
+    background-color: transparent;
+    border: 1.5px solid #fff;
+    color: #fff;
+    padding: 10px 30px;
+    border-radius: 22px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.auth-switch-btn:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.overlay-container {
+    width: 50%;
+    background: linear-gradient(135deg, #d21a1a, #433c49);
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    height: 100%;
+    right: 0;
+    z-index: 3;
+    transition: transform 0.6s ease-in-out;
+}
+
+.container.active .overlay-container {
+    transform: translateX(-100%);
+}
+
+.overlay-container h3 {
+    color: #fff;
+    font-size: 30px;
+    margin-bottom: 10px;
+}
+
+.overlay-container p {
+    font-size: 16px;
+    margin-bottom: 20px;
+    padding: 0 20px;
+    text-align: center;
+}
+
+.switch-btn {
+    background-color: transparent;
+    border: 1.5px solid #fff;
+    color: #fff;
+    padding: 10px 30px;
+    border-radius: 22px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.error {
+    color: red;
+    margin-top: 8px;
+}
+
+.success {
+    color: green;
+    margin-top: 8px;
+}

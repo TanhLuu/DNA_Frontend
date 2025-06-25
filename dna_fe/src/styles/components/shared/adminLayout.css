@@ -1,0 +1,19 @@
+.admin-layout {
+  display: flex;
+  height: 100vh;
+
+}
+
+.sidebar {
+
+  background-color: #1e1e2f;
+  color: #fff;
+  min-height: 100vh;
+}
+
+.admin-content {
+  flex: 1;
+  background-color: #f5f6fa;
+  padding: 0 10px;
+  overflow-y: auto;
+}
