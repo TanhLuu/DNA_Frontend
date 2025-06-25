@@ -22,20 +22,17 @@ export const forgotPassword = async (email) => {
 
 // Đặt lại mật khẩu từ email với token
 export const resetPasswordWithToken = async (token, newPassword) => {
-  const response = await axiosInstance.post(`${BASE_URL}/reset-password`, {
-    token,
-    newPassword,
-  });
+  const response = await axiosInstance.post(
+    `http://localhost:8080/auth/reset-password?token=${encodeURIComponent(token)}&newPassword=${encodeURIComponent(newPassword)}`
+  );
   return response.data;
 };
+
 
 // Đổi mật khẩu khi đã đăng nhập
 export const resetPasswordAuthenticated = async (newPassword) => {
   const token = localStorage.getItem('token');
-  const response = await axiosInstance.post(`${BASE_URL}/reset-password`, {
-    token,
-    newPassword,
-  });
+  const response = await axiosInstance.post(`/auth/reset-password?token=${token}&newPassword=${newPassword}`);
   return response.data;
 };
 

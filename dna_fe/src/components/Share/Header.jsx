@@ -28,10 +28,7 @@ const Header = () => {
     window.location.href = '/';
   };
 
-  const handleChangePassword = () => {
-    setIsResetOpen(true);
-    setIsDropdownOpen(false);
-  };
+  
 
   const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
   const toggleMenu = () => setMenuOpen(!menuOpen);
@@ -112,8 +109,7 @@ const Header = () => {
               </button>
               <div className="dropdown-menu">
                 <a href="/OrderHistory">Đơn hàng</a>
-                <a href="/profile">Hồ sơ</a>
-                <span onClick={handleChangePassword} className="logout-btn">Đổi mật khẩu</span>
+                <a href="/profile">Cài đặt</a>
                 <span onClick={handleLogout} className="logout-btn">Đăng xuất</span>
               </div>
             </div>
