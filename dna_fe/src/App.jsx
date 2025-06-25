@@ -77,9 +77,9 @@ function App() {
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/OrderHistory" element={<OrderHistory />} />
                 <Route path="/customer/orders/:orderId" element={<OrderDetailCustomer />} />
-                <Route path="/vnpay-return" element={<VNPayReturnPage />} />
+                {/* <Route path="/vnpay-return" element={<VNPayReturnPage />} />
             <Route path="/api/payments/vnpay-return" element={<VNPayReturnPage />} />
-            <Route path="/payment/result" element={<VNPayReturnPage />} />
+            <Route path="/payment/result" element={<VNPayReturnPage />} /> */}
               </>
             )}  
 
