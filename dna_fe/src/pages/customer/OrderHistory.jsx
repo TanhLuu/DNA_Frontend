@@ -2,6 +2,7 @@ import React from 'react';
 import '../../styles/customer/OrderHistory.css';
 import useCustomerOrders from '../../hooks/Order/useOrderHistory';
 import { useNavigate } from 'react-router-dom';
+import STATUS_LABELS from '../../constants/orderStatusLabels';
 
 const OrderHistory = () => {
   const {
@@ -11,16 +12,6 @@ const OrderHistory = () => {
     serviceData,
     handleFilterChange
   } = useCustomerOrders();
-
-  const STATUS_LABELS = {
-    PENDING: "Đang chờ thanh toán",                  // Đơn hàng mới tạo, chưa xử lý
-    CONFIRM: "Đặt lịch / Đăng ký",           // Đơn hàng vừa được tạo, chờ xử lý
-    SEND_KIT: "Đã gửi kit",                  // Đã gửi bộ kit lấy mẫu cho khách hàng
-    SEND_SAMPLE: "Đã gửi mẫu lại trung tâm", // Khách hàng đã gửi mẫu về trung tâm
-    COLLECT_SAMPLE: "Đã thu mẫu",            // Đã thu mẫu tại trung tâm hoặc tại nhà
-    TESTED: "Đã xét nghiệm",                 // Đã hoàn thành xét nghiệm
-    COMPLETED: "Hoàn thành"                  // Đã trả kết quả, hoàn tất đơn hàng
-  };
 
   const formatDate = (dateStr) => dateStr ? new Date(dateStr).toLocaleDateString('vi-VN') : 'N/A';
   const formatPrice = (amount) => amount ? amount.toLocaleString('vi-VN') + ' VNĐ' : 'N/A';
@@ -34,7 +25,6 @@ const OrderHistory = () => {
   if (isLoading) return <div className="orders-loading">Đang tải dữ liệu...</div>;
   if (error) return <div className="orders-error text-red-500">{error}</div>;
 
-  // Lọc các đơn hàng có trạng thái khác PENDING
   const nonPendingOrders = filteredOrders.filter(order => order.orderStatus !== 'PENDING');
 
   return (

@@ -1,4 +1,3 @@
-// OrderDetailAdmin.js
 import React, { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useOrderData } from "../../hooks/Order/useOrderData";
@@ -6,6 +5,7 @@ import { useFormatUtils } from "../../hooks/Order/useFormatUtils";
 import { useAdminSampleManagement } from "../../hooks/Order/useAdminSampleManagement";
 import { useOrderConditions } from "../../hooks/Order/useOrderConditions";
 import { useSampleData } from "../../hooks/Order/useSampleData";
+import STATUS_LABELS from "../../constants/orderStatusLabels";
 import OrderInfoSections from "../../components/OrderDetail/OrderInfoSections";
 import TestResultsAndSamples from "../../components/OrderDetail/TestResultsAndSamples";
 import TestSampleSection from "../../components/OrderDetail/TestSampleSection";
@@ -41,21 +41,8 @@ const OrderDetailAdmin = () => {
     canUpdateOrder,
     getNextStatus,
   } = useAdminSampleManagement(order, setOrder);
-  const { shouldShowFullFields, shouldShowKitCode, isCivilHomePending } = useOrderConditions(
-    order,
-    service
-  );
+  const { shouldShowFullFields, shouldShowKitCode, isCivilHomePending } = useOrderConditions(order, service);
   const { uniqueSamples, uniqueLoci } = useSampleData(testResultSamples, savedSamples);
-
-  const STATUS_LABELS = {
-    PENDING: "Đang chờ thanh toán",
-    CONFIRM: "Đặt lịch / Đăng ký",
-    SEND_KIT: "Đã gửi kit",
-    SEND_SAMPLE: "Đã gửi mẫu lại trung tâm",
-    COLLECT_SAMPLE: "Đã thu mẫu",
-    TESTED: "Đã xét nghiệm",
-    COMPLETED: "Hoàn thành",
-  };
 
   useEffect(() => {
     if (order && savedSamplesFromApi) {

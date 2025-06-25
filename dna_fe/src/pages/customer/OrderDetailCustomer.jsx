@@ -1,4 +1,3 @@
-// OrderDetailCustomer.js
 import React from "react";
 import { useParams } from "react-router-dom";
 import { useOrderData } from "../../hooks/Order/useOrderData";
@@ -6,6 +5,7 @@ import { useFormatUtils } from "../../hooks/Order/useFormatUtils";
 import { useSampleManagement } from "../../hooks/Order/useSampleManagement";
 import { useOrderConditions } from "../../hooks/Order/useOrderConditions";
 import { useSampleData } from "../../hooks/Order/useSampleData";
+import STATUS_LABELS from "../../constants/orderStatusLabels";
 import OrderInfoSections from "../../components/OrderDetail/OrderInfoSections";
 import TestResultsAndSamples from "../../components/OrderDetail/TestResultsAndSamples";
 import TestSampleSection from "../../components/OrderDetail/TestSampleSection";
@@ -39,20 +39,8 @@ const OrderDetailCustomer = () => {
     handleSaveAndConfirm,
     isFormValid,
   } = useSampleManagement(order, account, testSamples, setOrder);
-  const { shouldShowFullFields, shouldShowKitCode, isCivilHomePending } = useOrderConditions(
-    order,
-    service
-  );
+  const { shouldShowFullFields, shouldShowKitCode, isCivilHomePending } = useOrderConditions(order, service);
   const { uniqueSamples, uniqueLoci } = useSampleData(testResultSamples, testSamples);
-
-  const STATUS_LABELS = {
-    CONFIRM: "Đặt lịch / Đăng ký",
-    SEND_KIT: "Đã gửi kit",
-    SEND_SAMPLE: "Đã gửi mẫu lại trung tâm",
-    COLLECT_SAMPLE: "Đã thu mẫu",
-    TESTED: "Đã xét nghiệm",
-    COMPLETED: "Hoàn thành",
-  };
 
   const handleBack = () => window.history.back();
 
@@ -120,7 +108,7 @@ const OrderDetailCustomer = () => {
         handleUpdateAll={handleSaveAndConfirm}
         handleBack={handleBack}
         isFormValid={isFormValid}
-        staffRole={null} // Không cần staffRole cho customer
+        staffRole={null}
       />
     </div>
   );

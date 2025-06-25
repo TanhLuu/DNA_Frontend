@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import useOrders from '../../hooks/Order/useOrdersPage';
+import STATUS_LABELS from '../../constants/orderStatusLabels';
 import '../../styles/admin/ordersPage.css';
 
 const OrdersPage = () => {
@@ -14,15 +15,6 @@ const OrdersPage = () => {
     serviceData
   } = useOrders();
 
-  const STATUS_LABELS = {
-    CONFIRM: "Đặt lịch / Đăng ký",
-    SEND_KIT: "Đã gửi kit",
-    SEND_SAMPLE: "Đã gửi mẫu lại trung tâm",
-    COLLECT_SAMPLE: "Đã thu mẫu",
-    TESTED: "Đã xét nghiệm",
-    COMPLETED: "Hoàn thành",
-  };
-
   const formatDate = d => d ? new Date(d).toLocaleDateString('vi-VN') : 'N/A';
   const formatPrice = a => a ? a.toLocaleString('vi-VN') + ' VNĐ' : 'N/A';
 
@@ -34,7 +26,6 @@ const OrdersPage = () => {
   if (isLoading) return <div className="orders-loading">Đang tải dữ liệu...</div>;
   if (error) return <div className="orders-error text-red-500">{error}</div>;
 
-  // Lọc các đơn hàng có trạng thái khác PENDING
   const nonPendingOrders = filteredOrders.filter(order => order.orderStatus !== 'PENDING');
 
   return (
