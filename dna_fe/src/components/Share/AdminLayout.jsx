@@ -1,14 +1,11 @@
 import React from 'react';
-import Sidebar from '../../components/Share/Slidebar';
-import '../../styles/components/shared/adminLayout.css';
+import Sidebar from '../../components/Share/Sidebar';
 
 const AdminLayout = ({ children }) => {
   return (
-    <div className="admin-layout">
-      <aside className="sidebar">
-        <Sidebar />
-      </aside>
-      <main className="admin-content">
+    <div className="flex h-screen">
+      <Sidebar />
+      <main className="flex-1 bg-gray-100 p-6 overflow-y-auto">
         {children}
       </main>
     </div>
