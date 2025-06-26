@@ -15,6 +15,7 @@ import {
 } from "../../api/adminOrderApi";
 import OrderInfoSections from "../../components/Order/OrderInfoSections";
 import TestResultsAndSamples from "../../components/Order/TestResultsAndSamples";
+import axios from "axios"; // Thêm axios để gọi API
 
 const OrderDetailAdmin = () => {
   const { orderId } = useParams();
@@ -33,13 +34,43 @@ const OrderDetailAdmin = () => {
   const [testResults, setTestResults] = useState([]);
   const [testResultSamples, setTestResultSamples] = useState([]);
 
+  // Hàm gọi API để tải PDF
+  const handleDownloadPDF = async () => {
+  try {
+    const response = await axios.get(`http://localhost:8080/api/pdf/export/${orderId}`, {
+      responseType: "blob",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`, // Nếu cần xác thực
+      },
+    });
+
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", `result_${orderId}.pdf`);
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.URL.revokeObjectURL(url);
+  } catch (error) {
+    console.error("Lỗi khi tải PDF:", error);
+    if (error.response?.status === 404) {
+      setUpdateError("Không tìm thấy đơn hàng hoặc endpoint không tồn tại.");
+    } else if (error.response?.status === 500) {
+      setUpdateError("Lỗi server khi tạo PDF. Vui lòng kiểm tra backend.");
+    } else {
+      setUpdateError("Đã xảy ra lỗi khi tải báo cáo PDF: " + error.message);
+    }
+  }
+};
+
   const formatDate = (date) =>
     date ? new Date(date).toLocaleDateString("vi-VN") : "N/A";
 
   const formatPrice = (p) => (p ? p.toLocaleString("vi-VN") + " VNĐ" : "N/A");
 
   const getNextStatus = (currentStatus) => {
-    if (order?.sampleMethod === "center" && currentStatus === "PENDING") {
+    if (order?.sampleMethod === "center" && currentStatus === "CONFIRM") {
       return "COLLECT_SAMPLE";
     }
     const flow = [
@@ -537,6 +568,15 @@ const OrderDetailAdmin = () => {
                 </div>
               </div>
             ))}
+
+          {order.orderStatus === "COMPLETED" && (
+            <button
+              className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 mt-4 mr-2"
+              onClick={handleDownloadPDF}
+            >
+              In Báo Cáo PDF
+            </button>
+          )}
 
           {order.orderStatus === "COLLECT_SAMPLE" &&
             submitted &&
