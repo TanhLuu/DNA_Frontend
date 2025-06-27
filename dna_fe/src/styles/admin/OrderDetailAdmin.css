@@ -1,0 +1,162 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.OrderDeailAdmin {
+  
+}
+
+.OrderDetailTitle{
+    background-color: rgb(231, 231, 231);
+    padding: 20px 30px;
+    border-radius: 10px;
+}
+
+.DetailHeader {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  gap: 16px;
+  padding: 16px 10px;
+  background-color: #f8fafc;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.DetailItem {
+  display: flex;
+  flex-direction: column;
+  white-space: nowrap;
+}
+
+.DetailItem .label {
+  font-size: 12px;
+  font-weight: 500;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.DetailItem .value {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1f2937;
+  margin-top: 4px;
+}
+
+.divider {
+  width: 1px;
+  height: 28px;
+  background-color: #d1d5db;
+  opacity: 0.5;
+}
+
+.OrderDetailSections {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 24px;
+  margin-top: 24px;
+  padding: 24px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.OrderColumn {
+  display: flex;
+  flex-direction: column;
+}
+
+.OrderColumn h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 16px;
+  border-bottom: 2px solid #e5e7eb;
+  padding-bottom: 8px;
+}
+
+.OrderColumn p {
+  font-size: 14px;
+  color: #374151;
+  margin: 8px 0;
+  line-height: 1.5;
+}
+
+.OrderColumn p strong {
+  color: #1f2937;
+  font-weight: 600;
+}
+
+.customer-info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.customer-column {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.OrderDetailSections {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+  margin-top: 24px;
+  padding: 24px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.OrderColumn {
+  display: flex;
+  flex-direction: column;
+}
+
+.OrderColumn h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 16px;
+  border-bottom: 2px solid #e5e7eb;
+  padding-bottom: 8px;
+}
+
+.OrderColumn p {
+  font-size: 14px;
+  color: #374151;
+  margin: 8px 0;
+  line-height: 1.5;
+}
+
+.OrderColumn p strong {
+  color: #1f2937;
+  font-weight: 600;
+}
+
+.customer-info-3col {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px 32px;
+}
+
+.customer-info-3col p {
+  font-size: 14px;
+  color: #374151;
+  margin: 6px 0;
+  line-height: 1.6;
+}
+
+.customer-info-3col p strong {
+  font-weight: 600;
+  color: #1f2937;
+}
+
+
+.OrderColumn.order-info-right {
+  max-width: 300px;
+  margin-left: 40px;
+}

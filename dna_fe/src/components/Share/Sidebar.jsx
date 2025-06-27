@@ -23,19 +23,19 @@ const Sidebar = () => {
   return (
     <aside
       className={`${
-        isCollapsed ? 'w-16' : 'w-64'
+        isCollapsed ? 'w-16' : 'w-50'
       } h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white flex flex-col justify-between shadow-lg transition-all duration-300 overflow-y-auto`}
     >
       {/* User Info Section */}
       <div className="p-4">
         <div className={`flex ${isCollapsed ? 'justify-center' : 'items-center space-x-3'}`}>
           <div className="w-12 h-12 rounded-full bg-gray-600/50 flex items-center justify-center">
-            <span className="text-xl font-semibold">{name?.charAt(0) || 'U'}</span>
+            <span className="text-lg font-semibold">{name?.charAt(0) || 'U'}</span> {/* Giảm từ text-xl xuống text-lg */}
           </div>
           {!isCollapsed && (
             <div>
-              <h2 className="text-lg font-bold">{name || 'Người dùng'}</h2>
-              <p className="text-sm opacity-80">{role || 'Vai trò'}</p>
+              <h2 className="text-base font-bold">{name || 'Người dùng'}</h2> {/* Giảm từ text-lg xuống text-base */}
+              <p className="text-xs opacity-80">{role || 'Vai trò'}</p> {/* Giảm từ text-sm xuống text-xs */}
             </div>
           )}
         </div>
@@ -49,8 +49,8 @@ const Sidebar = () => {
             }`}
             title={isCollapsed ? 'Đơn xét nghiệm' : ''}
           >
-            <span className="mr-3">📋</span>
-            {!isCollapsed && <span>Đơn xét nghiệm</span>}
+            <span className="mr-3 text-lg">📋</span> {/* Giảm kích thước icon nếu cần */}
+            {!isCollapsed && <span className="text-sm">Đơn xét nghiệm</span>} {/* Giảm từ font mặc định xuống text-sm */}
           </Link>
           <Link
             to="/serviceManagement"
@@ -59,8 +59,8 @@ const Sidebar = () => {
             }`}
             title={isCollapsed ? 'Dịch vụ' : ''}
           >
-            <span className="mr-3">⚙️</span>
-            {!isCollapsed && <span>Dịch vụ</span>}
+            <span className="mr-3 text-lg">⚙️</span>
+            {!isCollapsed && <span className="text-sm">Dịch vụ</span>}
           </Link>
           {role === 'MANAGER' && (
             <Link
@@ -70,8 +70,8 @@ const Sidebar = () => {
               }`}
               title={isCollapsed ? 'Dashboard' : ''}
             >
-              <span className="mr-3">📊</span>
-              {!isCollapsed && <span>Dashboard</span>}
+              <span className="mr-3 text-lg">📊</span>
+              {!isCollapsed && <span className="text-sm">Dashboard</span>}
             </Link>
           )}
           <Link
@@ -81,8 +81,8 @@ const Sidebar = () => {
             }`}
             title={isCollapsed ? 'Quản lý feedback' : ''}
           >
-            <span className="mr-3">💬</span>
-            {!isCollapsed && <span>Quản lý feedback</span>}
+            <span className="mr-3 text-lg">💬</span>
+            {!isCollapsed && <span className="text-sm">Quản lý feedback</span>}
           </Link>
         </nav>
       </div>
@@ -96,8 +96,8 @@ const Sidebar = () => {
           }`}
           title={isCollapsed ? 'Trở về' : ''}
         >
-          <span className="mr-3">⬅</span>
-          {!isCollapsed && <span>Trở về</span>}
+          <span className="mr-3 text-lg">⬅</span>
+          {!isCollapsed && <span className="text-sm">Trở về</span>} {/* Giảm từ font mặc định xuống text-sm */}
         </button>
         <button
           onClick={handleLogout}
@@ -106,8 +106,8 @@ const Sidebar = () => {
           }`}
           title={isCollapsed ? 'Đăng xuất' : ''}
         >
-          <span className="mr-3">↩</span>
-          {!isCollapsed && <span>Đăng xuất</span>}
+          <span className="mr-3 text-lg">↩</span>
+          {!isCollapsed && <span className="text-sm">Đăng xuất</span>}
         </button>
         <button
           onClick={toggleSidebar}
@@ -116,8 +116,8 @@ const Sidebar = () => {
           }`}
           title={isCollapsed ? 'Mở rộng' : 'Thu gọn'}
         >
-          <span>{isCollapsed ? '🟪' : '🟩'}</span>
-          {!isCollapsed && <span className="ml-3">{isCollapsed ? 'Mở rộng' : 'Thu gọn'}</span>}
+          <span className="text-lg">{isCollapsed ? '🟪' : '🟩'}</span>
+          {!isCollapsed && <span className="ml-3 text-sm">{isCollapsed ? 'Mở rộng' : 'Thu gọn'}</span>} {/* Giảm từ font mặc định xuống text-sm */}
         </button>
       </div>
     </aside>
