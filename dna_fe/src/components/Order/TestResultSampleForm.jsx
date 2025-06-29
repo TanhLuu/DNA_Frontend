@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import "../../styles/admin/TestResultSampleForm.css"; // Sử dụng lại CSS đã viết theo tiền tố trs-
+import "../../styles/admin/TestResultSampleForm.css";
 
-const TestResultSampleForm = ({ orderId, testSamples, sampleQuantity, onClose }) => {
+const TestResultSampleForm = ({ orderId, testSamples, sampleQuantity, orderStatus, staffRole, onClose }) => {
   const [formData, setFormData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  // NORMAL_STAFF luôn chỉ đọc, LAB_STAFF chỉ chỉnh sửa khi orderStatus là COLLECT_SAMPLE
+  const isReadOnly = staffRole === "NORMAL_STAFF" || orderStatus !== "COLLECT_SAMPLE";
 
   const locusNames = [
     "D8S1179", "D21S11", "D7S820", "CFS1PO", "D3S1358", "TH01", "D13S317",
@@ -45,12 +48,18 @@ const TestResultSampleForm = ({ orderId, testSamples, sampleQuantity, onClose })
   }, [orderId, testSamples, sampleQuantity]);
 
   const handleInputChange = (locusIndex, sampleIndex, field, value) => {
+    if (isReadOnly) return;
     const updatedData = [...formData];
     updatedData[locusIndex].samples[sampleIndex][field] = value;
     setFormData(updatedData);
   };
 
   const handleSubmit = async () => {
+    if (isReadOnly) {
+      onClose();
+      return;
+    }
+
     setLoading(true);
     setError(null);
 
@@ -96,7 +105,7 @@ const TestResultSampleForm = ({ orderId, testSamples, sampleQuantity, onClose })
   return (
     <div className="trs-modal-overlay">
       <div className="trs-form-container">
-        <h2 className="trs-title">Nhập Kết Quả Mẫu Xét Nghiệm</h2>
+        <h2 className="trs-title">{isReadOnly ? "Xem Kết Quả Mẫu Xét Nghiệm" : "Nhập Kết Quả Mẫu Xét Nghiệm"}</h2>
         {error && <div className="trs-error-message">{error}</div>}
         <table className="trs-table">
           <thead>
@@ -131,7 +140,7 @@ const TestResultSampleForm = ({ orderId, testSamples, sampleQuantity, onClose })
                           type="text"
                           value={sample.allele1}
                           onChange={(e) => handleInputChange(locusIndex, sampleIndex, "allele1", e.target.value)}
-                          disabled={loading}
+                          disabled={loading || isReadOnly}
                         />
                       </td>
                       <td>
@@ -140,7 +149,7 @@ const TestResultSampleForm = ({ orderId, testSamples, sampleQuantity, onClose })
                           type="text"
                           value={sample.allele2}
                           onChange={(e) => handleInputChange(locusIndex, sampleIndex, "allele2", e.target.value)}
-                          disabled={loading}
+                          disabled={loading || isReadOnly}
                         />
                       </td>
                     </React.Fragment>
@@ -151,19 +160,21 @@ const TestResultSampleForm = ({ orderId, testSamples, sampleQuantity, onClose })
           </tbody>
         </table>
         <div className="trs-button-group">
-          <button
-            className="trs-submit-btn"
-            onClick={handleSubmit}
-            disabled={loading}
-          >
-            {loading ? "Đang gửi..." : "Gửi"}
-          </button>
+          {!isReadOnly && (
+            <button
+              className="trs-submit-btn"
+              onClick={handleSubmit}
+              disabled={loading}
+            >
+              {loading ? "Đang gửi..." : "Gửi"}
+            </button>
+          )}
           <button
             className="trs-cancel-btn"
             onClick={onClose}
             disabled={loading}
           >
-            Hủy
+            {isReadOnly ? "Đóng" : "Hủy"}
           </button>
         </div>
       </div>

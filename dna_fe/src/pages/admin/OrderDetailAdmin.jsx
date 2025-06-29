@@ -47,14 +47,9 @@ const OrderDetailAdmin = () => {
   };
 
   const disabledStatuses = ["SEND_SAMPLE", "COLLECT_SAMPLE", "TESTED", "COMPLETED"];
-  const resultInputStatuses = ["COLLECT_SAMPLE"]; // Chỉ hiển thị nút nhập kết quả khi trạng thái là TESTED
-
+  
   const isTestSampleButtonDisabled = () => {
     return disabledStatuses.includes(order?.orderStatus);
-  };
-
-  const isResultInputButtonDisabled = () => {
-    return !resultInputStatuses.includes(order?.orderStatus);
   };
 
   const getNextStatus = () => {
@@ -179,7 +174,7 @@ const OrderDetailAdmin = () => {
             </div>
             <div className="divider" />
             <div className="DetailItem">
-              <span className="label">THỜI GIAN XÉT NGHIỆM</span>
+              <span className="label">THỜ523I GIAN XÉT NGHIỆM</span>
               <span className="value">{service?.timeTest ? `${service.timeTest} ngày` : "N/A"}</span>
             </div>
             <div className="divider" />
@@ -237,6 +232,7 @@ const OrderDetailAdmin = () => {
               className={`bg-green-500 text-white p-2 rounded hover:bg-green-600 ${isUpdateButtonDisabled() ? 'opacity-50 cursor-not-allowed' : ''}`}
               onClick={handleUpdateStatus}
               disabled={isUpdateButtonDisabled()}
+              style={isUpdateButtonDisabled() ? { backgroundColor: '#22c55e', color: '#fff' } : {}}
             >
               Cập nhật trạng thái
             </button>
@@ -245,17 +241,30 @@ const OrderDetailAdmin = () => {
               className={`bg-blue-500 text-white p-2 rounded hover:bg-blue-600 ${isTestSampleButtonDisabled() ? 'opacity-50 cursor-not-allowed' : ''}`}
               onClick={() => setShowModal(true)}
               disabled={isTestSampleButtonDisabled()}
+              style={isTestSampleButtonDisabled() ? { backgroundColor: '#3b82f6', color: '#fff' } : {}}
             >
               Nhập mẫu xét nghiệm
             </button>
 
-            <button
-              className={`bg-purple-500 text-white p-2 rounded hover:bg-purple-600 ${isResultInputButtonDisabled() ? 'opacity-50 cursor-not-allowed' : ''}`}
-              onClick={() => setShowResultModal(true)}
-              disabled={isResultInputButtonDisabled()}
-            >
-              Nhập thông tin kết quả
-            </button>
+            {/* Nút Nhập kết quả (chỉ dành cho LAB_STAFF khi status là COLLECT_SAMPLE) */}
+            {staffRole === "LAB_STAFF" && order?.orderStatus === "COLLECT_SAMPLE" && (
+              <button
+                className="bg-purple-500 text-white p-2 rounded hover:bg-purple-600"
+                onClick={() => setShowResultModal(true)}
+              >
+                Nhập kết quả
+              </button>
+            )}
+
+            {/* Nút Xem kết quả (dành cho NORMAL_STAFF hoặc khi status là TESTED/COMPLETED) */}
+            {(staffRole === "NORMAL_STAFF" || order?.orderStatus === "TESTED" || order?.orderStatus === "COMPLETED") && (
+              <button
+                className="bg-gray-500 text-white p-2 rounded hover:bg-gray-600"
+                onClick={() => setShowResultModal(true)}
+              >
+                Xem kết quả
+              </button>
+            )}
           </div>
 
           <div className="testSampleContainer">
@@ -307,7 +316,9 @@ const OrderDetailAdmin = () => {
         <TestResultSampleForm
           orderId={orderId}
           testSamples={testSamples}
-          sampleQuantity={order.sampleQuantity || 0} // Thêm truyền sampleQuantity
+          sampleQuantity={order.sampleQuantity || 0}
+          orderStatus={order?.orderStatus}
+          staffRole={staffRole}
           onClose={() => setShowResultModal(false)}
         />
       )}
