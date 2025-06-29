@@ -17,7 +17,7 @@ import AllServicePricing from './pages/Pricing/AllServicePricing';
 import OrderHistory from './pages/customer/OrderHistory';
 import OrderDetailAdmin from './pages/admin/OrderDetailAdmin';
 import OrderDetailCustomer from './pages/customer/OrderDetailCustomer';
-import TestResultInput from './pages/admin/TestResultInput';
+
 import DoubleSliderAuth from './pages/auth/DoubleSliderAuth';
 import PaymentPage from './pages/payment/PaymentPage';
 import VNPayReturnPage from './pages/payment/VNPayReturnPage';
@@ -68,7 +68,7 @@ function App() {
                 <Route path="/serviceManagement" element={<AdminLayout> <ServiceManagement /> </AdminLayout>}/>
                 <Route path="/dashboard" element={<AdminLayout><Dashboard /></AdminLayout>}/>
                 <Route path="/admin/orders/:orderId" element={<AdminLayout><OrderDetailAdmin /></AdminLayout>} />
-                <Route path="/admin/test-result-input/:orderId" element={<AdminLayout><TestResultInput /></AdminLayout>} />
+
               </>
             )}
 

@@ -56,3 +56,8 @@ export const updateTestOrder = async (orderId, orderData) => {
   const response = await axiosInstance.put(`/api/testorders/${orderId}`, orderData);
   return response.data;
 };
+
+export const updateTestOrderStatus = async (orderId, statusData) => {
+  const response = await axiosInstance.put(`/api/testorders/${orderId}`, statusData);
+  return response.data;
+};

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import axios from "axios";
 import {
   getTestOrderById,
   getAccountByCustomerId,
@@ -7,9 +8,12 @@ import {
   getServiceById,
   getStaffById,
   getAccountById,
+  updateTestOrder,
 } from "../../api/adminOrderApi";
 import '../../styles/admin/OrderDetailAdmin.css';
-import TestSampleForm from "./TestSampleForm";
+import TestSampleForm from "../../components/Order/TestSampleForm";
+import TestSampleDetail from "../../components/Order/TestSampleDetail";
+import TestResultSampleForm from "../../components/Order/TestResultSampleForm";
 
 const OrderDetailAdmin = () => {
   const { orderId } = useParams();
@@ -22,6 +26,11 @@ const OrderDetailAdmin = () => {
   const [registrationStaff, setRegistrationStaff] = useState(null);
   const [testingStaff, setTestingStaff] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [showResultModal, setShowResultModal] = useState(false);
+  const [staffId, setStaffId] = useState(null);
+  const [staffRole, setStaffRole] = useState(null);
+  const [testSamples, setTestSamples] = useState([]);
+  const [selectedTestSampleId, setSelectedTestSampleId] = useState(null);
 
   const formatDate = (date) =>
     date ? new Date(date).toLocaleDateString("vi-VN") : "N/A";
@@ -37,11 +46,78 @@ const OrderDetailAdmin = () => {
     COMPLETED: "Hoàn thành",
   };
 
+  const disabledStatuses = ["SEND_SAMPLE", "COLLECT_SAMPLE", "TESTED", "COMPLETED"];
+  const resultInputStatuses = ["COLLECT_SAMPLE"]; // Chỉ hiển thị nút nhập kết quả khi trạng thái là TESTED
+
+  const isTestSampleButtonDisabled = () => {
+    return disabledStatuses.includes(order?.orderStatus);
+  };
+
+  const isResultInputButtonDisabled = () => {
+    return !resultInputStatuses.includes(order?.orderStatus);
+  };
+
+  const getNextStatus = () => {
+    if (!staffRole || !order?.orderStatus) {
+      return null;
+    }
+
+    if (staffRole === "NORMAL_STAFF") {
+      if (order.orderStatus === "CONFIRM") {
+        return order.sampleMethod === "center" ? "COLLECT_SAMPLE" : "SEND_KIT";
+      }
+      if (order.orderStatus === "SEND_SAMPLE") return "COLLECT_SAMPLE";
+      if (order.orderStatus === "TESTED") return "COMPLETED";
+    } else if (staffRole === "LAB_STAFF") {
+      if (order.orderStatus === "COLLECT_SAMPLE") return "TESTED";
+    }
+    return null;
+  };
+
+  const isUpdateButtonDisabled = () => {
+    return !getNextStatus();
+  };
+
+  const handleUpdateStatus = async () => {
+    const nextStatus = getNextStatus();
+    if (!nextStatus || !staffId) {
+      setUpdateError("Không thể cập nhật trạng thái: Thiếu thông tin nhân viên hoặc trạng thái không hợp lệ.");
+      return;
+    }
+
+    try {
+      const updateData = {
+        orderStatus: nextStatus,
+        staffId: parseInt(staffId),
+      };
+      await updateTestOrder(orderId, updateData);
+      const updatedOrder = await getTestOrderById(orderId);
+      setOrder(updatedOrder);
+      setUpdateError(null);
+      alert("Cập nhật trạng thái thành công!");
+    } catch (err) {
+      console.error("Lỗi khi cập nhật trạng thái:", err);
+      setUpdateError(`Lỗi khi cập nhật trạng thái: ${err.message}`);
+    }
+  };
+
   useEffect(() => {
+    const storedStaffId = localStorage.getItem("staffId");
+    const storedStaffRole = localStorage.getItem("staffRole");
+    setStaffId(storedStaffId);
+    setStaffRole(storedStaffRole);
+
+    if (!storedStaffId || !storedStaffRole) {
+      setUpdateError("Không tìm thấy thông tin nhân viên. Vui lòng đăng nhập lại.");
+    } else {
+      console.log("staffId:", storedStaffId, "staffRole:", storedStaffRole);
+    }
+
     const fetchData = async () => {
       try {
         const orderData = await getTestOrderById(orderId);
         setOrder(orderData);
+        console.log("orderStatus:", orderData.orderStatus, "sampleMethod:", orderData.sampleMethod);
 
         const accountInfo = await getAccountByCustomerId(orderData.customerId);
         const customerInfo = await getCustomerById(orderData.customerId);
@@ -61,9 +137,12 @@ const OrderDetailAdmin = () => {
           const testAccountInfo = await getAccountById(testStaffInfo.accountId);
           setTestingStaff(testAccountInfo);
         }
+
+        const response = await axios.get(`http://localhost:8080/api/testSamples/order/${orderId}`);
+        setTestSamples(response.data);
       } catch (err) {
         console.error("Lỗi khi tải dữ liệu:", err);
-        setUpdateError("Lỗi khi tải dữ liệu đơn hàng.");
+        setUpdateError("Lỗi khi tải dữ liệu đơn hàng hoặc TestSample.");
       } finally {
         setLoading(false);
       }
@@ -75,12 +154,13 @@ const OrderDetailAdmin = () => {
   if (loading) return <div>Đang tải...</div>;
   if (!order) return <div>Không tìm thấy đơn hàng</div>;
 
+  const handleShowDetail = (testSampleId) => {
+    setSelectedTestSampleId(testSampleId);
+  };
+
   return (
     <div className="OrderDetailAdmin">
       <div>
-        {updateError && (
-          <div className="text-red-500">{updateError}</div>
-        )}
         <div className="OrderDetailTitle">
           <div className="DetailHeader">
             <div className="DetailItem">
@@ -123,6 +203,7 @@ const OrderDetailAdmin = () => {
               <span className="value">{STATUS_LABELS[order?.orderStatus] || "N/A"}</span>
             </div>
           </div>
+
           <div className="OrderDetailSections">
             <div className="OrderColumn">
               <h3>Thông tin khách hàng</h3>
@@ -142,20 +223,72 @@ const OrderDetailAdmin = () => {
             <div className="OrderColumn order-info-right">
               <h3>Thông tin đơn hàng</h3>
               <div>
-                
                 <p><strong>Hình thức thu mẫu:</strong> {order?.sampleMethod === "center" ? "Tại trung tâm" : "Tại nhà"}</p>
                 <p><strong>Số lượng mẫu:</strong> {order?.sampleQuantity || "N/A"}</p>
                 <p><strong>Phương thức nhận kết quả:</strong> {order?.resultDeliveryMethod || "N/A"}</p>
                 <p><strong>Địa chỉ nhận kết quả:</strong> {order?.resultDeliverAddress || "N/A"}</p>
                 <p><strong>Giá:</strong> {formatPrice(order?.amount)}</p>
-                <button
-                  className="bg-blue-500 text-white p-2 rounded mt-4 hover:bg-blue-600"
-                  onClick={() => setShowModal(true)}
-                >
-                  Điền Test Samples
-                </button>
               </div>
             </div>
+          </div>
+
+          <div className="button-group mt-4 flex gap-4">
+            <button
+              className={`bg-green-500 text-white p-2 rounded hover:bg-green-600 ${isUpdateButtonDisabled() ? 'opacity-50 cursor-not-allowed' : ''}`}
+              onClick={handleUpdateStatus}
+              disabled={isUpdateButtonDisabled()}
+            >
+              Cập nhật trạng thái
+            </button>
+
+            <button
+              className={`bg-blue-500 text-white p-2 rounded hover:bg-blue-600 ${isTestSampleButtonDisabled() ? 'opacity-50 cursor-not-allowed' : ''}`}
+              onClick={() => setShowModal(true)}
+              disabled={isTestSampleButtonDisabled()}
+            >
+              Nhập mẫu xét nghiệm
+            </button>
+
+            <button
+              className={`bg-purple-500 text-white p-2 rounded hover:bg-purple-600 ${isResultInputButtonDisabled() ? 'opacity-50 cursor-not-allowed' : ''}`}
+              onClick={() => setShowResultModal(true)}
+              disabled={isResultInputButtonDisabled()}
+            >
+              Nhập thông tin kết quả
+            </button>
+          </div>
+
+          <div className="testSampleContainer">
+            {testSamples.length > 0 && (
+              <div className="testSampleTableWrapper">
+                <h3 className="testSampleTitle">Danh sách mẫu xét nghiệm</h3>
+                <table className="testSampleTable">
+                  <thead>
+                    <tr>
+                      <th>Họ tên</th>
+                      <th>Mối quan hệ</th>
+                      <th>Chi tiết</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {testSamples.map((sample) => (
+                      <tr key={sample.id}>
+                        <td>{sample.name || "N/A"}</td>
+                        <td>{sample.relationship || "N/A"}</td>
+                        <td>
+                          <button
+                            className="testSampleDetailButton"
+                            onClick={() => handleShowDetail(sample.id)}
+                          >
+                            Chi tiết
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -166,7 +299,25 @@ const OrderDetailAdmin = () => {
           sampleQuantity={order.sampleQuantity || 0}
           serviceType={service?.serviceType}
           sampleMethod={order?.sampleMethod}
+          isCustomer={false}
           onClose={() => setShowModal(false)}
+        />
+      )}
+      {showResultModal && (
+        <TestResultSampleForm
+          orderId={orderId}
+          testSamples={testSamples}
+          sampleQuantity={order.sampleQuantity || 0} // Thêm truyền sampleQuantity
+          onClose={() => setShowResultModal(false)}
+        />
+      )}
+      {selectedTestSampleId && (
+        <TestSampleDetail
+          orderId={orderId}
+          testSampleId={selectedTestSampleId}
+          serviceType={service?.serviceType}
+          sampleMethod={order?.sampleMethod}
+          onClose={() => setSelectedTestSampleId(null)}
         />
       )}
     </div>

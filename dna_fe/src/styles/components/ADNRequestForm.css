@@ -1,124 +1,114 @@
+/* Container chính */
 .adn-form-wrapper {
-  max-width: 1000px;
-  margin: 170px auto 30px;
-  background-color: #fff;
-  padding: 40px;
-  border-radius: 14px;
-  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.08);
+  max-width: 1200px;
+  margin: 150px auto 20px;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+/* Tiêu đề */
 .adn-form-title {
+  font-size: 24px;
+  color: #333;
   text-align: center;
-  color: #2c3e50;
-  margin-bottom: 30px;
-  font-size: 26px;
-  font-weight: 600;
+  margin-bottom: 20px;
 }
 
-.adn-form label {
-  display: block;
-  margin-top: 18px;
-  font-weight: 600;
+/* Thông báo lỗi và thành công */
+.adn-error {
+  color: #dc3545;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+/* Thông báo thành công */
+.adn-success {
+  color: #28a745;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+/* Form */
+.adn-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* Nhóm các trường sử dụng flex */
+.adn-flex-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+/* Trường input/select */
+.adn-field {
+  flex: 1;
+  min-width: 200px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.adn-field label {
+  font-weight: bold;
   color: #333;
 }
 
-.adn-form input,
-.adn-form select {
-  width: 100%;
-  padding: 10px;
-  margin-top: 6px;
-  border-radius: 8px;
+.adn-field input,
+.adn-field select {
+  padding: 8px;
   border: 1px solid #ccc;
-  font-size: 15px;
-  background-color: #fff;
+  border-radius: 4px;
+  font-size: 14px;
 }
 
-.adn-flex-row {
-  display: flex;
-  gap: 20px;
-  flex-wrap: wrap;
-}
-
-.adn-flex-row > div {
-  flex: 1;
-  min-width: 240px;
-}
-
-.adn-section-heading {
-  margin-top: 40px;
-  font-size: 18px;
-  color: #1a4d80;
-  font-weight: 600;
-  border-bottom: 2px solid #3498db;
-  padding-bottom: 6px;
-}
-
-.adn-radio-group,
-.adn-checkbox-group {
-  display: flex;
-  gap: 20px;
-  flex-wrap: wrap;
-  margin-top: 8px;
-}
-
-.adn-sample-block {
-  background-color: #f6fafd;
-  border: 1px solid #d6e8f7;
-  padding: 20px;
-  border-radius: 10px;
-  margin-top: 20px;
-}
-
-.adn-sample-title {
-  margin-bottom: 15px;
-  color: #007acc;
-  font-weight: 600;
-}
-
-.adn-total-cost {
-  margin-top: 30px;
-  font-weight: bold;
-  font-size: 18px;
-  color: #2c3e50;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start; /* hoặc center nếu bạn muốn căn giữa */
-  gap: 8px; /* thêm khoảng cách giữa giá và nút */
-
-}
-
-.adn-submit-btn {
-  margin-top: 30px;
-  background-color: #1a73e8;
-  color: #fff;
-  padding: 14px 26px;
-  font-size: 16px;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: background 0.25s ease;
-}
-
-.adn-submit-btn:hover {
-  background-color: #0d59c7;
-}
-
-
-.adn-submit-btn {
-  background-color: #4CAF50; /* Màu xanh khi enabled */
-  color: white;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.adn-submit-btn.disabled {
-  background-color: #cccccc; /* Màu xám khi disabled */
+.adn-field input:disabled {
+  background-color: #e9ecef;
   cursor: not-allowed;
 }
 
-.adn-submit-btn:hover:not(.disabled) {
-  background-color: #45a049; /* Màu khi hover nếu enabled */
+/* Tiêu đề phần */
+.adn-section-heading {
+  font-size: 18px;
+  font-weight: bold;
+  color: #007bff;
+  margin: 20px 0 10px;
+}
+
+/* Tổng chi phí */
+.adn-total-cost {
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+  text-align: right;
+  margin-top: 15px;
+}
+
+/* Nút gửi */
+.adn-submit-btn {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  align-self: flex-end;
+}
+
+.adn-submit-btn:hover {
+  background-color: #0056b3;
+}
+
+/* Loading */
+.adn-loading {
+  text-align: center;
+  font-size: 16px;
+  color: #666;
+  padding: 20px;
 }
