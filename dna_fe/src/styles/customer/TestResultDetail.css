@@ -1,0 +1,105 @@
+.test-result-detail-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.test-result-detail-container {
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  width: 80%;
+  max-width: 900px;
+  max-height: 100vh;
+  overflow-y: auto;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.test-result-detail-container h2 {
+  margin-bottom: 20px;
+  font-size: 24px;
+  text-align: center;
+}
+
+.test-result-section,
+.test-result-detail-section,
+.test-result-sample-section {
+  margin-bottom: 20px;
+}
+
+.test-result-section h3,
+.test-result-detail-section h3,
+.test-result-sample-section h4 {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.test-result-table,
+.test-result-sample-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+.test-result-table th,
+.test-result-table td,
+.test-result-sample-table th,
+.test-result-sample-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.test-result-table th,
+.test-result-sample-table th {
+  background-color: #f2f2f2;
+  font-weight: bold;
+}
+
+.test-result-detail-button {
+  padding: 6px 12px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.test-result-detail-button:hover {
+  background-color: #0056b3;
+}
+
+.test-result-info {
+  margin-bottom: 20px;
+}
+
+.test-result-info p {
+  margin: 5px 0;
+}
+
+.test-result-detail-close {
+  display: block;
+  margin: 20px auto 0;
+  padding: 10px 20px;
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.test-result-detail-close:hover {
+  background-color: #c82333;
+}
+
+.test-result-detail-container.error {
+  color: red;
+  text-align: center;
+}

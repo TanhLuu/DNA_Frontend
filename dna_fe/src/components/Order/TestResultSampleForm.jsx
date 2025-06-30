@@ -4,10 +4,11 @@ import "../../styles/admin/TestResultSampleForm.css";
 
 const TestResultSampleForm = ({ orderId, testSamples, sampleQuantity, orderStatus, staffRole, onClose }) => {
   const [formData, setFormData] = useState([]);
+  const [resultData, setResultData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [selectedResults, setSelectedResults] = useState([]);
 
-  // NORMAL_STAFF luôn chỉ đọc, LAB_STAFF chỉ chỉnh sửa khi orderStatus là COLLECT_SAMPLE
   const isReadOnly = staffRole === "NORMAL_STAFF" || orderStatus !== "COLLECT_SAMPLE";
 
   const locusNames = [
@@ -17,41 +18,119 @@ const TestResultSampleForm = ({ orderId, testSamples, sampleQuantity, orderStatu
   ];
 
   useEffect(() => {
-    const fetchExistingResults = async () => {
-      try {
-        const response = await axios.get(`http://localhost:8080/api/test-result-samples/order/${orderId}`);
-        const existingResults = response.data;
+  const fetchExistingResults = async () => {
+    try {
+      // Lấy dữ liệu mẫu xét nghiệm
+      const sampleResponse = await axios.get(`http://localhost:8080/api/test-result-samples/order/${orderId}`);
+      const existingSamples = sampleResponse.data || [];
 
-        const initialData = locusNames.map(locus => ({
-          locusName: locus,
-          samples: Array.from({ length: sampleQuantity }, (_, index) => {
-            const testSample = testSamples[index] || { id: index + 1, name: `Sample ${index + 1}` };
-            const existingSample = existingResults.find(
-              result => result.testSampleId === testSample.id && result.locusName === locus
-            );
-            return {
-              testSampleId: testSample.id,
-              name: testSample.name || "N/A",
-              allele1: existingSample ? existingSample.allele1 : "",
-              allele2: existingSample ? existingSample.allele2 : ""
-            };
-          })
-        }));
-        setFormData(initialData);
-      } catch (err) {
-        console.error("Lỗi khi tải dữ liệu TestResultSample:", err);
-        setError("Lỗi khi tải dữ liệu: " + err.message);
+      // Khởi tạo formData cho bảng nhập allele
+      const initialData = locusNames.map(locus => ({
+        locusName: locus,
+        samples: Array.from({ length: sampleQuantity }, (_, index) => {
+          const testSample = testSamples[index] || { id: index + 1, name: `Sample ${index + 1}`, relationship: "N/A" };
+          const existingSample = existingSamples.find(
+            result => result.testSampleId === testSample.id && result.locusName === locus
+          );
+          return {
+            testSampleId: testSample.id,
+            name: testSample.name || "N/A",
+            relationship: testSample.relationship || "N/A",
+            allele1: existingSample ? existingSample.allele1 : "",
+            allele2: existingSample ? existingSample.allele2 : ""
+          };
+        })
+      }));
+      setFormData(initialData);
+
+      // Lấy dữ liệu kết quả
+      const resultResponse = await axios.get(`http://localhost:8080/api/test-results/order/${orderId}`);
+      const existingResults = Array.isArray(resultResponse.data) ? resultResponse.data : []; // Đảm bảo là mảng
+
+      // Khởi tạo resultData với tất cả các cặp mẫu, ngay cả khi chưa có dữ liệu
+      const initialResults = [];
+      for (let i = 0; i < sampleQuantity; i++) {
+        for (let j = i + 1; j < sampleQuantity; j++) {
+          const sample1Id = testSamples[i]?.id || i + 1;
+          const sample2Id = testSamples[j]?.id || j + 1;
+          const existingResult = existingResults.find(
+            r => (r.sampleId1 === sample1Id && r.sampleId2 === sample2Id) ||
+                 (r.sampleId1 === sample2Id && r.sampleId2 === sample1Id)
+          );
+          initialResults.push({
+            sample1Id,
+            sample2Id,
+            result: existingResult ? existingResult.result : "",
+            resultPercent: existingResult ? existingResult.resultPercent : ""
+          });
+        }
       }
-    };
+      setResultData(initialResults);
+      setSelectedResults(new Array(initialResults.length).fill(false));
+    } catch (err) {
+      console.error("Lỗi khi tải dữ liệu:", err);
+      setError("Lỗi khi tải dữ liệu: " + err.message);
 
-    fetchExistingResults();
-  }, [orderId, testSamples, sampleQuantity]);
+      // Khởi tạo resultData mặc định ngay cả khi có lỗi
+      const initialResults = [];
+      for (let i = 0; i < sampleQuantity; i++) {
+        for (let j = i + 1; j < sampleQuantity; j++) {
+          const sample1Id = testSamples[i]?.id || i + 1;
+          const sample2Id = testSamples[j]?.id || j + 1;
+          initialResults.push({
+            sample1Id,
+            sample2Id,
+            result: "",
+            resultPercent: ""
+          });
+        }
+      }
+      setResultData(initialResults);
+      setSelectedResults(new Array(initialResults.length).fill(false));
+    }
+  };
 
+  fetchExistingResults();
+}, [orderId, testSamples, sampleQuantity]);
   const handleInputChange = (locusIndex, sampleIndex, field, value) => {
     if (isReadOnly) return;
     const updatedData = [...formData];
     updatedData[locusIndex].samples[sampleIndex][field] = value;
     setFormData(updatedData);
+  };
+
+  const handleResultChange = (index, field, value) => {
+    if (isReadOnly) return;
+    const updatedResults = [...resultData];
+    updatedResults[index][field] = value;
+    setResultData(updatedResults);
+  };
+
+  const handleCheckboxChange = (index) => {
+    if (isReadOnly) return;
+    const updatedSelected = [...selectedResults];
+    updatedSelected[index] = !updatedSelected[index];
+    setSelectedResults(updatedSelected);
+  };
+
+  const handlePrintPDF = async (sampleId1, sampleId2) => {
+    try {
+      const response = await axios.get(`http://localhost:8080/api/pdf/export/samples?sampleId1=${sampleId1}&sampleId2=${sampleId2}`, {
+        responseType: 'blob'
+      });
+
+      const url = window.URL.createObjectURL(new Blob([response.data], { type: 'application/pdf' }));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `result_${sampleId1}_${sampleId2}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error("Lỗi khi tải PDF:", err);
+      setError("Lỗi khi tải PDF: " + (err.response?.data?.message || err.message));
+    }
   };
 
   const handleSubmit = async () => {
@@ -74,24 +153,42 @@ const TestResultSampleForm = ({ orderId, testSamples, sampleQuantity, orderStatu
         }))
     );
 
+    const resultPayload = resultData
+      .filter((_, index) => selectedResults[index])
+      .map(item => ({
+        orderId: orderId,
+        sampleId1: item.sample1Id,
+        sampleId2: item.sample2Id,
+        result: item.result,
+        resultPercent: item.resultPercent
+      }));
+
     try {
-      const response = await axios.post("http://localhost:8080/api/test-result-samples/list", payload, {
+      const alleleResponse = await axios.post("http://localhost:8080/api/test-result-samples/list", payload, {
         headers: { "Content-Type": "application/json" }
       });
-      if (response.status === 200) {
+
+      const resultResponse = await axios.post("http://localhost:8080/api/test-results/create", resultPayload, {
+        headers: { "Content-Type": "application/json" }
+      });
+
+      if (alleleResponse.status === 200 && resultResponse.status === 200) {
         alert("Dữ liệu đã được gửi thành công!");
         setFormData(locusNames.map(locus => ({
           locusName: locus,
           samples: Array.from({ length: sampleQuantity }, (_, index) => {
-            const testSample = testSamples[index] || { id: index + 1, name: `Sample ${index + 1}` };
+            const testSample = testSamples[index] || { id: index + 1, name: `Sample ${index + 1}`, relationship: "N/A" };
             return {
               testSampleId: testSample.id,
               name: testSample.name || "N/A",
+              relationship: testSample.relationship || "N/A",
               allele1: "",
               allele2: ""
             };
           })
         })));
+        setResultData(resultData.map(r => ({ ...r, result: "", resultPercent: "" })));
+        setSelectedResults(new Array(resultData.length).fill(false));
         onClose();
       }
     } catch (err) {
@@ -111,11 +208,14 @@ const TestResultSampleForm = ({ orderId, testSamples, sampleQuantity, orderStatu
           <thead>
             <tr>
               <th>Locus Name</th>
-              {Array.from({ length: sampleQuantity }, (_, index) => (
-                <th key={index} colSpan={2}>
-                  {testSamples[index]?.name || `Sample ${index + 1}`}
-                </th>
-              ))}
+              {Array.from({ length: sampleQuantity }, (_, index) => {
+                const sample = testSamples[index] || { name: `Sample ${index + 1}`, relationship: "N/A" };
+                return (
+                  <th key={index} colSpan={2}>
+                    {sample.name} - {sample.relationship}
+                  </th>
+                );
+              })}
             </tr>
             <tr>
               <th></th>
@@ -159,6 +259,73 @@ const TestResultSampleForm = ({ orderId, testSamples, sampleQuantity, orderStatu
             ))}
           </tbody>
         </table>
+
+        {resultData.length > 0 && (
+          <table className="trs-table">
+            <thead>
+              <tr>
+                <th>Mẫu 1</th>
+                <th>Mẫu 2</th>
+                <th>Kết luận</th>
+                <th>Chỉ số kết hợp (CPI)</th>
+                <th>Chọn cặp kết quả</th>
+                {staffRole === "NORMAL_STAFF" && <th>In kết quả</th>}
+              </tr>
+            </thead>
+            <tbody>
+              {resultData.map((result, index) => {
+                const sample1 = testSamples.find(s => s.id === result.sample1Id) || { name: "N/A", relationship: "N/A" };
+                const sample2 = testSamples.find(s => s.id === result.sample2Id) || { name: "N/A", relationship: "N/A" };
+                return (
+                  <tr key={index}>
+                    <td>{`${sample1.name} - ${sample1.relationship}`}</td>
+                    <td>{`${sample2.name} - ${sample2.relationship}`}</td>
+                    <td>
+                      <input
+                        className="trs-input"
+                        type="text"
+                        value={result.result}
+                        onChange={(e) => handleResultChange(index, "result", e.target.value)}
+                        disabled={loading || isReadOnly}
+                        style={{ width: "100%", boxSizing: "border-box" }}
+                      />
+                    </td>
+                    <td>
+                      <input
+                        className="trs-input"
+                        type="text"
+                        value={result.resultPercent}
+                        onChange={(e) => handleResultChange(index, "resultPercent", e.target.value)}
+                        disabled={loading || isReadOnly}
+                        style={{ width: "100%", boxSizing: "border-box" }}
+                      />
+                    </td>
+                    <td>
+                      <input
+                        type="checkbox"
+                        checked={selectedResults[index] || false}
+                        onChange={() => handleCheckboxChange(index)}
+                        disabled={loading || isReadOnly}
+                      />
+                    </td>
+                    {staffRole === "NORMAL_STAFF" && (
+                      <td>
+                        <button
+                          className="trs-print-btn"
+                          onClick={() => handlePrintPDF(result.sample1Id, result.sample2Id)}
+                          disabled={loading}
+                        >
+                          In
+                        </button>
+                      </td>
+                    )}
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        )}
+
         <div className="trs-button-group">
           {!isReadOnly && (
             <button

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import "../../styles/sample/TestSampleForm.css"; 
+import "../../styles/sample/TestSampleForm.css";
 
 const TestSampleForm = ({ orderId, customerId, sampleQuantity, serviceType, sampleMethod, isCustomer, onClose }) => {
   const [testSamples, setTestSamples] = useState([]);
@@ -41,7 +41,7 @@ const TestSampleForm = ({ orderId, customerId, sampleQuantity, serviceType, samp
       return [
         'name', 'gender', 'dateOfBirth', 'address', 'documentType', 'documentNumber',
         'dateOfIssue', 'expirationDate', 'placeOfIssue', 'nationality',
-         'sampleType', 'numberOfSample', 'relationship',
+        'sampleType', 'numberOfSample', 'relationship',
         'medicalHistory', 'fingerprint'
       ];
     }
@@ -54,7 +54,7 @@ const TestSampleForm = ({ orderId, customerId, sampleQuantity, serviceType, samp
     gender: 'Giới tính',
     dateOfBirth: 'Ngày sinh',
     address: 'Địa chỉ',
-    
+
     documentNumber: 'Số giấy tờ',
     dateOfIssue: 'Ngày cấp',
     expirationDate: 'Ngày hết hạn',
@@ -200,50 +200,50 @@ const TestSampleForm = ({ orderId, customerId, sampleQuantity, serviceType, samp
       <div className={`test-sample-form-container ${showForm ? 'expanded' : ''}`}>
         {/* Left: Danh sách */}
         <div className="test-sample-form-list">
-  <div className="test-sample-form-header">
-    <h2 className="test-sample-form-title">
-      Danh sách mẫu xét nghiệm ({testSamples.length}/{sampleQuantity})
-    </h2>
-    <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
-      {testSamples.length < sampleQuantity && !isCustomer && (
-        <button
-          className="test-sample-form-add-btn"
-          onClick={() => {
-            setEditingSampleId(null);
-            setShowForm(true);
-          }}
-        >
-          + Thêm mẫu
-        </button>
-      )}
-      <button className="test-sample-form-close-btn" onClick={onClose}>×</button>
-    </div>
-  </div>
-  {testSamples.length > 0 ? (
-    <ul className="test-sample-form-ul">
-      {testSamples.map(sample => (
-        <li key={sample.id} className="test-sample-form-item">
-          <div className="test-sample-form-grid">
-            {fieldsToShow().map(key => (
-              <div key={key} className="test-sample-form-grid-item">
-                <strong>{fieldLabels[key]}:</strong>{" "}
-                {key.includes("date") && sample[key] ? formatDate(sample[key]) : sample[key] || "N/A"}
-              </div>
-            ))}
+          <div className="test-sample-form-header">
+            <h2 className="test-sample-form-title">
+              Danh sách mẫu xét nghiệm ({testSamples.length}/{sampleQuantity})
+            </h2>
+            <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+              {testSamples.length < sampleQuantity && !isCustomer && (
+                <button
+                  className="test-sample-form-add-btn"
+                  onClick={() => {
+                    setEditingSampleId(null);
+                    setShowForm(true);
+                  }}
+                >
+                  + Thêm mẫu
+                </button>
+              )}
+              <button className="test-sample-form-close-btn" onClick={onClose}>×</button>
+            </div>
           </div>
-          <button
-            onClick={() => handleEdit(sample)}
-            className="test-sample-form-edit-btn"
-          >
-            Cập nhật
-          </button>
-        </li>
-      ))}
-    </ul>
-  ) : (
-    <p>Chưa có mẫu xét nghiệm nào.</p>
-  )}
-</div>
+          {testSamples.length > 0 ? (
+            <ul className="test-sample-form-ul">
+              {testSamples.map(sample => (
+                <li key={sample.id} className="test-sample-form-item">
+                  <div className="test-sample-form-grid">
+                    {fieldsToShow().map(key => (
+                      <div key={key} className="test-sample-form-grid-item">
+                        <strong>{fieldLabels[key]}:</strong>{" "}
+                        {key.includes("date") && sample[key] ? formatDate(sample[key]) : sample[key] || "N/A"}
+                      </div>
+                    ))}
+                  </div>
+                  <button
+                    onClick={() => handleEdit(sample)}
+                    className="test-sample-form-edit-btn"
+                  >
+                    Cập nhật
+                  </button>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p>Chưa có mẫu xét nghiệm nào.</p>
+          )}
+        </div>
 
         {/* Right: Form */}
         {showForm && (
@@ -324,7 +324,7 @@ const TestSampleForm = ({ orderId, customerId, sampleQuantity, serviceType, samp
                     <div key={key} className="test-sample-form-field flex-1">
                       <label>{fieldLabels[key]}</label>
                       <input
-                        type={key.includes("date") ? "date" : "text"}
+                        type={(key === 'dateOfIssue' || key === 'expirationDate' || key === 'dateOfBirth') ? 'date' : 'text'}
                         name={key}
                         value={formData[key]}
                         onChange={handleInputChange}
@@ -419,7 +419,7 @@ const TestSampleForm = ({ orderId, customerId, sampleQuantity, serviceType, samp
               )}
 
               <div className="test-sample-form-buttons">
-                
+
                 <button
                   type="submit"
                   className="submit-btn"

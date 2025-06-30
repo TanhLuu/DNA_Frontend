@@ -23,6 +23,8 @@ const ADNRequestForm = ({
 
   if (isLoading) return <div className="adn-loading">Đang tải thông tin...</div>;
 
+  
+
   return (
     <div className="adn-form-wrapper">
       <h2 className="adn-form-title">{title}</h2>
@@ -77,9 +79,7 @@ const ADNRequestForm = ({
             ) : (
               <>
                 <input type="hidden" name="method" value="center" />
-                <select value="center">
-                  <option value="center">Tại trung tâm</option>
-                </select>
+                <input type="text" value="Tại trung tâm" disabled />
               </>
             )}
           </div>

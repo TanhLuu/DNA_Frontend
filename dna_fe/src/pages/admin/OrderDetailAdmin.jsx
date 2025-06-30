@@ -96,6 +96,27 @@ const OrderDetailAdmin = () => {
     }
   };
 
+  const handleExportPdf = async () => {
+    try {
+      const response = await axios.get(`http://localhost:8080/api/testorders/${orderId}/export-pdf`, {
+        responseType: 'blob', // Để xử lý dữ liệu nhị phân (PDF)
+      });
+
+      // Tạo URL tạm thời cho file PDF
+      const url = window.URL.createObjectURL(new Blob([response.data], { type: 'application/pdf' }));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `TestOrder_${orderId}.pdf`); // Tên file khi tải xuống
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url); // Giải phóng URL
+    } catch (err) {
+      console.error("Lỗi khi tải phiếu đăng ký:", err);
+      setUpdateError("Lỗi khi tải phiếu đăng ký: " + err.message);
+    }
+  };
+
   useEffect(() => {
     const storedStaffId = localStorage.getItem("staffId");
     const storedStaffRole = localStorage.getItem("staffRole");
@@ -174,7 +195,7 @@ const OrderDetailAdmin = () => {
             </div>
             <div className="divider" />
             <div className="DetailItem">
-              <span className="label">THỜ523I GIAN XÉT NGHIỆM</span>
+              <span className="label">THỜI GIAN XÉT NGHIỆM</span>
               <span className="value">{service?.timeTest ? `${service.timeTest} ngày` : "N/A"}</span>
             </div>
             <div className="divider" />
@@ -256,6 +277,14 @@ const OrderDetailAdmin = () => {
               </button>
             )}
 
+            {/* Nút Tải phiếu đăng ký */}
+            <button
+              className="bg-yellow-500 text-white p-2 rounded hover:bg-yellow-600"
+              onClick={handleExportPdf}
+            >
+              Tải phiếu đăng ký
+            </button>
+
             {/* Nút Xem kết quả (dành cho NORMAL_STAFF hoặc khi status là TESTED/COMPLETED) */}
             {(staffRole === "NORMAL_STAFF" || order?.orderStatus === "TESTED" || order?.orderStatus === "COMPLETED") && (
               <button
@@ -265,6 +294,8 @@ const OrderDetailAdmin = () => {
                 Xem kết quả
               </button>
             )}
+
+            
           </div>
 
           <div className="testSampleContainer">

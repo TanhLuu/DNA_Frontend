@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import "../../styles/sample/TestSampleDetail.css"; // thêm file css riêng
 
 const TestSampleDetail = ({ orderId, testSampleId, serviceType, sampleMethod, onClose }) => {
   const [testSample, setTestSample] = useState(null);
@@ -27,7 +28,6 @@ const TestSampleDetail = ({ orderId, testSampleId, serviceType, sampleMethod, on
     fetchTestSample();
   }, [testSampleId]);
 
-  // Xác định các trường cần hiển thị dựa trên serviceType và sampleMethod
   const getFieldsToDisplay = () => {
     if (serviceType === "Dân sự") {
       const baseFields = [
@@ -65,24 +65,24 @@ const TestSampleDetail = ({ orderId, testSampleId, serviceType, sampleMethod, on
 
   const fieldsToDisplay = getFieldsToDisplay();
 
-  
-  if (error) return <div className="text-red-500">{error}</div>;
-  if (!testSample) return <div>Không tìm thấy mẫu xét nghiệm</div>;
+  if (error) return <div className="test-sample-detail-error">{error}</div>;
+  if (!testSample) return <div className="test-sample-detail-not-found">Không tìm thấy mẫu xét nghiệm</div>;
 
   return (
-    <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
-        <h3 className="text-lg font-semibold mb-4">Chi tiết mẫu xét nghiệm #{testSample.id}</h3>
-        {fieldsToDisplay.map((field) => (
-          <p key={field.key} className="mb-2">
-            <strong>{field.label}:</strong>{" "}
-            {field.format ? field.format(testSample[field.key]) : testSample[field.key] || "N/A"}
-          </p>
-        ))}
-        <button
-          className="mt-4 bg-red-500 text-white p-2 rounded hover:bg-red-600"
-          onClick={onClose}
-        >
+    <div className="test-sample-detail-overlay">
+      <div className="test-sample-detail-container">
+        <h3 className="test-sample-detail-title">
+          Chi tiết mẫu xét nghiệm #{testSample.id}
+        </h3>
+        <div className="test-sample-detail-info">
+          {fieldsToDisplay.map((field) => (
+            <p key={field.key} className="test-sample-detail-field">
+              <strong>{field.label}:</strong>{" "}
+              {field.format ? field.format(testSample[field.key]) : testSample[field.key] || "N/A"}
+            </p>
+          ))}
+        </div>
+        <button className="test-sample-detail-close-btn" onClick={onClose}>
           Đóng
         </button>
       </div>

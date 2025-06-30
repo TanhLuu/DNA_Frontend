@@ -3,7 +3,7 @@ import axios from 'axios';
 import { fetchAccountInfo, getCustomerByAccountId } from '../api/accountApi';
 import { useNavigate } from 'react-router-dom';
 
-const useADNRequestForm = (getServices) => {
+const useADNRequestForm = (getServices, isCivil) => {
   const navigate = useNavigate();
 
   const [customer, setCustomer] = useState({
@@ -21,7 +21,7 @@ const useADNRequestForm = (getServices) => {
   const [isLoading, setIsLoading] = useState(true);
   const [services, setServices] = useState([]);
   const [selectedService, setSelectedService] = useState(null);
-  const [formData, setFormData] = useState({});
+  const [formData, setFormData] = useState({ method: isCivil ? '' : 'center' });
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
 
@@ -66,6 +66,13 @@ const useADNRequestForm = (getServices) => {
     fetchData();
   }, [getServices]);
 
+  useEffect(() => {
+    // Đảm bảo method là "center" khi không phải isCivil
+    if (!isCivil && formData.method !== 'center') {
+      setFormData((prev) => ({ ...prev, method: 'center' }));
+    }
+  }, [isCivil]);
+
   const handleSampleChange = (e) => {
     const value = e.target.value;
     setSampleCount(value ? parseInt(value) : '');
@@ -94,15 +101,18 @@ const useADNRequestForm = (getServices) => {
 
       const amount = calculateTotalPrice(isCivil) || 0;
 
+      const formDataObj = new FormData(e.target);
+      const formDataEntries = Object.fromEntries(formDataObj);
+
       const orderData = {
         customerId: parseInt(customerId),
         staffId: null,
         serviceId: selectedService?.serviceID || parseInt(formData.testType),
         orderDate: formData.orderDate || new Date().toISOString().split('T')[0],
         orderStatus: 'PENDING',
-        sampleMethod: formData.method || '',
-        resultDeliveryMethod: formData.receiveAt || '',
-        resultDeliverAddress: formData.resultAddress || '',
+        sampleMethod: isCivil ? formData.method || formDataEntries.method || '' : 'center',
+        resultDeliveryMethod: formData.receiveAt || formDataEntries.receiveAt || '',
+        resultDeliverAddress: formData.resultAddress || formDataEntries.resultAddress || '',
         sampleQuantity: parseInt(sampleCount) || 2,
         amount: amount
       };
@@ -110,6 +120,8 @@ const useADNRequestForm = (getServices) => {
       if (!orderData.serviceId || !orderData.resultDeliveryMethod || !orderData.sampleQuantity) {
         throw new Error('Vui lòng điền đầy đủ thông tin: Loại xét nghiệm, hình thức nhận kết quả, và số người cần phân tích.');
       }
+
+      console.log('orderData:', orderData); // Gỡ lỗi: In dữ liệu gửi đi
 
       const res = await axios.post('http://localhost:8080/api/testorders', orderData, {
         headers: {
@@ -121,7 +133,7 @@ const useADNRequestForm = (getServices) => {
       const orderId = res.data.orderId || res.data.id;
 
       setSuccess('Tạo đơn hàng thành công!');
-      setFormData({});
+      setFormData({ method: isCivil ? '' : 'center' });
       setSampleCount('');
 
       // Chuyển trang sau khi thành công, bao gồm customerName
@@ -129,7 +141,7 @@ const useADNRequestForm = (getServices) => {
         state: {
           orderId,
           customerId,
-          customerName: customer.requesterName, // Truyền tên khách hàng
+          customerName: customer.requesterName,
           amount
         }
       });
@@ -147,6 +159,7 @@ const useADNRequestForm = (getServices) => {
     selectedService,
     setSelectedService,
     formData,
+    setFormData,
     error,
     success,
     handleSampleChange,

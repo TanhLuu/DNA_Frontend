@@ -11,7 +11,8 @@ import {
 import { getStaffById, getAccountById } from "../../api/adminOrderApi";
 import TestSampleForm from "../../components/Order/TestSampleForm";
 import TestSampleDetail from "../../components/Order/TestSampleDetail";
-import "../../styles/customer/OrderDetailCustomer.css"; // Import file CSS
+import TestResultDetail from "../../components/Order/TestResultDetail";
+import "../../styles/customer/OrderDetailCustomer.css";
 
 const OrderDetailCustomer = () => {
   const { orderId } = useParams();
@@ -27,6 +28,7 @@ const OrderDetailCustomer = () => {
   const [showModal, setShowModal] = useState(false);
   const [testSamples, setTestSamples] = useState([]);
   const [selectedTestSampleId, setSelectedTestSampleId] = useState(null);
+  const [showTestResultModal, setShowTestResultModal] = useState(false);
 
   const formatDate = (date) =>
     date ? new Date(date).toLocaleDateString("vi-VN") : "N/A";
@@ -51,6 +53,9 @@ const OrderDetailCustomer = () => {
     service?.serviceType === "Dân sự" &&
     order?.sampleMethod === "home" &&
     order?.orderStatus === "SEND_KIT";
+
+  const shouldShowViewResultButton = () =>
+    order?.orderStatus === "COMPLETED" || order?.orderStatus === "TESTED";
 
   const handleUpdateStatus = async () => {
     const token = localStorage.getItem("token");
@@ -129,9 +134,25 @@ const OrderDetailCustomer = () => {
     setSelectedTestSampleId(testSampleId);
   };
 
+  const handleShowTestResult = () => {
+    setShowTestResultModal(true);
+  };
+
   if (loading) return <div className="order-detail-container">Đang tải...</div>;
   if (!order)
     return <div className="order-detail-container">Không tìm thấy đơn hàng</div>;
+
+  // Lấy relationship của sampleId1 và sampleId2
+  const getRelationships = (sampleId1, sampleId2) => {
+    const sample1 = testSamples.find(s => s.id === sampleId1);
+    const sample2 = testSamples.find(s => s.id === sampleId2);
+    return {
+      relationship1: sample1?.relationship || "N/A",
+      relationship2: sample2?.relationship || "N/A",
+    };
+  };
+
+  const { relationship1, relationship2 } = order && getRelationships(order.sampleId1, order.sampleId2);
 
   return (
     <div className="order-detail-container">
@@ -251,6 +272,14 @@ const OrderDetailCustomer = () => {
               Cập nhật trạng thái
             </button>
           )}
+          {shouldShowViewResultButton() && (
+            <button
+              className="order-detail-button"
+              onClick={handleShowTestResult}
+            >
+              Xem kết quả
+            </button>
+          )}
           <button
             className="order-detail-button back"
             onClick={handleBack}
@@ -308,6 +337,16 @@ const OrderDetailCustomer = () => {
           serviceType={service?.serviceType}
           sampleMethod={order?.sampleMethod}
           onClose={() => setSelectedTestSampleId(null)}
+        />
+      )}
+      {showTestResultModal && account && customer && (
+        <TestResultDetail
+          orderId={orderId}
+          fullName={account.fullName}
+          address={customer.address}
+          relationship1={relationship1} // Truyền relationship của sampleId1
+          relationship2={relationship2} // Truyền relationship của sampleId2
+          onClose={() => setShowTestResultModal(false)}
         />
       )}
     </div>
