@@ -239,10 +239,13 @@ const OrderDetailCustomer = () => {
             <p>
               <strong>Số lượng mẫu:</strong> {order?.sampleQuantity || "N/A"}
             </p>
-            <p>
-              <strong>Phương thức nhận kết quả:</strong>{" "}
-              {order?.resultDeliveryMethod || "N/A"}
-            </p>
+            <p><strong>Phương thức nhận kết quả:</strong> {
+                  order?.resultDeliverMethod ||
+                  (order?.resultDeliveryMethod === "home" ? "Tại nhà" :
+                    order?.resultDeliveryMethod === "office" ? "Tại văn phòng" :
+                      order?.resultDeliveryMethod === "email" ? "Email" :
+                        "N/A")
+                }</p>
             <p>
               <strong>Địa chỉ nhận kết quả:</strong>{" "}
               {order?.resultDeliverAddress || "N/A"}

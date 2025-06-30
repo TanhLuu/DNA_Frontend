@@ -47,7 +47,7 @@ const OrderDetailAdmin = () => {
   };
 
   const disabledStatuses = ["SEND_SAMPLE", "COLLECT_SAMPLE", "TESTED", "COMPLETED"];
-  
+
   const isTestSampleButtonDisabled = () => {
     return disabledStatuses.includes(order?.orderStatus);
   };
@@ -174,6 +174,8 @@ const OrderDetailAdmin = () => {
     setSelectedTestSampleId(testSampleId);
   };
 
+
+
   return (
     <div className="OrderDetailAdmin">
       <div>
@@ -241,7 +243,13 @@ const OrderDetailAdmin = () => {
               <div>
                 <p><strong>Hình thức thu mẫu:</strong> {order?.sampleMethod === "center" ? "Tại trung tâm" : "Tại nhà"}</p>
                 <p><strong>Số lượng mẫu:</strong> {order?.sampleQuantity || "N/A"}</p>
-                <p><strong>Phương thức nhận kết quả:</strong> {order?.resultDeliveryMethod || "N/A"}</p>
+                <p><strong>Phương thức nhận kết quả:</strong> {
+                  order?.resultDeliverMethod ||
+                  (order?.resultDeliveryMethod === "home" ? "Tại nhà" :
+                    order?.resultDeliveryMethod === "office" ? "Tại văn phòng" :
+                      order?.resultDeliveryMethod === "email" ? "Email" :
+                        "N/A")
+                }</p>
                 <p><strong>Địa chỉ nhận kết quả:</strong> {order?.resultDeliverAddress || "N/A"}</p>
                 <p><strong>Giá:</strong> {formatPrice(order?.amount)}</p>
               </div>
@@ -295,7 +303,7 @@ const OrderDetailAdmin = () => {
               </button>
             )}
 
-            
+
           </div>
 
           <div className="testSampleContainer">
