@@ -97,7 +97,7 @@ const Header = () => {
             </div>
           </div>
           <a href="/order-detail">Hướng dẫn</a>
-          <a href="/auth">Tin tức</a>
+          <a href="/blog">Tin tức</a>
         </nav>
 
         <div className={`auth-links ${isDropdownOpen ? 'active' : ''}`}>

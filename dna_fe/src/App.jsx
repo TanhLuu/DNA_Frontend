@@ -22,6 +22,12 @@ import DoubleSliderAuth from './pages/auth/DoubleSliderAuth';
 import PaymentPage from './pages/payment/PaymentPage';
 import VNPayReturnPage from './pages/payment/VNPayReturnPage';
 
+import RatingFeedbackList from './pages/admin/RatingFeedbackList';
+import BlogEditor from './pages/admin/BlogEditor';
+import BlogList from './components/Blog/BlogList';
+import BlogDetail from './components/Blog/BlogDetail';
+
+
 
 function App() {
 
@@ -61,6 +67,8 @@ function App() {
             <Route path="/legal-price" element={<LegalServicePricing />} />
             <Route path="/all-price" element={<AllServicePricing />} />
             <Route path="/auth" element={<DoubleSliderAuth />} />
+            <Route path="/blog" element={<BlogList />} />
+            <Route path="/blog/:id" element={<BlogDetail />} />
 
             {(role === 'staff' || role === 'manager') && (
               <>
@@ -68,7 +76,8 @@ function App() {
                 <Route path="/serviceManagement" element={<AdminLayout> <ServiceManagement /> </AdminLayout>}/>
                 <Route path="/dashboard" element={<AdminLayout><Dashboard /></AdminLayout>}/>
                 <Route path="/admin/orders/:orderId" element={<AdminLayout><OrderDetailAdmin /></AdminLayout>} />
-
+                <Route path="/rating-feedbacks" element={<AdminLayout><RatingFeedbackList /></AdminLayout>} />
+                <Route path="/blog-management" element={<AdminLayout><BlogEditor /></AdminLayout>} />
               </>
             )}
 

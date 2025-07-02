@@ -4,7 +4,7 @@ import '../../styles/components/profile.css';
 import { useCustomerProfile } from '../../hooks/Account/useCustomerProfile';
 import { useAuth } from '../../hooks/Account/useAuth';
 
-const genderOptions = ['Nam', 'Nữ', 'Khác'];
+const genderOptions = ['Chọn giới tính', 'Nam', 'Nữ'];
 const documentOptions = ['CCCD', 'Giấy khai sinh', 'Hộ chiếu'];
 
 const Profile = () => {

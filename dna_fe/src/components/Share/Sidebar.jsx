@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useStaffInfo } from '../../hooks/Account/useStaffInfo';
+import { FaClipboardList, FaWrench, FaChartBar, FaComments, FaArrowCircleLeft, FaUserCircle, FaPowerOff, FaAngleDoubleLeft, FaAngleDoubleRight, FaBook } from 'react-icons/fa';
 
 const Sidebar = () => {
   const navigate = useNavigate();
   const { name, role } = useStaffInfo();
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [showLogout, setShowLogout] = useState(false);
 
   const handleLogout = () => {
     localStorage.clear();
@@ -20,105 +22,156 @@ const Sidebar = () => {
     setIsCollapsed(!isCollapsed);
   };
 
+  const toggleLogoutMenu = () => {
+    setShowLogout(!showLogout);
+  };
+
   return (
     <aside
-      className={`${
-        isCollapsed ? 'w-16' : 'w-50'
-      } h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white flex flex-col justify-between shadow-lg transition-all duration-300 overflow-y-auto`}
+      className={`${isCollapsed ? 'w-16' : 'w-64'
+        } h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white flex flex-col justify-between shadow-lg transition-all duration-300 ease-in-out overflow-y-auto`}
     >
-      {/* User Info Section */}
-      <div className="p-4">
-        <div className={`flex ${isCollapsed ? 'justify-center' : 'items-center space-x-3'}`}>
-          <div className="w-12 h-12 rounded-full bg-gray-600/50 flex items-center justify-center">
-            <span className="text-lg font-semibold">{name?.charAt(0) || 'U'}</span> {/* Giảm từ text-xl xuống text-lg */}
-          </div>
+      {/* Top: Toggle Button */}
+      <div className={`p-4 border-b border-gray-600/30 ${isCollapsed ? 'flex justify-center' : ''}`}>
+        <button
+          onClick={toggleSidebar}
+          className={`flex items-center p-3 rounded-lg bg-gray-600 hover:bg-gray-500 transition-colors duration-200 ${isCollapsed ? 'justify-center w-10 h-10' : 'w-full'
+            }`}
+          title={isCollapsed ? 'Mở rộng' : 'Thu gọn'}
+        >
+          <FaAngleDoubleLeft className={`text-lg ${isCollapsed ? 'hidden' : 'block'}`} />
+          <FaAngleDoubleRight className={`text-lg ${isCollapsed ? 'block' : 'hidden'}`} />
           {!isCollapsed && (
-            <div>
-              <h2 className="text-base font-bold">{name || 'Người dùng'}</h2> {/* Giảm từ text-lg xuống text-base */}
-              <p className="text-xs opacity-80">{role || 'Vai trò'}</p> {/* Giảm từ text-sm xuống text-xs */}
-            </div>
+            <span className="ml-3 text-sm opacity-100 transition-opacity duration-200">
+              {isCollapsed ? 'Mở rộng' : 'Thu gọn'}
+            </span>
           )}
-        </div>
+        </button>
+      </div>
 
-        {/* Navigation Links */}
-        <nav className={`mt-6 space-y-2 ${isCollapsed ? 'flex flex-col items-center' : ''}`}>
+      {/* Middle: Navigation */}
+      <div className="p-4 flex-1">
+        <nav className={`space-y-2 ${isCollapsed ? 'flex flex-col items-center' : ''}`}>
           <Link
             to="/ordersPageAdmin"
-            className={`flex items-center p-3 rounded-lg hover:bg-gray-700 transition-colors ${
-              isCollapsed ? 'justify-center' : ''
-            }`}
+            className={`flex items-center p-3 rounded-lg hover:bg-gray-700 transition-colors duration-200 hover:scale-105 transform ${isCollapsed ? 'justify-center' : ''
+              }`}
             title={isCollapsed ? 'Đơn xét nghiệm' : ''}
           >
-            <span className="mr-3 text-lg">📋</span> {/* Giảm kích thước icon nếu cần */}
-            {!isCollapsed && <span className="text-sm">Đơn xét nghiệm</span>} {/* Giảm từ font mặc định xuống text-sm */}
+            <FaClipboardList className="text-lg" />
+            {!isCollapsed && (
+              <span className="ml-3 text-sm opacity-100 transition-opacity duration-200">
+                Đơn xét nghiệm
+              </span>
+            )}
           </Link>
+
           <Link
             to="/serviceManagement"
-            className={`flex items-center p-3 rounded-lg hover:bg-gray-700 transition-colors ${
-              isCollapsed ? 'justify-center' : ''
-            }`}
+            className={`flex items-center p-3 rounded-lg hover:bg-gray-700 transition-colors duration-200 hover:scale-105 transform ${isCollapsed ? 'justify-center' : ''
+              }`}
             title={isCollapsed ? 'Dịch vụ' : ''}
           >
-            <span className="mr-3 text-lg">⚙️</span>
-            {!isCollapsed && <span className="text-sm">Dịch vụ</span>}
+            <FaWrench className="text-lg" />
+            {!isCollapsed && (
+              <span className="ml-3 text-sm opacity-100 transition-opacity duration-200">
+                Dịch vụ
+              </span>
+            )}
           </Link>
+
           {role === 'MANAGER' && (
             <Link
               to="/dashboard"
-              className={`flex items-center p-3 rounded-lg hover:bg-gray-700 transition-colors ${
-                isCollapsed ? 'justify-center' : ''
-              }`}
+              className={`flex items-center p-3 rounded-lg hover:bg-gray-700 transition-colors duration-200 hover:scale-105 transform ${isCollapsed ? 'justify-center' : ''
+                }`}
               title={isCollapsed ? 'Dashboard' : ''}
             >
-              <span className="mr-3 text-lg">📊</span>
-              {!isCollapsed && <span className="text-sm">Dashboard</span>}
+              <FaChartBar className="text-lg" />
+              {!isCollapsed && (
+                <span className="ml-3 text-sm opacity-100 transition-opacity duration-200">
+                  Dashboard
+                </span>
+              )}
             </Link>
           )}
+
           <Link
-            to="/B"
-            className={`flex items-center p-3 rounded-lg hover:bg-gray-700 transition-colors ${
-              isCollapsed ? 'justify-center' : ''
-            }`}
+            to="/rating-feedbacks"
+            className={`flex items-center p-3 rounded-lg hover:bg-gray-700 transition-colors duration-200 hover:scale-105 transform ${isCollapsed ? 'justify-center' : ''
+              }`}
             title={isCollapsed ? 'Quản lý feedback' : ''}
           >
-            <span className="mr-3 text-lg">💬</span>
-            {!isCollapsed && <span className="text-sm">Quản lý feedback</span>}
+            <FaComments className="text-lg" />
+            {!isCollapsed && (
+              <span className="ml-3 text-sm opacity-100 transition-opacity duration-200">
+                Quản lý feedback
+              </span>
+            )}
+          </Link>
+
+          <Link
+            to="/blog-management"
+            className={`flex items-center p-3 rounded-lg hover:bg-gray-700 transition-colors duration-200 hover:scale-105 transform ${isCollapsed ? 'justify-center' : ''
+              }`}
+            title={isCollapsed ? 'Bài viết' : ''}
+          >
+            <FaBook className="text-lg" />
+            {!isCollapsed && (
+              <span className="ml-3 text-sm opacity-100 transition-opacity duration-200">
+                Bài viết
+              </span>
+            )}
           </Link>
         </nav>
       </div>
 
-      {/* Control Buttons */}
+      {/* Bottom: User Info + Back + Logout */}
       <div className={`p-4 border-t border-gray-600/30 ${isCollapsed ? 'flex flex-col items-center' : ''}`}>
         <button
           onClick={handleBack}
-          className={`flex items-center p-3 mb-2 rounded-lg bg-gray-600 hover:bg-gray-500 transition-colors ${
-            isCollapsed ? 'justify-center w-10 h-10' : 'w-full'
-          }`}
+          className={`flex items-center p-3 rounded-lg hover:bg-gray-500 transition-colors duration-200 hover:scale-105 transform mt-2 ${isCollapsed ? 'justify-center w-10 h-10' : 'w-full'
+            }`}
           title={isCollapsed ? 'Trở về' : ''}
         >
-          <span className="mr-3 text-lg">⬅</span>
-          {!isCollapsed && <span className="text-sm">Trở về</span>} {/* Giảm từ font mặc định xuống text-sm */}
+          <FaArrowCircleLeft className="text-lg" />
+          {!isCollapsed && (
+            <span className="ml-3 text-sm opacity-100 transition-opacity duration-200">
+              Trở về
+            </span>
+          )}
         </button>
-        <button
-          onClick={handleLogout}
-          className={`flex items-center p-3 mb-2 rounded-lg bg-red-600 hover:bg-red-500 transition-colors ${
-            isCollapsed ? 'justify-center w-10 h-10' : 'w-full'
-          }`}
-          title={isCollapsed ? 'Đăng xuất' : ''}
+
+        <div
+          onClick={toggleLogoutMenu}
+          className={`cursor-pointer flex items-center p-3 rounded-lg hover:bg-gray-700 transition-colors duration-200 hover:scale-105 transform ${isCollapsed ? 'justify-center w-10 h-10' : 'w-full'
+            }`}
+          title={isCollapsed ? name || 'Người dùng' : ''}
         >
-          <span className="mr-3 text-lg">↩</span>
-          {!isCollapsed && <span className="text-sm">Đăng xuất</span>}
-        </button>
-        <button
-          onClick={toggleSidebar}
-          className={`flex items-center p-3 rounded-lg bg-gray-600 hover:bg-gray-500 transition-colors ${
-            isCollapsed ? 'justify-center w-10 h-10' : 'w-full'
-          }`}
-          title={isCollapsed ? 'Mở rộng' : 'Thu gọn'}
-        >
-          <span className="text-lg">{isCollapsed ? '🟪' : '🟩'}</span>
-          {!isCollapsed && <span className="ml-3 text-sm">{isCollapsed ? 'Mở rộng' : 'Thu gọn'}</span>} {/* Giảm từ font mặc định xuống text-sm */}
-        </button>
+          <div className="w-10 h-10 rounded-full bg-gray-600/50 flex items-center justify-center">
+            <FaUserCircle className="text-lg" />
+          </div>
+          {!isCollapsed && (
+            <div className="ml-3 flex flex-col">
+              <span className="text-sm font-semibold opacity-100 transition-opacity duration-200">
+                {name || 'Người dùng'}
+              </span>
+              <span className="text-xs opacity-80 transition-opacity duration-200">
+                {role ? role.replace('_', ' ') : 'Vai trò không xác định'}
+              </span>
+            </div>
+          )}
+        </div>
+
+        {!isCollapsed && showLogout && (
+          <button
+            onClick={handleLogout}
+            className="w-full mt-2 p-3 bg-red-600 rounded-lg hover:bg-red-500 text-sm transition-colors duration-200 opacity-100 transition-opacity duration-300 flex items-center justify-center hover:scale-105 transform"
+          >
+            <FaPowerOff className="mr-2 text-lg" />
+            Đăng xuất
+          </button>
+        )}
       </div>
     </aside>
   );

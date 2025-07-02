@@ -12,6 +12,7 @@ import { getStaffById, getAccountById } from "../../api/adminOrderApi";
 import TestSampleForm from "../../components/Order/TestSampleForm";
 import TestSampleDetail from "../../components/Order/TestSampleDetail";
 import TestResultDetail from "../../components/Order/TestResultDetail";
+import RatingFeedbackForm from "../../components/Order/RatingFeedbackForm";
 import "../../styles/customer/OrderDetailCustomer.css";
 
 const OrderDetailCustomer = () => {
@@ -29,6 +30,8 @@ const OrderDetailCustomer = () => {
   const [testSamples, setTestSamples] = useState([]);
   const [selectedTestSampleId, setSelectedTestSampleId] = useState(null);
   const [showTestResultModal, setShowTestResultModal] = useState(false);
+  const [showFeedbackModal, setShowFeedbackModal] = useState(false);
+  const [feedback, setFeedback] = useState(null); // Thêm state cho feedback
 
   const formatDate = (date) =>
     date ? new Date(date).toLocaleDateString("vi-VN") : "N/A";
@@ -56,6 +59,12 @@ const OrderDetailCustomer = () => {
 
   const shouldShowViewResultButton = () =>
     order?.orderStatus === "COMPLETED" || order?.orderStatus === "TESTED";
+
+  const shouldShowFeedbackButton = () =>
+    order?.orderStatus === "COMPLETED" && !feedback; // Chỉ hiển thị khi chưa có feedback
+
+  const shouldShowViewFeedbackButton = () =>
+    order?.orderStatus === "COMPLETED" && feedback; // Hiển thị khi đã có feedback
 
   const handleUpdateStatus = async () => {
     const token = localStorage.getItem("token");
@@ -95,9 +104,9 @@ const OrderDetailCustomer = () => {
         setOrder(orderData);
 
         const accountInfo = await getAccountByCustomerId(orderData.customerId);
-        const customerInfo = await getCustomerById(orderData.customerId);
+        const userInfo = await getCustomerById(orderData.customerId);
         setAccount(accountInfo);
-        setCustomer(customerInfo);
+        setCustomer(userInfo);
 
         const serviceInfo = await getServiceById(orderData.serviceId);
         setService(serviceInfo);
@@ -117,6 +126,20 @@ const OrderDetailCustomer = () => {
           `http://localhost:8080/api/testSamples/order/${orderId}`
         );
         setTestSamples(response.data);
+
+        // Lấy feedback theo orderId
+        try {
+          const feedbackResponse = await axios.get(
+            `http://localhost:8080/api/rating-feedbacks/order/${orderId}`,
+            {
+              headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+            }
+          );
+          setFeedback(feedbackResponse.data); // Lưu feedback nếu có
+        } catch (err) {
+          console.log("Chưa có feedback hoặc lỗi khi lấy feedback:", err);
+          setFeedback(null); // Nếu không có feedback, set null
+        }
       } catch (err) {
         console.error("Lỗi khi tải dữ liệu:", err);
         setUpdateError("Lỗi khi tải dữ liệu đơn hàng hoặc TestSample.");
@@ -138,21 +161,29 @@ const OrderDetailCustomer = () => {
     setShowTestResultModal(true);
   };
 
+  const handleShowFeedback = () => {
+    setShowFeedbackModal(true);
+  };
+
+  const handleFeedbackSubmitted = (newFeedback) => {
+    setFeedback(newFeedback); // Cập nhật feedback sau khi gửi
+  };
+
   if (loading) return <div className="order-detail-container">Đang tải...</div>;
   if (!order)
     return <div className="order-detail-container">Không tìm thấy đơn hàng</div>;
 
-  // Lấy relationship của sampleId1 và sampleId2
   const getRelationships = (sampleId1, sampleId2) => {
-    const sample1 = testSamples.find(s => s.id === sampleId1);
-    const sample2 = testSamples.find(s => s.id === sampleId2);
+    const sample1 = testSamples.find((s) => s.id === sampleId1);
+    const sample2 = testSamples.find((s) => s.id === sampleId2);
     return {
       relationship1: sample1?.relationship || "N/A",
       relationship2: sample2?.relationship || "N/A",
     };
   };
 
-  const { relationship1, relationship2 } = order && getRelationships(order.sampleId1, order.sampleId2);
+  const { relationship1, relationship2 } =
+    order && getRelationships(order.sampleId1, order.sampleId2);
 
   return (
     <div className="order-detail-container">
@@ -165,58 +196,33 @@ const OrderDetailCustomer = () => {
         <section className="order-detail-section">
           <h3>Thông tin khách hàng</h3>
           <div>
-            <p>
-              <strong>Họ tên:</strong> {account?.fullName || "N/A"}
-            </p>
-            <p>
-              <strong>SĐT:</strong> {account?.phone || "N/A"}
-            </p>
-            <p>
-              <strong>Email:</strong> {account?.email || "N/A"}
-            </p>
-            <p>
-              <strong>Giới tính:</strong> {customer?.gender || "N/A"}
-            </p>
-            <p>
-              <strong>Địa chỉ:</strong> {customer?.address || "N/A"}
-            </p>
-            <p>
-              <strong>Loại giấy tờ:</strong> {customer?.documentType || "N/A"}
-            </p>
-            <p>
-              <strong>Số giấy tờ:</strong> {customer?.cccd || "N/A"}
-            </p>
-            <p>
-              <strong>Nơi cấp:</strong> {customer?.placeOfIssue || "N/A"}
-            </p>
-            <p>
-              <strong>Ngày cấp:</strong> {formatDate(customer?.dateOfIssue)}
-            </p>
+            <p><strong>Họ tên:</strong> {account?.fullName || "N/A"}</p>
+            <p><strong>SĐT:</strong> {account?.phone || "N/A"}</p>
+            <p><strong>Email:</strong> {account?.email || "N/A"}</p>
+            <p><strong>Giới tính:</strong> {customer?.gender || "N/A"}</p>
+            <p><strong>Địa chỉ:</strong> {customer?.address || "N/A"}</p>
+            <p><strong>Loại giấy tờ:</strong> {customer?.documentType || "N/A"}</p>
+            <p><strong>Số giấy tờ:</strong> {customer?.cccd || "N/A"}</p>
+            <p><strong>Nơi cấp:</strong> {customer?.placeOfIssue || "N/A"}</p>
+            <p><strong>Ngày cấp:</strong> {formatDate(customer?.dateOfIssue)}</p>
           </div>
         </section>
 
         <section className="order-detail-section">
           <h3>Thông tin dịch vụ</h3>
           <div>
-            <p>
-              <strong>Tên dịch vụ:</strong> {service?.serviceName || "N/A"}
-            </p>
-            <p>
-              <strong>Loại dịch vụ:</strong> {service?.serviceType || "N/A"}
-            </p>
-            <p>
-              <strong>Thời gian xét nghiệm:</strong>{" "}
+            <p><strong>Tên dịch vụ:</strong> {service?.serviceName || "N/A"}</p>
+            <p><strong>Loại dịch vụ:</strong> {service?.serviceType || "N/A"}</p>
+            <p><strong>Thời gian xét nghiệm:</strong>{" "}
               {service?.timeTest ? `${service.timeTest} ngày` : "N/A"}
             </p>
           </div>
           <h3>Thông tin nhân viên phụ trách</h3>
           <div>
-            <p>
-              <strong>Nhân viên đăng ký:</strong>{" "}
+            <p><strong>Nhân viên đăng ký:</strong>{" "}
               {registrationStaff?.fullName || "Chưa có"}
             </p>
-            <p>
-              <strong>Nhân viên xét nghiệm:</strong>{" "}
+            <p><strong>Nhân viên xét nghiệm:</strong>{" "}
               {testingStaff?.fullName || "Chưa có"}
             </p>
           </div>
@@ -225,20 +231,14 @@ const OrderDetailCustomer = () => {
         <section className="order-detail-section">
           <h3>Thông tin đơn hàng</h3>
           <div>
-            <p>
-              <strong>Trạng thái:</strong>{" "}
+            <p><strong>Trạng thái:</strong>{" "}
               {STATUS_LABELS[order?.orderStatus] || "N/A"}
             </p>
-            <p>
-              <strong>Ngày đặt:</strong> {formatDate(order?.orderDate)}
-            </p>
-            <p>
-              <strong>Hình thức thu mẫu:</strong>{" "}
+            <p><strong>Ngày đặt:</strong> {formatDate(order?.orderDate)}</p>
+            <p><strong>Hình thức thu mẫu:</strong>{" "}
               {order?.sampleMethod === "center" ? "Tại trung tâm" : "Tại nhà"}
             </p>
-            <p>
-              <strong>Số lượng mẫu:</strong> {order?.sampleQuantity || "N/A"}
-            </p>
+            <p><strong>Số lượng mẫu:</strong> {order?.sampleQuantity || "N/A"}</p>
             <p><strong>Phương thức nhận kết quả:</strong> {
                   order?.resultDeliverMethod ||
                   (order?.resultDeliveryMethod === "home" ? "Tại nhà" :
@@ -246,13 +246,10 @@ const OrderDetailCustomer = () => {
                       order?.resultDeliveryMethod === "email" ? "Email" :
                         "N/A")
                 }</p>
-            <p>
-              <strong>Địa chỉ nhận kết quả:</strong>{" "}
+            <p><strong>Địa chỉ nhận kết quả:</strong>{" "}
               {order?.resultDeliverAddress || "N/A"}
             </p>
-            <p>
-              <strong>Giá:</strong> {formatPrice(order?.amount)}
-            </p>
+            <p><strong>Giá:</strong> {formatPrice(order?.amount)}</p>
           </div>
         </section>
       </div>
@@ -281,6 +278,22 @@ const OrderDetailCustomer = () => {
               onClick={handleShowTestResult}
             >
               Xem kết quả
+            </button>
+          )}
+          {shouldShowFeedbackButton() && (
+            <button
+              className="order-detail-button"
+              onClick={handleShowFeedback}
+            >
+              Phản hồi
+            </button>
+          )}
+          {shouldShowViewFeedbackButton() && (
+            <button
+              className="order-detail-button"
+              onClick={handleShowFeedback}
+            >
+              Xem phản hồi
             </button>
           )}
           <button
@@ -347,9 +360,17 @@ const OrderDetailCustomer = () => {
           orderId={orderId}
           fullName={account.fullName}
           address={customer.address}
-          relationship1={relationship1} // Truyền relationship của sampleId1
-          relationship2={relationship2} // Truyền relationship của sampleId2
+          relationship1={relationship1}
+          relationship2={relationship2}
           onClose={() => setShowTestResultModal(false)}
+        />
+      )}
+      {showFeedbackModal && (shouldShowFeedbackButton() || shouldShowViewFeedbackButton()) && (
+        <RatingFeedbackForm
+          orderId={orderId}
+          onClose={() => setShowFeedbackModal(false)}
+          onSubmit={handleFeedbackSubmitted}
+          feedback={feedback}
         />
       )}
     </div>
