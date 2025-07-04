@@ -1,19 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import ServiceFormPopup from '../../components/UI/Service/ServiceFormPopup';
-import ServiceDetailDialog from '../../components/UI/Service/ServiceDetailDialog'; // Đã sửa đúng đường dẫn
+import ServiceDetailDialog from '../../components/UI/Service/ServiceDetailDialog';
+import SampleTypeManagementPopup from '../../components/UI/Service/SampleTypeManagementPopup'; // Thêm import
 import { getAllServices, deleteService } from '../../api/serviceApi';
 import '../../styles/admin/serviceManagement.css';
 import { Tooltip } from '@mui/material';
-
 
 const ServiceManagement = () => {
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [formOpen, setFormOpen] = useState(false);
+  const [sampleTypeOpen, setSampleTypeOpen] = useState(false); // Thêm state cho popup SampleType
   const [selectedService, setSelectedService] = useState(null);
   const [searchKeyword, setSearchKeyword] = useState('');
   const [userRole, setUserRole] = useState('');
-  const [viewingService, setViewingService] = useState(null); // 💡 để mở dialog chi tiết
+  const [viewingService, setViewingService] = useState(null);
 
   useEffect(() => {
     fetchServices();
@@ -57,7 +58,7 @@ const ServiceManagement = () => {
   };
 
   const handleViewDetail = (service) => {
-    setViewingService(service); // 💡 mở popup dialog
+    setViewingService(service);
   };
 
   const filteredServices = services.filter(service =>
@@ -69,9 +70,20 @@ const ServiceManagement = () => {
       <div className="service-card">
         <div className="service-header">
           <span>Quản lý dịch vụ</span>
-          {userRole === 'MANAGER' && (
-            <button className="service-btn-add" onClick={openAddModal}>+ Thêm dịch vụ</button>
-          )}
+          <div>
+            {userRole === 'MANAGER' && (
+              <button className="service-btn-add" onClick={openAddModal}>+ Thêm dịch vụ </button>
+            )}
+            {userRole === 'MANAGER' && (
+              <button
+                className="service-btn-add"
+                onClick={() => setSampleTypeOpen(true)}
+                style={{ marginLeft: '10px' }}
+              >
+                + Quản lý loại mẫu
+              </button>
+            )}
+          </div>
         </div>
 
         <div className="service-search-bar">
@@ -154,7 +166,11 @@ const ServiceManagement = () => {
         onSuccess={fetchServices}
       />
 
-      {/* 💡 Popup chi tiết */}
+      <SampleTypeManagementPopup
+        open={sampleTypeOpen}
+        onClose={() => setSampleTypeOpen(false)}
+      />
+
       <ServiceDetailDialog
         open={!!viewingService}
         onClose={() => setViewingService(null)}

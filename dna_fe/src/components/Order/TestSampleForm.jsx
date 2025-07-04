@@ -4,6 +4,7 @@ import "../../styles/sample/TestSampleForm.css";
 
 const TestSampleForm = ({ orderId, customerId, sampleQuantity, serviceType, sampleMethod, isCustomer, onClose }) => {
   const [testSamples, setTestSamples] = useState([]);
+  const [sampleTypes, setSampleTypes] = useState([]);
   const dateFields = ['dateOfBirth', 'dateOfIssue', 'expirationDate'];
   const [formData, setFormData] = useState({
     name: '',
@@ -16,25 +17,31 @@ const TestSampleForm = ({ orderId, customerId, sampleQuantity, serviceType, samp
     placeOfIssue: '',
     nationality: '',
     address: '',
-    sampleType: '',
+    sampleTypeId: '',
     numberOfSample: '',
     relationship: '',
     medicalHistory: '',
-    fingerprint: '', // Lưu chuỗi base64 của ảnh
+    fingerprint: '',
     kitCode: '',
   });
   const [editingSampleId, setEditingSampleId] = useState(null);
   const [showForm, setShowForm] = useState(false);
-  const [previewImage, setPreviewImage] = useState(''); // Để hiển thị ảnh xem trước
+  const [previewImage, setPreviewImage] = useState('');
 
   // Hàm định dạng ngày theo kiểu vi-VN (dd/mm/yyyy)
   const formatDate = (date) =>
     date ? new Date(date).toLocaleDateString("vi-VN") : "N/A";
 
+  // Hàm lấy tên SampleType từ sampleTypeId
+  const getSampleTypeName = (sampleTypeId) => {
+    const sampleType = sampleTypes.find(type => type.id === sampleTypeId);
+    return sampleType ? sampleType.sampleType : "N/A";
+  };
+
   // Định nghĩa các trường hiển thị dựa trên serviceType, sampleMethod và isCustomer
   const fieldsToShow = () => {
     if (serviceType === "Dân sự") {
-      const baseFields = ['name', 'gender', 'dateOfBirth', 'relationship', 'sampleType'];
+      const baseFields = ['name', 'gender', 'dateOfBirth', 'relationship', 'sampleTypeId'];
       if (sampleMethod === "home") {
         return [...baseFields, 'kitCode'];
       }
@@ -43,7 +50,7 @@ const TestSampleForm = ({ orderId, customerId, sampleQuantity, serviceType, samp
       return [
         'name', 'gender', 'dateOfBirth', 'address', 'documentType', 'documentNumber',
         'dateOfIssue', 'expirationDate', 'placeOfIssue', 'nationality',
-        'sampleType', 'numberOfSample', 'relationship',
+        'sampleTypeId', 'numberOfSample', 'relationship',
         'medicalHistory', 'fingerprint'
       ];
     }
@@ -62,7 +69,7 @@ const TestSampleForm = ({ orderId, customerId, sampleQuantity, serviceType, samp
     placeOfIssue: 'Nơi cấp',
     nationality: 'Quốc tịch',
     documentType: 'Loại giấy tờ',
-    sampleType: 'Loại mẫu',
+    sampleTypeId: 'Loại mẫu',
     numberOfSample: 'Số lượng mẫu',
     relationship: 'Mối quan hệ',
     medicalHistory: 'Có bệnh về máu, truyền máu, ghép tủy trong 6 tháng',
@@ -70,7 +77,18 @@ const TestSampleForm = ({ orderId, customerId, sampleQuantity, serviceType, samp
     kitCode: 'Mã kit',
   };
 
+  // Lấy danh sách SampleType và TestSample
   useEffect(() => {
+    const fetchSampleTypes = async () => {
+      try {
+        const response = await axios.get('http://localhost:8080/api/sample-types');
+        setSampleTypes(response.data);
+      } catch (error) {
+        console.error('Lỗi khi lấy danh sách loại mẫu:', error);
+        alert('Có lỗi xảy ra khi lấy danh sách loại mẫu: ' + error.message);
+      }
+    };
+
     const fetchTestSamples = async () => {
       try {
         const response = await axios.get(`http://localhost:8080/api/testSamples/order/${orderId}`);
@@ -80,7 +98,9 @@ const TestSampleForm = ({ orderId, customerId, sampleQuantity, serviceType, samp
         alert('Có lỗi xảy ra khi lấy danh sách mẫu xét nghiệm: ' + error.message);
       }
     };
-fetchTestSamples();
+
+    fetchSampleTypes();
+    fetchTestSamples();
   }, [orderId]);
 
   // Xử lý khi người dùng chọn file ảnh
@@ -91,7 +111,7 @@ fetchTestSamples();
       reader.onloadend = () => {
         const base64String = reader.result;
         setFormData({ ...formData, fingerprint: base64String });
-        setPreviewImage(base64String); // Lưu để hiển thị ảnh xem trước
+        setPreviewImage(base64String);
       };
       reader.readAsDataURL(file);
     }
@@ -147,14 +167,14 @@ fetchTestSamples();
         placeOfIssue: '',
         nationality: '',
         address: '',
-        sampleType: '',
+        sampleTypeId: '',
         numberOfSample: '',
         relationship: '',
         medicalHistory: '',
         fingerprint: '',
         kitCode: '',
       });
-      setPreviewImage(''); // Xóa ảnh xem trước sau khi submit
+      setPreviewImage('');
     } catch (error) {
       console.error('Lỗi khi lưu mẫu xét nghiệm:', error);
       alert('Có lỗi xảy ra khi lưu mẫu xét nghiệm: ' + error.message);
@@ -175,14 +195,14 @@ fetchTestSamples();
       placeOfIssue: sample.placeOfIssue || '',
       nationality: sample.nationality || '',
       address: sample.address || '',
-      sampleType: sample.sampleType || '',
+      sampleTypeId: sample.sampleType?.id || '',
       numberOfSample: sample.numberOfSample || '',
       relationship: sample.relationship || '',
       medicalHistory: sample.medicalHistory || '',
       fingerprint: sample.fingerprint || '',
       kitCode: sample.kitCode || '',
     });
-    setPreviewImage(sample.fingerprint || ''); // Hiển thị ảnh xem trước khi chỉnh sửa
+    setPreviewImage(sample.fingerprint || '');
   };
 
   const handleClose = () => {
@@ -199,14 +219,14 @@ fetchTestSamples();
       placeOfIssue: '',
       nationality: '',
       address: '',
-      sampleType: '',
+      sampleTypeId: '',
       numberOfSample: '',
       relationship: '',
       medicalHistory: '',
       fingerprint: '',
       kitCode: '',
     });
-    setPreviewImage(''); // Xóa ảnh xem trước
+    setPreviewImage('');
   };
 
   const showKitCodeWarning = () => {
@@ -249,6 +269,8 @@ fetchTestSamples();
                           <img src={sample[key]} alt="Vân tay" style={{ width: '50px', height: '50px' }} />
                         ) : key.includes("date") && sample[key] ? (
                           formatDate(sample[key])
+                        ) : key === 'sampleTypeId' ? (
+                          getSampleTypeName(sample.sampleTypeId) // Sử dụng hàm để lấy tên SampleType
                         ) : (
                           sample[key] || "N/A"
                         )}
@@ -361,20 +383,22 @@ fetchTestSamples();
 
               {/* Nhóm 4: Loại mẫu - Số lượng mẫu - Mối quan hệ */}
               <div className="test-sample-form-group-row">
-                {['sampleType', 'numberOfSample', 'relationship'].map((key) => (
+                {['sampleTypeId', 'numberOfSample', 'relationship'].map((key) => (
                   fieldsToShow().includes(key) && (
                     <div key={key} className="test-sample-form-field flex-1">
                       <label>{fieldLabels[key]}</label>
-                      {key === 'sampleType' ? (
+                      {key === 'sampleTypeId' ? (
                         <select
                           name={key}
                           value={formData[key]}
                           onChange={handleInputChange}
                         >
                           <option value="">Chọn loại mẫu</option>
-                          <option value="Mẫu máu">Mẫu máu</option>
-                          <option value="Mẫu tóc">Mẫu tóc</option>
-                          <option value="Mẫu móng tay/chân">Mẫu móng tay/chân</option>
+                          {sampleTypes.map((type) => (
+                            <option key={type.id} value={type.id}>
+                              {type.sampleType}
+                            </option>
+                          ))}
                         </select>
                       ) : key === 'relationship' ? (
                         <select
