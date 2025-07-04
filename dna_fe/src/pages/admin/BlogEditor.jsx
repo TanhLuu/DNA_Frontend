@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import Quill from 'quill';
 import 'quill/dist/quill.snow.css';
 import ImageResize from 'quill-image-resize-module-react';
@@ -7,7 +8,8 @@ import '../../styles/blog/BlogEditor.css';
 
 Quill.register('modules/imageResize', ImageResize);
 
-const BlogEditor = ({ blogId }) => {
+const BlogEditor = () => {
+  const { blogId } = useParams();
   const quillRef = useRef(null);
   const quillInstance = useRef(null);
   const [title, setTitle] = useState('');
@@ -17,20 +19,7 @@ const BlogEditor = ({ blogId }) => {
   const [previewTitleImage, setPreviewTitleImage] = useState('');
 
   useEffect(() => {
-    const handleSizeChange = (value) => {
-      const quill = quillInstance.current;
-      quill.format('size', value);
-    };
-
-    // Thêm sự kiện cho select cỡ chữ
-    document.querySelector('.ql-size').addEventListener('change', (e) => {
-      handleSizeChange(e.target.value);
-    });
-
-    // Danh sách màu tùy chỉnh
-    const colors = ['#000000', '#e60000', '#ff9900', '#ffff00', '#008a00', '#0066cc', '#9933ff', '#ffffff'];
-
-    // Khởi tạo Quill
+    console.log('Initializing Quill with blogId:', blogId);
     quillInstance.current = new Quill(quillRef.current, {
       theme: 'snow',
       modules: {
@@ -74,32 +63,51 @@ const BlogEditor = ({ blogId }) => {
           modules: ['Resize', 'DisplaySize'],
         },
       },
-      formats: [
-        'size', 'bold', 'italic', 'underline', 'strike',
-        'color', 'align', 'image'
-      ],
+      formats: ['size', 'bold', 'italic', 'underline', 'strike', 'color', 'align', 'image'],
     });
 
-    // Thêm cấu hình màu chữ vào Quill
+    const handleSizeChange = (value) => {
+      quillInstance.current.format('size', value);
+    };
+    const sizeSelect = document.querySelector('.ql-size');
+    if (sizeSelect) {
+      sizeSelect.addEventListener('change', (e) => handleSizeChange(e.target.value));
+    }
+
     quillInstance.current.getModule('toolbar').addHandler('color', (value) => {
       quillInstance.current.format('color', value);
     });
 
-    if (blogId) {
+    return () => {
+      if (quillInstance.current) {
+        quillInstance.current.root.innerHTML = '';
+      }
+      if (sizeSelect) {
+        sizeSelect.removeEventListener('change', handleSizeChange);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    if (blogId && quillInstance.current) {
+      console.log('Fetching blog with ID:', blogId);
       axios
         .get(`http://localhost:8080/api/blogs/${blogId}`)
         .then((response) => {
+          console.log('Blog data:', response.data);
           const blog = response.data;
-          setTitle(blog.title);
-          setBlogType(blog.blogType);
-          setBlogDate(blog.blogDate);
-          setPreviewTitleImage(blog.titleImageBase64);
-          quillInstance.current.root.innerHTML = blog.contentHtml;
+          setTitle(blog.title || '');
+          setBlogType(blog.blogType || 'Tin tức');
+          setBlogDate(blog.blogDate || new Date().toISOString().split('T')[0]);
+          setPreviewTitleImage(blog.titleImageBase64 || '');
+          setPreviewContent(blog.contentHtml || '');
+          quillInstance.current.root.innerHTML = blog.contentHtml || '';
         })
-        .catch((error) => console.error('Lỗi khi lấy dữ liệu blog:', error));
+        .catch((error) => {
+          console.error('Error fetching blog:', error);
+          alert('Lỗi khi tải dữ liệu blog!');
+        });
     }
-
-    return () => (quillInstance.current.root.innerHTML = '');
   }, [blogId]);
 
   const toBase64 = (file) =>
@@ -127,7 +135,9 @@ const BlogEditor = ({ blogId }) => {
 
     for (let file of files) {
       try {
-        const base64 = await toBase64(file);
+        const base64 = await toBase64(file
+
+);
         quill.insertEmbed(range.index, 'image', base64);
         quill.setSelection(range.index + 1);
         range = quill.getSelection();
@@ -168,36 +178,43 @@ const BlogEditor = ({ blogId }) => {
     }
   };
 
+  console.log('Rendering BlogEditor with title:', title, 'blogType:', blogType, 'blogDate:', blogDate);
   return (
-    <div className="blog-editor-container">
-      <h2>✍️ Blog Editor - Full Features</h2>
+    <div className="blog-editor-container max-w-4xl mx-auto p-4">
+      <h2 className="text-2xl font-bold mb-4">✍️ Blog Editor - Full Features</h2>
       <input
         type="text"
         placeholder="Blog Title..."
         value={title}
         onChange={(e) => setTitle(e.target.value)}
+        className="w-full p-2 mb-4 border rounded"
       />
-      <label>Loại bài viết:</label>
+      <label className="block mb-2">Loại bài viết:</label>
       <select
         value={blogType}
         onChange={(e) => setBlogType(e.target.value)}
+        className="w-full p-2 mb-4 border rounded"
       >
         <option value="Tin tức">Tin tức</option>
         <option value="Hướng dẫn">Hướng dẫn</option>
       </select>
-      <label>Ngày đăng:</label>
+      <label className="block mb-2">Ngày đăng:</label>
       <input
         type="date"
         value={blogDate}
         onChange={(e) => setBlogDate(e.target.value)}
+        className="w-full p-2 mb-4 border rounded"
         readOnly
       />
-      <label>Ảnh tiêu đề:</label>
-      <input type="file" id="titleImageInput" />
-      <div id="toolbar">
+      <label className="block mb-2">Ảnh tiêu đề:</label>
+      {previewTitleImage && (
+        <img src={previewTitleImage} alt="title image" className="w-32 h-32 object-cover mb-2" />
+      )}
+      <input type="file" id="titleImageInput" className="mb-4" />
+      <div id="toolbar" className="mb-4">
         <span className="ql-formats">
           <select className="ql-size">
-            <option value="normal" selected>Bình thường</option>
+            <option value="normal" defaultValue>Bình thường</option>
             <option value="large">Lớn</option>
             <option value="huge">Rất lớn</option>
           </select>
@@ -229,22 +246,29 @@ const BlogEditor = ({ blogId }) => {
           <button className="ql-image"></button>
         </span>
       </div>
-
       <div
         ref={quillRef}
         style={{ height: '400px', backgroundColor: 'white', marginBottom: '20px' }}
       ></div>
-      <label>Chèn nhiều ảnh nội dung:</label>
-      <input type="file" id="uploadImages" multiple />
-      <button className="btn" onClick={insertImages}>
+      <label className="block mb-2">Chèn nhiều ảnh nội dung:</label>
+      <input type="file" id="uploadImages" multiple className="mb-4" />
+      <button
+        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2"
+        onClick={insertImages}
+      >
         Chèn ảnh
       </button>
-      <button className="btn" onClick={saveBlog}>
+      <button
+        className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+        onClick={saveBlog}
+      >
         Lưu Blog
       </button>
-      <div>
-        <h2>{title}</h2>
-        {previewTitleImage && <img src={previewTitleImage} alt="title image" />}
+      <div className="mt-6">
+        <h2 className="text-xl font-semibold mb-2">{title}</h2>
+        {previewTitleImage && (
+          <img src={previewTitleImage} alt="title image" className="w-full h-48 object-cover rounded mb-4" />
+        )}
         <div className="ql-snow">
           <div className="ql-editor" dangerouslySetInnerHTML={{ __html: previewContent }} />
         </div>

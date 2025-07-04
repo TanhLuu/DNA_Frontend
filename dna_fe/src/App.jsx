@@ -83,6 +83,7 @@ function App() {
                 <Route path="/rating-feedbacks" element={<AdminLayout><RatingFeedbackList /></AdminLayout>} />
                 <Route path="/blog-editor" element={<AdminLayout><BlogEditor /></AdminLayout>} />
                 <Route path="/blog-management" element={<AdminLayout><BlogListManager /></AdminLayout>} />
+                <Route path="/blog-editor/:blogId" element={<AdminLayout><BlogEditor /></AdminLayout>} />
               </>
             )}
 

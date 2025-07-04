@@ -69,12 +69,12 @@ const BlogListManager = () => {
               <h2 className="text-xl font-semibold mb-2">{blog.title}</h2>
               <p className="text-gray-600 mb-2">Type: {blog.blogType}</p>
               <p className="text-gray-600 mb-4">Date: {blog.blogDate}</p>
-              <div className="ql-snow">
+              {/* <div className="ql-snow">
                 <div
                   className="ql-editor line-clamp-3"
                   dangerouslySetInnerHTML={{ __html: blog.contentHtml }}
                 />
-              </div>
+              </div> */}
               <div className="flex justify-between mt-4">
                 <button
                   onClick={() => handleEditBlog(blog.id)}
