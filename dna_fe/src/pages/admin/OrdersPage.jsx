@@ -41,7 +41,7 @@ const OrdersPage = () => {
               <th>Dịch vụ</th>
               <th>Mục đích</th>
               <th>Địa chỉ nhận kết quả</th>
-              <th>Loại mẫu</th>
+              <th>Hình thức thu mẫu</th>
               <th>Thời gian xét nghiệm</th>
               <th>Ngày đặt</th>
               <th>Giá</th>

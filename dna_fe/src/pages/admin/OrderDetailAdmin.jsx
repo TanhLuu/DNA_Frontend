@@ -44,9 +44,10 @@ const OrderDetailAdmin = () => {
     COLLECT_SAMPLE: "Đã thu mẫu",
     TESTED: "Đã xét nghiệm",
     COMPLETED: "Hoàn thành",
+    CANCEL: "Đã hủy",
   };
 
-  const disabledStatuses = ["SEND_SAMPLE", "COLLECT_SAMPLE", "TESTED", "COMPLETED"];
+  const disabledStatuses = ["SEND_SAMPLE", "COLLECT_SAMPLE", "TESTED", "COMPLETED", "CANCEL"];
 
   const isTestSampleButtonDisabled = () => {
     return disabledStatuses.includes(order?.orderStatus);
@@ -70,7 +71,11 @@ const OrderDetailAdmin = () => {
   };
 
   const isUpdateButtonDisabled = () => {
-    return !getNextStatus();
+    return !getNextStatus() || order?.orderStatus === "CANCEL";
+  };
+
+  const shouldShowCancelButton = () => {
+    return staffRole === "NORMAL_STAFF" && order?.orderStatus === "CONFIRM";
   };
 
   const handleUpdateStatus = async () => {
@@ -96,21 +101,54 @@ const OrderDetailAdmin = () => {
     }
   };
 
+  const handleCancelOrder = async () => {
+    if (!staffId) {
+      setUpdateError("Không tìm thấy thông tin nhân viên. Vui lòng đăng nhập lại.");
+      return;
+    }
+
+    if (window.confirm("Bạn có chắc chắn muốn hủy đơn hàng này?")) {
+      try {
+        const updateData = {
+          orderStatus: "CANCEL",
+          staffId: parseInt(staffId),
+        };
+        await updateTestOrder(orderId, updateData);
+        const updatedOrder = await getTestOrderById(orderId);
+        setOrder(updatedOrder);
+        setUpdateError(null);
+        alert("Hủy đơn hàng thành công!");
+      } catch (err) {
+        console.error("Lỗi khi hủy đơn hàng:", err);
+        if (err.response?.status === 403) {
+          setUpdateError(
+            err.response.data || "Không có quyền hủy đơn hàng."
+          );
+        } else if (err.response?.status === 400) {
+          setUpdateError(err.response.data || "Yêu cầu không hợp lệ.");
+        } else if (err.response?.status === 500) {
+          setUpdateError("Lỗi server khi hủy đơn hàng.");
+        } else {
+          setUpdateError(`Lỗi khi hủy đơn hàng: ${err.message}`);
+        }
+      }
+    }
+  };
+
   const handleExportPdf = async () => {
     try {
       const response = await axios.get(`http://localhost:8080/api/testorders/${orderId}/export-pdf`, {
-        responseType: 'blob', // Để xử lý dữ liệu nhị phân (PDF)
+        responseType: 'blob',
       });
 
-      // Tạo URL tạm thời cho file PDF
       const url = window.URL.createObjectURL(new Blob([response.data], { type: 'application/pdf' }));
       const link = document.createElement('a');
       link.href = url;
-      link.setAttribute('download', `TestOrder_${orderId}.pdf`); // Tên file khi tải xuống
+      link.setAttribute('download', `TestOrder_${orderId}.pdf`);
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      window.URL.revokeObjectURL(url); // Giải phóng URL
+      window.URL.revokeObjectURL(url);
     } catch (err) {
       console.error("Lỗi khi tải phiếu đăng ký:", err);
       setUpdateError("Lỗi khi tải phiếu đăng ký: " + err.message);
@@ -173,8 +211,6 @@ const OrderDetailAdmin = () => {
   const handleShowDetail = (testSampleId) => {
     setSelectedTestSampleId(testSampleId);
   };
-
-
 
   return (
     <div className="OrderDetailAdmin">
@@ -275,7 +311,15 @@ const OrderDetailAdmin = () => {
               Nhập mẫu xét nghiệm
             </button>
 
-            {/* Nút Nhập kết quả (chỉ dành cho LAB_STAFF khi status là COLLECT_SAMPLE) */}
+            {shouldShowCancelButton() && (
+              <button
+                className="bg-red-500 text-white p-2 rounded hover:bg-red-600"
+                onClick={handleCancelOrder}
+              >
+                Hủy đơn hàng
+              </button>
+            )}
+
             {staffRole === "LAB_STAFF" && order?.orderStatus === "COLLECT_SAMPLE" && (
               <button
                 className="bg-purple-500 text-white p-2 rounded hover:bg-purple-600"
@@ -285,7 +329,6 @@ const OrderDetailAdmin = () => {
               </button>
             )}
 
-            {/* Nút Tải phiếu đăng ký */}
             <button
               className="bg-yellow-500 text-white p-2 rounded hover:bg-yellow-600"
               onClick={handleExportPdf}
@@ -293,7 +336,6 @@ const OrderDetailAdmin = () => {
               Tải phiếu đăng ký
             </button>
 
-            {/* Nút Xem kết quả (dành cho NORMAL_STAFF hoặc khi status là TESTED/COMPLETED) */}
             {(staffRole === "NORMAL_STAFF" || order?.orderStatus === "TESTED" || order?.orderStatus === "COMPLETED") && (
               <button
                 className="bg-gray-500 text-white p-2 rounded hover:bg-gray-600"
@@ -302,8 +344,6 @@ const OrderDetailAdmin = () => {
                 Xem kết quả
               </button>
             )}
-
-
           </div>
 
           <div className="testSampleContainer">

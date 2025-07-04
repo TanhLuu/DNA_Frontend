@@ -57,7 +57,7 @@ const TestSampleDetail = ({ orderId, testSampleId, serviceType, sampleMethod, on
         { key: "numberOfSample", label: "Số lượng mẫu" },
         { key: "relationship", label: "Mối quan hệ" },
         { key: "medicalHistory", label: "Có bệnh về máu, truyền máu, ghép tủy trong 6 tháng" },
-        { key: "fingerprint", label: "Vân tay" },
+        
       ];
     }
     return [];

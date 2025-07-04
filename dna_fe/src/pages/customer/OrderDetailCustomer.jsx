@@ -31,7 +31,7 @@ const OrderDetailCustomer = () => {
   const [selectedTestSampleId, setSelectedTestSampleId] = useState(null);
   const [showTestResultModal, setShowTestResultModal] = useState(false);
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
-  const [feedback, setFeedback] = useState(null); // Thêm state cho feedback
+  const [feedback, setFeedback] = useState(null);
 
   const formatDate = (date) =>
     date ? new Date(date).toLocaleDateString("vi-VN") : "N/A";
@@ -39,12 +39,13 @@ const OrderDetailCustomer = () => {
   const formatPrice = (p) => (p ? p.toLocaleString("vi-VN") + " VNĐ" : "N/A");
 
   const STATUS_LABELS = {
-    PENDING: "Đặt lịch / Đăng ký",
+    CONFIRM: "Đặt lịch / Đăng ký",
     SEND_KIT: "Đã gửi kit",
     SEND_SAMPLE: "Đã gửi mẫu lại trung tâm",
     COLLECT_SAMPLE: "Đã thu mẫu",
     TESTED: "Đã xét nghiệm",
     COMPLETED: "Hoàn thành",
+    CANCEL: "Đã hủy",
   };
 
   const shouldShowTestSampleForm = () =>
@@ -55,16 +56,20 @@ const OrderDetailCustomer = () => {
   const shouldShowUpdateStatusButton = () =>
     service?.serviceType === "Dân sự" &&
     order?.sampleMethod === "home" &&
-    order?.orderStatus === "SEND_KIT";
+    order?.orderStatus === "SEND_KIT" &&
+    order?.orderStatus !== "CANCEL";
+
+  const shouldShowCancelButton = () =>
+    order?.orderStatus === "CONFIRM";
 
   const shouldShowViewResultButton = () =>
-    order?.orderStatus === "COMPLETED" || order?.orderStatus === "TESTED";
+    order?.orderStatus === "COMPLETED";
 
   const shouldShowFeedbackButton = () =>
-    order?.orderStatus === "COMPLETED" && !feedback; // Chỉ hiển thị khi chưa có feedback
+    order?.orderStatus === "COMPLETED" && !feedback;
 
   const shouldShowViewFeedbackButton = () =>
-    order?.orderStatus === "COMPLETED" && feedback; // Hiển thị khi đã có feedback
+    order?.orderStatus === "COMPLETED" && feedback;
 
   const handleUpdateStatus = async () => {
     const token = localStorage.getItem("token");
@@ -93,6 +98,39 @@ const OrderDetailCustomer = () => {
         setUpdateError("Lỗi server khi cập nhật trạng thái đơn hàng.");
       } else {
         setUpdateError(`Lỗi khi cập nhật trạng thái đơn hàng: ${error.message}`);
+      }
+    }
+  };
+
+  const handleCancelOrder = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setUpdateError("Không tìm thấy token xác thực. Vui lòng đăng nhập lại.");
+      return;
+    }
+
+    if (window.confirm("Bạn có chắc chắn muốn hủy đơn hàng này?")) {
+      try {
+        await updateTestOrder(orderId, {
+          orderStatus: "CANCEL",
+        });
+        setOrder({ ...order, orderStatus: "CANCEL" });
+        setUpdateError(null);
+        alert("Hủy đơn hàng thành công");
+      } catch (error) {
+        console.error("Lỗi khi hủy đơn hàng:", error);
+        if (error.response?.status === 403) {
+          setUpdateError(
+            error.response.data ||
+              "Không có quyền hủy đơn hàng."
+          );
+        } else if (error.response?.status === 400) {
+          setUpdateError(error.response.data || "Yêu cầu không hợp lệ.");
+        } else if (error.response?.status === 500) {
+          setUpdateError("Lỗi server khi hủy đơn hàng.");
+        } else {
+          setUpdateError(`Lỗi khi hủy đơn hàng: ${error.message}`);
+        }
       }
     }
   };
@@ -127,7 +165,6 @@ const OrderDetailCustomer = () => {
         );
         setTestSamples(response.data);
 
-        // Lấy feedback theo orderId
         try {
           const feedbackResponse = await axios.get(
             `http://localhost:8080/api/rating-feedbacks/order/${orderId}`,
@@ -135,10 +172,10 @@ const OrderDetailCustomer = () => {
               headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
             }
           );
-          setFeedback(feedbackResponse.data); // Lưu feedback nếu có
+          setFeedback(feedbackResponse.data);
         } catch (err) {
           console.log("Chưa có feedback hoặc lỗi khi lấy feedback:", err);
-          setFeedback(null); // Nếu không có feedback, set null
+          setFeedback(null);
         }
       } catch (err) {
         console.error("Lỗi khi tải dữ liệu:", err);
@@ -166,7 +203,7 @@ const OrderDetailCustomer = () => {
   };
 
   const handleFeedbackSubmitted = (newFeedback) => {
-    setFeedback(newFeedback); // Cập nhật feedback sau khi gửi
+    setFeedback(newFeedback);
   };
 
   if (loading) return <div className="order-detail-container">Đang tải...</div>;
@@ -261,7 +298,7 @@ const OrderDetailCustomer = () => {
               className="order-detail-button"
               onClick={() => setShowModal(true)}
             >
-              Điền Test Samples
+              Nhập mẫu xét nghiệm
             </button>
           )}
           {shouldShowUpdateStatusButton() && (
@@ -270,6 +307,14 @@ const OrderDetailCustomer = () => {
               onClick={handleUpdateStatus}
             >
               Cập nhật trạng thái
+            </button>
+          )}
+          {shouldShowCancelButton() && (
+            <button
+              className="order-detail-button cancel"
+              onClick={handleCancelOrder}
+            >
+              Hủy đơn hàng
             </button>
           )}
           {shouldShowViewResultButton() && (
@@ -359,7 +404,7 @@ const OrderDetailCustomer = () => {
         <TestResultDetail
           orderId={orderId}
           fullName={account.fullName}
-          address={customer.address}
+          address顧客 = {customer.address}
           relationship1={relationship1}
           relationship2={relationship2}
           onClose={() => setShowTestResultModal(false)}

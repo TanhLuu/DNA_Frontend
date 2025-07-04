@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@applitools/eyes-selenium": "^4.81.2",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
     "@mui/icons-material": "^7.1.1",
@@ -15,6 +16,7 @@
     "axios": "^1.10.0",
     "bootstrap": "^5.3.6",
     "chart.js": "^4.5.0",
+    "chromedriver": "^138.0.1",
     "cors": "^2.8.5",
     "date-fns": "^4.1.0",
     "file-saver": "^2.0.5",
@@ -58,5 +60,17 @@
       "last 1 safari version"
     ]
   },
-  "proxy": "http://localhost:8080"
+  "proxy": "http://localhost:8080",
+  "devDependencies": {
+    "jest": "^27.5.1",
+    "selenium-webdriver": "^4.34.0"
+  },
+  "description": "This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
 }

@@ -26,6 +26,9 @@ import RatingFeedbackList from './pages/admin/RatingFeedbackList';
 import BlogEditor from './pages/admin/BlogEditor';
 import BlogList from './components/Blog/BlogList';
 import BlogDetail from './components/Blog/BlogDetail';
+import BlogListManager from './pages/admin/BlogListManager';
+
+import AccountManagement from './pages/admin/AccountManagement';
 
 
 
@@ -75,9 +78,11 @@ function App() {
                 <Route path="/ordersPageAdmin" element={<AdminLayout> <OrdersPage /> </AdminLayout>} />
                 <Route path="/serviceManagement" element={<AdminLayout> <ServiceManagement /> </AdminLayout>}/>
                 <Route path="/dashboard" element={<AdminLayout><Dashboard /></AdminLayout>}/>
+                <Route path='/account-management' element={<AdminLayout><AccountManagement /></AdminLayout>}/>
                 <Route path="/admin/orders/:orderId" element={<AdminLayout><OrderDetailAdmin /></AdminLayout>} />
                 <Route path="/rating-feedbacks" element={<AdminLayout><RatingFeedbackList /></AdminLayout>} />
-                <Route path="/blog-management" element={<AdminLayout><BlogEditor /></AdminLayout>} />
+                <Route path="/blog-editor" element={<AdminLayout><BlogEditor /></AdminLayout>} />
+                <Route path="/blog-management" element={<AdminLayout><BlogListManager /></AdminLayout>} />
               </>
             )}
 

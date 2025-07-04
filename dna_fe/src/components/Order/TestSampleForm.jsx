@@ -4,6 +4,7 @@ import "../../styles/sample/TestSampleForm.css";
 
 const TestSampleForm = ({ orderId, customerId, sampleQuantity, serviceType, sampleMethod, isCustomer, onClose }) => {
   const [testSamples, setTestSamples] = useState([]);
+  const dateFields = ['dateOfBirth', 'dateOfIssue', 'expirationDate'];
   const [formData, setFormData] = useState({
     name: '',
     gender: '',
@@ -19,11 +20,12 @@ const TestSampleForm = ({ orderId, customerId, sampleQuantity, serviceType, samp
     numberOfSample: '',
     relationship: '',
     medicalHistory: '',
-    fingerprint: '',
+    fingerprint: '', // Lưu chuỗi base64 của ảnh
     kitCode: '',
   });
   const [editingSampleId, setEditingSampleId] = useState(null);
   const [showForm, setShowForm] = useState(false);
+  const [previewImage, setPreviewImage] = useState(''); // Để hiển thị ảnh xem trước
 
   // Hàm định dạng ngày theo kiểu vi-VN (dd/mm/yyyy)
   const formatDate = (date) =>
@@ -54,7 +56,6 @@ const TestSampleForm = ({ orderId, customerId, sampleQuantity, serviceType, samp
     gender: 'Giới tính',
     dateOfBirth: 'Ngày sinh',
     address: 'Địa chỉ',
-
     documentNumber: 'Số giấy tờ',
     dateOfIssue: 'Ngày cấp',
     expirationDate: 'Ngày hết hạn',
@@ -65,7 +66,7 @@ const TestSampleForm = ({ orderId, customerId, sampleQuantity, serviceType, samp
     numberOfSample: 'Số lượng mẫu',
     relationship: 'Mối quan hệ',
     medicalHistory: 'Có bệnh về máu, truyền máu, ghép tủy trong 6 tháng',
-    fingerprint: 'Vân tay',
+    fingerprint: 'Vân tay (Tải ảnh)',
     kitCode: 'Mã kit',
   };
 
@@ -79,8 +80,22 @@ const TestSampleForm = ({ orderId, customerId, sampleQuantity, serviceType, samp
         alert('Có lỗi xảy ra khi lấy danh sách mẫu xét nghiệm: ' + error.message);
       }
     };
-    fetchTestSamples();
+fetchTestSamples();
   }, [orderId]);
+
+  // Xử lý khi người dùng chọn file ảnh
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64String = reader.result;
+        setFormData({ ...formData, fingerprint: base64String });
+        setPreviewImage(base64String); // Lưu để hiển thị ảnh xem trước
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -139,6 +154,7 @@ const TestSampleForm = ({ orderId, customerId, sampleQuantity, serviceType, samp
         fingerprint: '',
         kitCode: '',
       });
+      setPreviewImage(''); // Xóa ảnh xem trước sau khi submit
     } catch (error) {
       console.error('Lỗi khi lưu mẫu xét nghiệm:', error);
       alert('Có lỗi xảy ra khi lưu mẫu xét nghiệm: ' + error.message);
@@ -166,6 +182,7 @@ const TestSampleForm = ({ orderId, customerId, sampleQuantity, serviceType, samp
       fingerprint: sample.fingerprint || '',
       kitCode: sample.kitCode || '',
     });
+    setPreviewImage(sample.fingerprint || ''); // Hiển thị ảnh xem trước khi chỉnh sửa
   };
 
   const handleClose = () => {
@@ -189,6 +206,7 @@ const TestSampleForm = ({ orderId, customerId, sampleQuantity, serviceType, samp
       fingerprint: '',
       kitCode: '',
     });
+    setPreviewImage(''); // Xóa ảnh xem trước
   };
 
   const showKitCodeWarning = () => {
@@ -227,7 +245,13 @@ const TestSampleForm = ({ orderId, customerId, sampleQuantity, serviceType, samp
                     {fieldsToShow().map(key => (
                       <div key={key} className="test-sample-form-grid-item">
                         <strong>{fieldLabels[key]}:</strong>{" "}
-                        {key.includes("date") && sample[key] ? formatDate(sample[key]) : sample[key] || "N/A"}
+                        {key === 'fingerprint' && sample[key] ? (
+                          <img src={sample[key]} alt="Vân tay" style={{ width: '50px', height: '50px' }} />
+                        ) : key.includes("date") && sample[key] ? (
+                          formatDate(sample[key])
+                        ) : (
+                          sample[key] || "N/A"
+                        )}
                       </div>
                     ))}
                   </div>
@@ -274,7 +298,7 @@ const TestSampleForm = ({ orderId, customerId, sampleQuantity, serviceType, samp
                         </select>
                       ) : (
                         <input
-                          type={key.includes("date") ? "date" : "text"}
+                          type={dateFields.includes(key) ? "date" : "text"}
                           name={key}
                           value={formData[key]}
                           onChange={handleInputChange}
@@ -324,7 +348,7 @@ const TestSampleForm = ({ orderId, customerId, sampleQuantity, serviceType, samp
                     <div key={key} className="test-sample-form-field flex-1">
                       <label>{fieldLabels[key]}</label>
                       <input
-                        type={(key === 'dateOfIssue' || key === 'expirationDate' || key === 'dateOfBirth') ? 'date' : 'text'}
+                        type={dateFields.includes(key) ? "date" : "text"}
                         name={key}
                         value={formData[key]}
                         onChange={handleInputChange}
@@ -388,7 +412,21 @@ const TestSampleForm = ({ orderId, customerId, sampleQuantity, serviceType, samp
                 fieldsToShow().includes(key) && (
                   <div key={key} className="test-sample-form-field">
                     <label>{fieldLabels[key]}</label>
-                    {key === 'medicalHistory' ? (
+                    {key === 'fingerprint' ? (
+                      <div>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleImageChange}
+                        />
+                        {previewImage && (
+                          <div>
+                            <p>Xem trước:</p>
+                            <img src={previewImage} alt="Vân tay xem trước" style={{ maxWidth: '100px', maxHeight: '100px' }} />
+                          </div>
+                        )}
+                      </div>
+                    ) : key === 'medicalHistory' ? (
                       <select
                         name={key}
                         value={formData[key]}
@@ -419,7 +457,6 @@ const TestSampleForm = ({ orderId, customerId, sampleQuantity, serviceType, samp
               )}
 
               <div className="test-sample-form-buttons">
-
                 <button
                   type="submit"
                   className="submit-btn"
