@@ -188,6 +188,27 @@ const OrderDetailCustomer = () => {
     fetchData();
   }, [orderId]);
 
+  useEffect(() => {
+  if (!showModal) {
+    // Modal vừa đóng, làm mới danh sách testSamples
+    const fetchTestSamples = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:8080/api/testSamples/order/${orderId}`,
+          {
+            headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+          }
+        );
+        setTestSamples(response.data); // Cập nhật danh sách testSamples
+      } catch (err) {
+        console.error("Lỗi khi tải danh sách mẫu xét nghiệm:", err);
+        setUpdateError("Lỗi khi tải danh sách mẫu xét nghiệm.");
+      }
+    };
+    fetchTestSamples();
+  }
+}, [showModal, orderId]);
+
   const handleBack = () => navigate(-1);
 
   const handleShowDetail = (testSampleId) => {
