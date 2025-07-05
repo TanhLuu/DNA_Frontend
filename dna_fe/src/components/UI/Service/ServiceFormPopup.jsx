@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {
   Dialog, DialogTitle, DialogContent, DialogActions,
-  TextField, Button, FormControl, InputLabel, Select, MenuItem
+  TextField, Button, FormControl, InputLabel, Select, MenuItem, Switch, FormControlLabel
 } from '@mui/material';
 import { createService, updateService } from '../../../api/serviceApi';
 
@@ -12,13 +12,15 @@ const ServiceFormPopup = ({ open, onClose, serviceToEdit, onSuccess }) => {
     timeTest: '',
     describe: '',
     price: '',
-    numberOfSamples: 2, // Mặc định là 2
-    pricePerAdditionalSample: ''
+    numberOfSamples: 2,
+    pricePerAdditionalSample: '',
+    isActive: true
   });
 
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
+    console.log('serviceToEdit:', serviceToEdit); // Debug dữ liệu serviceToEdit
     if (serviceToEdit) {
       setFormData({
         serviceName: serviceToEdit.serviceName || '',
@@ -27,7 +29,8 @@ const ServiceFormPopup = ({ open, onClose, serviceToEdit, onSuccess }) => {
         describe: serviceToEdit.describe || '',
         price: serviceToEdit.price || '',
         numberOfSamples: serviceToEdit.numberOfSamples || 2,
-        pricePerAdditionalSample: serviceToEdit.pricePerAdditionalSample || ''
+        pricePerAdditionalSample: serviceToEdit.pricePerAdditionalSample || '',
+        isActive: serviceToEdit.active !== undefined ? serviceToEdit.active : true // Sử dụng active thay vì isActive
       });
     } else {
       setFormData({
@@ -37,18 +40,18 @@ const ServiceFormPopup = ({ open, onClose, serviceToEdit, onSuccess }) => {
         describe: '',
         price: '',
         numberOfSamples: 2,
-        pricePerAdditionalSample: ''
+        pricePerAdditionalSample: '',
+        isActive: true
       });
     }
   }, [serviceToEdit]);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value, type, checked } = e.target;
+    console.log('handleChange:', { name, value, type, checked }); // Debug thay đổi
     setFormData(prev => ({
       ...prev,
-      [name]: name === 'price' || name === 'timeTest' || name === 'numberOfSamples' || name === 'pricePerAdditionalSample'
-        ? (value === '' ? '' : Number(value))
-        : value
+      [name]: type === 'checkbox' ? checked : (name === 'price' || name === 'timeTest' || name === 'numberOfSamples' || name === 'pricePerAdditionalSample' ? (value === '' ? '' : Number(value)) : value)
     }));
   };
 
@@ -73,9 +76,10 @@ const ServiceFormPopup = ({ open, onClose, serviceToEdit, onSuccess }) => {
     try {
       const dataToSubmit = {
         ...formData,
-        pricePerAdditionalSample: formData.pricePerAdditionalSample === '' ? null : formData.pricePerAdditionalSample
+        pricePerAdditionalSample: formData.pricePerAdditionalSample === '' ? null : formData.pricePerAdditionalSample,
+        active: formData.isActive // Ánh xạ isActive thành active cho API
       };
-
+      console.log('Data sent to API:', dataToSubmit); // Debug dữ liệu gửi đi
       if (serviceToEdit) {
         await updateService(serviceToEdit.serviceID, dataToSubmit);
       } else {
@@ -124,7 +128,7 @@ const ServiceFormPopup = ({ open, onClose, serviceToEdit, onSuccess }) => {
         <TextField
           margin="dense"
           name="timeTest"
-          label="Th Thời Gian Xét Nghiệm (ngày)"
+          label="Thời Gian Xét Nghiệm (ngày)"
           type="number"
           fullWidth
           value={formData.timeTest}
@@ -162,7 +166,7 @@ const ServiceFormPopup = ({ open, onClose, serviceToEdit, onSuccess }) => {
           fullWidth
           value={formData.pricePerAdditionalSample}
           onChange={handleChange}
- stress={!!errors.pricePerAdditionalSample}
+          error={!!errors.pricePerAdditionalSample}
           helperText={errors.pricePerAdditionalSample}
         />
         <TextField
@@ -174,6 +178,18 @@ const ServiceFormPopup = ({ open, onClose, serviceToEdit, onSuccess }) => {
           rows={3}
           value={formData.describe}
           onChange={handleChange}
+        />
+        <FormControlLabel
+          control={
+            <Switch
+              checked={formData.isActive}
+              onChange={handleChange}
+              name="isActive"
+              color="primary"
+            />
+          }
+          label={`Trạng Thái Hoạt Động: ${formData.isActive ? 'Bật' : 'Tắt'}`} // Hiển thị trạng thái rõ ràng
+          style={{ marginTop: '16px' }}
         />
       </DialogContent>
       <DialogActions>

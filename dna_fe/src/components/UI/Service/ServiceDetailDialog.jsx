@@ -23,6 +23,9 @@ const ServiceDetailDialog = ({ open, onClose, service }) => {
             ? `${Number(service.pricePerAdditionalSample).toLocaleString('vi-VN')} VND`
             : 'Không có'}
         </Typography>
+        <Typography variant="subtitle1">
+          <strong>Trạng thái:</strong> {service.active ? 'Hoạt động' : 'Không hoạt động'}
+        </Typography>
         <Typography variant="subtitle1"><strong>Mô tả:</strong></Typography>
         <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>
           {service.describe || 'Không có mô tả'}

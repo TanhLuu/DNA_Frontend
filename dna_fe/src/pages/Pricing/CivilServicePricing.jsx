@@ -31,7 +31,9 @@ const CivilServicePricing = () => {
     [visibleCount, filteredServices.length]
   );
 
-  const visibleServices = filteredServices.slice(0, visibleCount);
+  // Lọc chỉ các dịch vụ có active: true
+  const activeServices = filteredServices.filter(service => service.active === true);
+  const visibleServices = activeServices.slice(0, visibleCount);
 
   return (
     <div className="civil-pricing-container">
@@ -46,24 +48,28 @@ const CivilServicePricing = () => {
       />
 
       <div className="service-grid">
-        {visibleServices.map((service, index) => {
-          const isLast = index === visibleServices.length - 1;
-          return (
-            <div
-              className="service-card"
-              key={service.serviceID}
-              ref={isLast ? lastItemRef : null}
-            >
-              <h3 className="service-name">{service.serviceName}</h3>
-              <p className="service-description">{service.describe || 'Không có mô tả chi tiết.'}</p>
-              <div className="service-info">
-                <p><strong>Thời gian xét nghiệm:</strong> {service.timeTest} ngày</p>
-                <p><strong>Giá:</strong> {service.price.toLocaleString('vi-VN')} VNĐ</p>
-                <p><strong>Loại dịch vụ:</strong> {service.serviceType}</p>
+        {visibleServices.length > 0 ? (
+          visibleServices.map((service, index) => {
+            const isLast = index === visibleServices.length - 1;
+            return (
+              <div
+                className="service-card"
+                key={service.serviceID}
+                ref={isLast ? lastItemRef : null}
+              >
+                <h3 className="service-name">{service.serviceName}</h3>
+                <p className="service-description">{service.describe || 'Không có mô tả chi tiết.'}</p>
+                <div className="service-info">
+                  <p><strong>Thời gian xét nghiệm:</strong> {service.timeTest} ngày</p>
+                  <p><strong>Giá:</strong> {service.price.toLocaleString('vi-VN')} VNĐ</p>
+                  <p><strong>Loại dịch vụ:</strong> {service.serviceType}</p>
+                </div>
               </div>
-            </div>
-          );
-        })}
+            );
+          })
+        ) : (
+          <p>Không có dịch vụ dân sự hoạt động nào để hiển thị.</p>
+        )}
       </div>
     </div>
   );
