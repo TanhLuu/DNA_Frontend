@@ -9,12 +9,12 @@ const TestSampleDetail = ({ orderId, testSampleId, serviceType, sampleMethod, on
   const [error, setError] = useState(null);
 
   const formatDate = (date) =>
-    date ? new Date(date).toLocaleDateString("vi-VN") : "N/A";
+    date ? new Date(date).toLocaleDateString("vi-VN") : "Không có";
 
   // Hàm lấy tên SampleType từ sampleTypeId
   const getSampleTypeName = (sampleTypeId) => {
     const sampleType = sampleTypes.find(type => type.id === sampleTypeId);
-    return sampleType ? sampleType.sampleType : "N/A";
+    return sampleType ? sampleType.sampleType : "Không có";
   };
 
   useEffect(() => {
@@ -95,7 +95,7 @@ const TestSampleDetail = ({ orderId, testSampleId, serviceType, sampleMethod, on
           {fieldsToDisplay.map((field) => (
             <p key={field.key} className="test-sample-detail-field">
               <strong>{field.label}:</strong>{" "}
-              {field.format ? field.format(testSample[field.key]) : testSample[field.key] || "N/A"}
+              {field.format ? field.format(testSample[field.key]) : testSample[field.key] || "Không có"}
             </p>
           ))}
         </div>

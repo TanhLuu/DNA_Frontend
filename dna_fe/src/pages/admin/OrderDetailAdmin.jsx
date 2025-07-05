@@ -33,9 +33,9 @@ const OrderDetailAdmin = () => {
   const [selectedTestSampleId, setSelectedTestSampleId] = useState(null);
 
   const formatDate = (date) =>
-    date ? new Date(date).toLocaleDateString("vi-VN") : "N/A";
+    date ? new Date(date).toLocaleDateString("vi-VN") : "Không có";
 
-  const formatPrice = (p) => (p ? p.toLocaleString("vi-VN") + " VNĐ" : "N/A");
+  const formatPrice = (p) => (p ? p.toLocaleString("vi-VN") + " VNĐ" : "Không có");
 
   const STATUS_LABELS = {
     CONFIRM: "Đặt lịch / Đăng ký",
@@ -224,17 +224,17 @@ const OrderDetailAdmin = () => {
             <div className="divider" />
             <div className="DetailItem">
               <span className="label">TÊN DỊCH VỤ</span>
-              <span className="value">{service?.serviceName || "N/A"}</span>
+              <span className="value">{service?.serviceName || "Không có"}</span>
             </div>
             <div className="divider" />
             <div className="DetailItem">
               <span className="label">LOẠI DỊCH VỤ</span>
-              <span className="value">{service?.serviceType || "N/A"}</span>
+              <span className="value">{service?.serviceType || "Không có"}</span>
             </div>
             <div className="divider" />
             <div className="DetailItem">
               <span className="label">THỜI GIAN XÉT NGHIỆM</span>
-              <span className="value">{service?.timeTest ? `${service.timeTest} ngày` : "N/A"}</span>
+              <span className="value">{service?.timeTest ? `${service.timeTest} ngày` : "Không có"}</span>
             </div>
             <div className="divider" />
             <div className="DetailItem">
@@ -254,7 +254,7 @@ const OrderDetailAdmin = () => {
             <div className="divider" />
             <div className="DetailItem">
               <span className="label">TRẠNG THÁI</span>
-              <span className="value">{STATUS_LABELS[order?.orderStatus] || "N/A"}</span>
+              <span className="value">{STATUS_LABELS[order?.orderStatus] || "Không có"}</span>
             </div>
           </div>
 
@@ -262,31 +262,31 @@ const OrderDetailAdmin = () => {
             <div className="OrderColumn">
               <h3>Thông tin khách hàng</h3>
               <div className="customer-info-3col">
-                <p><strong>Họ tên:</strong> {account?.fullName || "N/A"}</p>
+                <p><strong>Họ tên:</strong> {account?.fullName || "Không có"}</p>
                 <p><strong>Ngày sinh:</strong> {formatDate(customer?.dateOfBirth)}</p>
-                <p><strong>Giới tính:</strong> {customer?.gender || "N/A"}</p>
-                <p><strong>SĐT:</strong> {account?.phone || "N/A"}</p>
-                <p><strong>Loại giấy tờ:</strong> {customer?.documentType || "N/A"}</p>
-                <p><strong>Số giấy tờ:</strong> {customer?.cccd || "N/A"}</p>
+                <p><strong>Giới tính:</strong> {customer?.gender || "Không có"}</p>
+                <p><strong>SĐT:</strong> {account?.phone || "Không có"}</p>
+                <p><strong>Loại giấy tờ:</strong> {customer?.documentType || "Không có"}</p>
+                <p><strong>Số giấy tờ:</strong> {customer?.cccd || "Không có"}</p>
                 <p><strong>Ngày cấp:</strong> {formatDate(customer?.dateOfIssue)}</p>
-                <p><strong>Nơi cấp:</strong> {customer?.placeOfIssue || "N/A"}</p>
-                <p><strong>Email:</strong> {account?.email || "N/A"}</p>
-                <p><strong>Địa chỉ:</strong> {customer?.address || "N/A"}</p>
+                <p><strong>Nơi cấp:</strong> {customer?.placeOfIssue || "Không có"}</p>
+                <p><strong>Email:</strong> {account?.email || "Không có"}</p>
+                <p><strong>Địa chỉ:</strong> {customer?.address || "Không cóA"}</p>
               </div>
             </div>
             <div className="OrderColumn order-info-right">
               <h3>Thông tin đơn hàng</h3>
               <div>
                 <p><strong>Hình thức thu mẫu:</strong> {order?.sampleMethod === "center" ? "Tại trung tâm" : "Tại nhà"}</p>
-                <p><strong>Số lượng mẫu:</strong> {order?.sampleQuantity || "N/A"}</p>
+                <p><strong>Số lượng mẫu:</strong> {order?.sampleQuantity || "Không có"}</p>
                 <p><strong>Phương thức nhận kết quả:</strong> {
                   order?.resultDeliverMethod ||
                   (order?.resultDeliveryMethod === "home" ? "Tại nhà" :
                     order?.resultDeliveryMethod === "office" ? "Tại văn phòng" :
                       order?.resultDeliveryMethod === "email" ? "Email" :
-                        "N/A")
+                        "Không có")
                 }</p>
-                <p><strong>Địa chỉ nhận kết quả:</strong> {order?.resultDeliverAddress || "N/A"}</p>
+                <p><strong>Địa chỉ nhận kết quả:</strong> {order?.resultDeliverAddress || "Không có"}</p>
                 <p><strong>Giá:</strong> {formatPrice(order?.amount)}</p>
               </div>
             </div>
@@ -361,8 +361,8 @@ const OrderDetailAdmin = () => {
                   <tbody>
                     {testSamples.map((sample) => (
                       <tr key={sample.id}>
-                        <td>{sample.name || "N/A"}</td>
-                        <td>{sample.relationship || "N/A"}</td>
+                        <td>{sample.name || "Không có"}</td>
+                        <td>{sample.relationship || "Không có"}</td>
                         <td>
                           <button
                             className="testSampleDetailButton"

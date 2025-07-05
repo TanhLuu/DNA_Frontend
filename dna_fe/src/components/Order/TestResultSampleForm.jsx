@@ -28,14 +28,14 @@ const TestResultSampleForm = ({ orderId, testSamples, sampleQuantity, orderStatu
       const initialData = locusNames.map(locus => ({
         locusName: locus,
         samples: Array.from({ length: sampleQuantity }, (_, index) => {
-          const testSample = testSamples[index] || { id: index + 1, name: `Sample ${index + 1}`, relationship: "N/A" };
+          const testSample = testSamples[index] || { id: index + 1, name: `Sample ${index + 1}`, relationship: "Không có" };
           const existingSample = existingSamples.find(
             result => result.testSampleId === testSample.id && result.locusName === locus
           );
           return {
             testSampleId: testSample.id,
-            name: testSample.name || "N/A",
-            relationship: testSample.relationship || "N/A",
+            name: testSample.name || "Không có",
+            relationship: testSample.relationship || "Không có",
             allele1: existingSample ? existingSample.allele1 : "",
             allele2: existingSample ? existingSample.allele2 : ""
           };
@@ -177,11 +177,11 @@ const TestResultSampleForm = ({ orderId, testSamples, sampleQuantity, orderStatu
         setFormData(locusNames.map(locus => ({
           locusName: locus,
           samples: Array.from({ length: sampleQuantity }, (_, index) => {
-            const testSample = testSamples[index] || { id: index + 1, name: `Sample ${index + 1}`, relationship: "N/A" };
+            const testSample = testSamples[index] || { id: index + 1, name: `Sample ${index + 1}`, relationship: "Không có" };
             return {
               testSampleId: testSample.id,
-              name: testSample.name || "N/A",
-              relationship: testSample.relationship || "N/A",
+              name: testSample.name || "Không có",
+              relationship: testSample.relationship || "Không có",
               allele1: "",
               allele2: ""
             };
@@ -209,7 +209,7 @@ const TestResultSampleForm = ({ orderId, testSamples, sampleQuantity, orderStatu
             <tr>
               <th>Locus Name</th>
               {Array.from({ length: sampleQuantity }, (_, index) => {
-                const sample = testSamples[index] || { name: `Sample ${index + 1}`, relationship: "N/A" };
+                const sample = testSamples[index] || { name: `Sample ${index + 1}`, relationship: "Không có" };
                 return (
                   <th key={index} colSpan={2}>
                     {sample.name} - {sample.relationship}
@@ -274,8 +274,8 @@ const TestResultSampleForm = ({ orderId, testSamples, sampleQuantity, orderStatu
             </thead>
             <tbody>
               {resultData.map((result, index) => {
-                const sample1 = testSamples.find(s => s.id === result.sample1Id) || { name: "N/A", relationship: "N/A" };
-                const sample2 = testSamples.find(s => s.id === result.sample2Id) || { name: "N/A", relationship: "N/A" };
+                const sample1 = testSamples.find(s => s.id === result.sample1Id) || { name: "Không có", relationship: "Không có" };
+                const sample2 = testSamples.find(s => s.id === result.sample2Id) || { name: "Không có", relationship: "Không có" };
                 return (
                   <tr key={index}>
                     <td>{`${sample1.name} - ${sample1.relationship}`}</td>

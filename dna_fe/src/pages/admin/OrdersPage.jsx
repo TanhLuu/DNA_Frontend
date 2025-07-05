@@ -15,8 +15,8 @@ const OrdersPage = () => {
     serviceData
   } = useOrders();
 
-  const formatDate = d => d ? new Date(d).toLocaleDateString('vi-VN') : 'N/A';
-  const formatPrice = a => a ? a.toLocaleString('vi-VN') + ' VNĐ' : 'N/A';
+  const formatDate = d => d ? new Date(d).toLocaleDateString('vi-VN') : 'Không có';
+  const formatPrice = a => a ? a.toLocaleString('vi-VN') + ' VNĐ' : 'Không có';
 
   const navigate = useNavigate();
   const handleViewDetails = (orderId) => {
@@ -54,18 +54,18 @@ const OrdersPage = () => {
               nonPendingOrders.map(order => (
                 <tr key={order.orderId}>
                   <td>{order.orderId}</td>
-                  <td>{accountData[order.customerId]?.fullName || 'N/A'}</td>
-                  <td>{accountData[order.customerId]?.phone || 'N/A'}</td>
-                  <td>{accountData[order.customerId]?.email || 'N/A'}</td>
-                  <td>{serviceData[order.serviceId]?.serviceName || 'N/A'}</td>
-                  <td>{serviceData[order.serviceId]?.serviceType || 'N/A'}</td>
-                  <td>{order.resultDeliverAddress || 'N/A'}</td>
+                  <td>{accountData[order.customerId]?.fullName || 'Không có'}</td>
+                  <td>{accountData[order.customerId]?.phone || 'Không có'}</td>
+                  <td>{accountData[order.customerId]?.email || 'Không cóA'}</td>
+                  <td>{serviceData[order.serviceId]?.serviceName || 'Không có'}</td>
+                  <td>{serviceData[order.serviceId]?.serviceType || 'Không có'}</td>
+                  <td>{order.resultDeliverAddress || 'Không có'}</td>
                   <td><span className="pill">{order.sampleMethod === 'center' ? 'Tại trung tâm' : 'Tự lấy mẫu'}</span></td>
-                  <td>{serviceData[order.serviceId]?.timeTest || 'N/A'} ngày</td>
+                  <td>{serviceData[order.serviceId]?.timeTest || 'Không có'} ngày</td>
                   <td>{formatDate(order.orderDate)}</td>
                   <td>{formatPrice(order.amount)}</td>
                   <td className={`status ${order.orderStatus}`}>
-                    {STATUS_LABELS[order.orderStatus] || 'N/A'}
+                    {STATUS_LABELS[order.orderStatus] || 'Không có'}
                   </td>
                   <td>
                     <button className="action-btn" onClick={() => handleViewDetails(order.orderId)}>Chi tiết đơn</button>

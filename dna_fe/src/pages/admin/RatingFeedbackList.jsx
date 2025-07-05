@@ -91,7 +91,7 @@ const RatingFeedbackList = () => {
             {ratingFeedbacks.map((feedback) => (
               <tr key={feedback.ratingFeedbackId}>
                 
-                <td>{feedback.testOrderId || 'N/A'}</td>
+                <td>{feedback.testOrderId || 'Không có'}</td>
                 <td>
                   {feedback.testOrder && feedback.testOrder.service
                     ? feedback.testOrder.service.serviceName || 'Không có tên dịch vụ'
@@ -102,9 +102,9 @@ const RatingFeedbackList = () => {
                     ? feedback.testOrder.service.serviceType || 'Không có loại dịch vụ'
                     : 'Không có dữ liệu đơn hàng'}
                 </td>
-                <td>{feedback.rating || 'N/A'}</td>
+                <td>{feedback.rating || 'Không có'}</td>
                 <td>{feedback.comment || 'Không có bình luận'}</td>
-                <td>{feedback.date || 'N/A'}</td>
+                <td>{feedback.date || 'Không có'}</td>
               </tr>
             ))}
           </tbody>

@@ -50,11 +50,11 @@ const Dashboard = () => {
     // Chuẩn bị dữ liệu cho Excel
     const data = recentOrders.map(order => ({
       'Mã đơn': order.orderId,
-      'Khách hàng': order.account?.fullName || 'N/A',
+      'Khách hàng': order.account?.fullName || 'Không có',
       'Ngày đặt': order.orderDate,
-      'Trạng thái': STATUS_LABELS[order.orderStatus] || 'N/A',
-      'Loại dịch vụ': services[order.serviceId]?.serviceType || 'N/A',
-      'Tên dịch vụ': services[order.serviceId]?.serviceName || 'N/A',
+      'Trạng thái': STATUS_LABELS[order.orderStatus] || 'Không có',
+      'Loại dịch vụ': services[order.serviceId]?.serviceType || 'Không có',
+      'Tên dịch vụ': services[order.serviceId]?.serviceName || 'Không có',
       'Số tiền': Number(order.amount), // Chuyển thành số để định dạng
     }));
 
@@ -209,11 +209,11 @@ const Dashboard = () => {
             {recentOrders.map(order => (
               <tr key={order.orderId}>
                 <td>{order.orderId}</td>
-                <td>{order.account?.fullName || 'N/A'}</td>
+                <td>{order.account?.fullName || 'Không có'}</td>
                 <td>{order.orderDate}</td>
-                <td>{STATUS_LABELS[order.orderStatus] || 'N/A'}</td>
-                <td>{services[order.serviceId]?.serviceType || 'N/A'}</td>
-                <td>{services[order.serviceId]?.serviceName || 'N/A'}</td>
+                <td>{STATUS_LABELS[order.orderStatus] || 'Không có'}</td>
+                <td>{services[order.serviceId]?.serviceType || 'Không có'}</td>
+                <td>{services[order.serviceId]?.serviceName || 'Không có'}</td>
                 <td>{order.amount.toLocaleString()} VND</td>
               </tr>
             ))}

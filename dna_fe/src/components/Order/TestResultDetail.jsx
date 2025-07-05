@@ -59,7 +59,7 @@ const TestResultDetail = ({ orderId, fullName, address, relationship1, relations
   // Lấy relationship dựa trên sampleId
   const getTestSampleRelationship = (sampleId) => {
     const sample = testSamples.find(s => s.id === sampleId);
-    return sample ? sample.relationship || "N/A" : "N/A";
+    return sample ? sample.relationship || "Không có" : "Không có";
   };
 
   // Tạo bảng chi tiết mẫu xét nghiệm với các mẫu liên quan
@@ -88,14 +88,14 @@ const TestResultDetail = ({ orderId, fullName, address, relationship1, relations
         <tbody>
           {loci.map(locus => (
             <tr key={locus}>
-              <td>{locus || "N/A"}</td>
+              <td>{locus || "Không có"}</td>
               {relatedSampleNames.map((sampleName, index) => {
                 const sampleId = testSamples.find(s => s.name === sampleName)?.id;
                 const sampleData = samples.find(s => s.testSampleId === sampleId && s.locusName === locus);
                 return (
                   <React.Fragment key={index}>
-                    <td>{sampleData ? sampleData.allele1 || "N/A" : "N/A"}</td>
-                    <td>{sampleData ? sampleData.allele2 || "N/A" : "N/A"}</td>
+                    <td>{sampleData ? sampleData.allele1 || "Không có" : "Không có"}</td>
+                    <td>{sampleData ? sampleData.allele2 || "Không có" : "NKhông có"}</td>
                   </React.Fragment>
                 );
               })}
@@ -117,8 +117,8 @@ const TestResultDetail = ({ orderId, fullName, address, relationship1, relations
         <h2>Xem Kết Quả Mẫu Xét Nghiệm</h2>
         <div className="user-info">
           <p><strong> Căn cứ vào giấy đề nghị phân tích ADN số: HID{orderId}</strong> </p>
-          <p><strong>Của Ông/Bà:</strong> {fullName || "N/A"}</p>
-          <p><strong>Địa chỉ:</strong> {address || "N/A"}</p>
+          <p><strong>Của Ông/Bà:</strong> {fullName || "N/Không có"}</p>
+          <p><strong>Địa chỉ:</strong> {address || "Không có"}</p>
           <br />
         </div>
 
@@ -142,8 +142,8 @@ const TestResultDetail = ({ orderId, fullName, address, relationship1, relations
                   <td>{result.id}</td>
                   <td>{getTestSampleName(result.sampleId1)} - {getTestSampleRelationship(result.sampleId1)}</td>
                   <td>{getTestSampleName(result.sampleId2)} - {getTestSampleRelationship(result.sampleId2)}</td>
-                  <td>{result.result || "N/A"}</td>
-                  <td>{result.resultPercent || "N/A"}</td>
+                  <td>{result.result || "Không có"}</td>
+                  <td>{result.resultPercent || "Không có"}</td>
                   <td>
                     <button
                       className="test-result-detail-button"
@@ -174,8 +174,8 @@ const TestResultDetail = ({ orderId, fullName, address, relationship1, relations
                   <div className="test-result-info">
                     <p><strong>Mẫu 1:</strong> {getTestSampleName(selectedResult.sampleId1)} - {getTestSampleRelationship(selectedResult.sampleId1)}</p>
                     <p><strong>Mẫu 2:</strong> {getTestSampleName(selectedResult.sampleId2)} - {getTestSampleRelationship(selectedResult.sampleId2)}</p>
-                    <p><strong>Kết quả:</strong> {selectedResult.result || "N/A"}</p>
-                    <p><strong>Tỷ lệ:</strong> {selectedResult.resultPercent || "N/A"}</p>
+                    <p><strong>Kết quả:</strong> {selectedResult.result || "Không có"}</p>
+                    <p><strong>Tỷ lệ:</strong> {selectedResult.resultPercent || "Không có"}</p>
                   </div>
 
                   {relatedSamples.length > 0 ? (

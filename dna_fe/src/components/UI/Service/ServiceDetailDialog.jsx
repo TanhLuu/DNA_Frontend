@@ -17,9 +17,15 @@ const ServiceDetailDialog = ({ open, onClose, service }) => {
         <Typography variant="subtitle1">
           <strong>Giá:</strong> {Number(service.price).toLocaleString('vi-VN')} VND
         </Typography>
+        <Typography variant="subtitle1"><strong>Số mẫu mặc định:</strong> {service.numberOfSamples}</Typography>
+        <Typography variant="subtitle1">
+          <strong>Giá tăng thêm mỗi mẫu:</strong> {service.pricePerAdditionalSample
+            ? `${Number(service.pricePerAdditionalSample).toLocaleString('vi-VN')} VND`
+            : 'Không có'}
+        </Typography>
         <Typography variant="subtitle1"><strong>Mô tả:</strong></Typography>
         <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>
-          {service.serviceBlog || 'Không có mô tả'}
+          {service.describe || 'Không có mô tả'}
         </Typography>
       </DialogContent>
       <DialogActions>

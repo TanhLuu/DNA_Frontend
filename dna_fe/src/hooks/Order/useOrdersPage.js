@@ -28,15 +28,15 @@ const useOrders = () => {
           getAccountByCustomerId(order.customerId)
             .then(account => ({
               customerId: order.customerId,
-              fullName: account.fullName || 'N/A',
-              phone: account.phone || 'N/A',
-              email: account.email || 'N/A',
+              fullName: account.fullName || 'Không có',
+              phone: account.phone || 'Không có',
+              email: account.email || 'Không có',
             }))
             .catch(() => ({
               customerId: order.customerId,
-              fullName: 'N/A',
-              phone: 'N/A',
-              email: 'N/A',
+              fullName: 'Không có',
+              phone: 'Không có',
+              email: 'Không có',
             }))
         );
         const accounts = await Promise.all(accountPromises);
@@ -47,21 +47,21 @@ const useOrders = () => {
             ? getServiceById(order.serviceId)
               .then(service => ({
                 serviceId: order.serviceId,
-                serviceName: service.serviceName || 'N/A',
-                serviceType: service.serviceType || 'N/A',
-                timeTest: service.timeTest || 'N/A',
+                serviceName: service.serviceName || 'Không có',
+                serviceType: service.serviceType || 'Không có',
+                timeTest: service.timeTest || 'Không có',
               }))
               .catch(() => ({
                 serviceId: order.serviceId,
-                serviceName: 'N/A',
-                serviceType: 'N/A',
-                timeTest: 'N/A',
+                serviceName: 'Không có',
+                serviceType: 'Không có',
+                timeTest: 'Không có',
               }))
             : Promise.resolve({
               serviceId: order.serviceId,
-              serviceName: 'N/A',
-              serviceType: 'N/A',
-              timeTest: 'N/A',
+              serviceName: 'Không có',
+              serviceType: 'Không có',
+              timeTest: 'Không có',
             })
         );
         const services = await Promise.all(servicePromises);

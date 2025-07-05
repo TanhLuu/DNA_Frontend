@@ -19,11 +19,9 @@ const ADNRequestForm = ({
   handleSubmit,
   calculateTotalPrice,
 }) => {
-  const totalPrice = calculateTotalPrice(isCivil);
+  const totalPrice = calculateTotalPrice();
 
   if (isLoading) return <div className="adn-loading">Đang tải thông tin...</div>;
-
-  
 
   return (
     <div className="adn-form-wrapper">
@@ -131,11 +129,11 @@ const ADNRequestForm = ({
         </div>
 
         <div className="adn-field">
-          <label>Số người cần phân tích:</label>
+          <label>Số mẫu phân tích:</label>
           <select onChange={handleSampleChange} name="sampleCount" value={sampleCount} required>
             <option value="">-- Chọn số mẫu --</option>
             {[2, 3, 4, 5].map((num) => (
-              <option value={num} key={num}>{num} người</option>
+              <option value={num} key={num}>{num} mẫu</option>
             ))}
           </select>
         </div>

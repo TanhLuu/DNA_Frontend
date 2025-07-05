@@ -34,9 +34,9 @@ const OrderDetailCustomer = () => {
   const [feedback, setFeedback] = useState(null);
 
   const formatDate = (date) =>
-    date ? new Date(date).toLocaleDateString("vi-VN") : "N/A";
+    date ? new Date(date).toLocaleDateString("vi-VN") : "Không có";
 
-  const formatPrice = (p) => (p ? p.toLocaleString("vi-VN") + " VNĐ" : "N/A");
+  const formatPrice = (p) => (p ? p.toLocaleString("vi-VN") + " VNĐ" : "Không có");
 
   const STATUS_LABELS = {
     CONFIRM: "Đặt lịch / Đăng ký",
@@ -235,8 +235,8 @@ const OrderDetailCustomer = () => {
     const sample1 = testSamples.find((s) => s.id === sampleId1);
     const sample2 = testSamples.find((s) => s.id === sampleId2);
     return {
-      relationship1: sample1?.relationship || "N/A",
-      relationship2: sample2?.relationship || "N/A",
+      relationship1: sample1?.relationship || "Không có",
+      relationship2: sample2?.relationship || "Không có",
     };
   };
 
@@ -254,14 +254,14 @@ const OrderDetailCustomer = () => {
         <section className="order-detail-section">
           <h3>Thông tin khách hàng</h3>
           <div>
-            <p><strong>Họ tên:</strong> {account?.fullName || "N/A"}</p>
-            <p><strong>SĐT:</strong> {account?.phone || "N/A"}</p>
-            <p><strong>Email:</strong> {account?.email || "N/A"}</p>
-            <p><strong>Giới tính:</strong> {customer?.gender || "N/A"}</p>
-            <p><strong>Địa chỉ:</strong> {customer?.address || "N/A"}</p>
-            <p><strong>Loại giấy tờ:</strong> {customer?.documentType || "N/A"}</p>
-            <p><strong>Số giấy tờ:</strong> {customer?.cccd || "N/A"}</p>
-            <p><strong>Nơi cấp:</strong> {customer?.placeOfIssue || "N/A"}</p>
+            <p><strong>Họ tên:</strong> {account?.fullName || "Không có"}</p>
+            <p><strong>SĐT:</strong> {account?.phone || "Không có"}</p>
+            <p><strong>Email:</strong> {account?.email || "Không có"}</p>
+            <p><strong>Giới tính:</strong> {customer?.gender || "Không có"}</p>
+            <p><strong>Địa chỉ:</strong> {customer?.address || "Không có"}</p>
+            <p><strong>Loại giấy tờ:</strong> {customer?.documentType || "Không có"}</p>
+            <p><strong>Số giấy tờ:</strong> {customer?.cccd || "Không có"}</p>
+            <p><strong>Nơi cấp:</strong> {customer?.placeOfIssue || "Không có"}</p>
             <p><strong>Ngày cấp:</strong> {formatDate(customer?.dateOfIssue)}</p>
           </div>
         </section>
@@ -269,10 +269,10 @@ const OrderDetailCustomer = () => {
         <section className="order-detail-section">
           <h3>Thông tin dịch vụ</h3>
           <div>
-            <p><strong>Tên dịch vụ:</strong> {service?.serviceName || "N/A"}</p>
-            <p><strong>Loại dịch vụ:</strong> {service?.serviceType || "N/A"}</p>
+            <p><strong>Tên dịch vụ:</strong> {service?.serviceName || "Không có"}</p>
+            <p><strong>Loại dịch vụ:</strong> {service?.serviceType || "Không có"}</p>
             <p><strong>Thời gian xét nghiệm:</strong>{" "}
-              {service?.timeTest ? `${service.timeTest} ngày` : "N/A"}
+              {service?.timeTest ? `${service.timeTest} ngày` : "Không có"}
             </p>
           </div>
           <h3>Thông tin nhân viên phụ trách</h3>
@@ -290,22 +290,22 @@ const OrderDetailCustomer = () => {
           <h3>Thông tin đơn hàng</h3>
           <div>
             <p><strong>Trạng thái:</strong>{" "}
-              {STATUS_LABELS[order?.orderStatus] || "N/A"}
+              {STATUS_LABELS[order?.orderStatus] || "Không có"}
             </p>
             <p><strong>Ngày đặt:</strong> {formatDate(order?.orderDate)}</p>
             <p><strong>Hình thức thu mẫu:</strong>{" "}
               {order?.sampleMethod === "center" ? "Tại trung tâm" : "Tại nhà"}
             </p>
-            <p><strong>Số lượng mẫu:</strong> {order?.sampleQuantity || "N/A"}</p>
+            <p><strong>Số lượng mẫu:</strong> {order?.sampleQuantity || "Không có"}</p>
             <p><strong>Phương thức nhận kết quả:</strong> {
                   order?.resultDeliverMethod ||
                   (order?.resultDeliveryMethod === "home" ? "Tại nhà" :
                     order?.resultDeliveryMethod === "office" ? "Tại văn phòng" :
                       order?.resultDeliveryMethod === "email" ? "Email" :
-                        "N/A")
+                        "Không có")
                 }</p>
             <p><strong>Địa chỉ nhận kết quả:</strong>{" "}
-              {order?.resultDeliverAddress || "N/A"}
+              {order?.resultDeliverAddress || "Không có"}
             </p>
             <p><strong>Giá:</strong> {formatPrice(order?.amount)}</p>
           </div>
@@ -383,8 +383,8 @@ const OrderDetailCustomer = () => {
               <tbody>
                 {testSamples.map((sample) => (
                   <tr key={sample.id}>
-                    <td>{sample.name || "N/A"}</td>
-                    <td>{sample.relationship || "N/A"}</td>
+                    <td>{sample.name || "Không có"}</td>
+                    <td>{sample.relationship || "Không có"}</td>
                     <td>
                       <button
                         className="test-sample-detail-button"

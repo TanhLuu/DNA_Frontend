@@ -30,12 +30,12 @@ const TestSampleForm = ({ orderId, customerId, sampleQuantity, serviceType, samp
 
   // Hàm định dạng ngày theo kiểu vi-VN (dd/mm/yyyy)
   const formatDate = (date) =>
-    date ? new Date(date).toLocaleDateString("vi-VN") : "N/A";
+    date ? new Date(date).toLocaleDateString("vi-VN") : "Không có";
 
   // Hàm lấy tên SampleType từ sampleTypeId
   const getSampleTypeName = (sampleTypeId) => {
     const sampleType = sampleTypes.find(type => type.id === sampleTypeId);
-    return sampleType ? sampleType.sampleType : "N/A";
+    return sampleType ? sampleType.sampleType : "Không có";
   };
 
   // Định nghĩa các trường hiển thị dựa trên serviceType, sampleMethod và isCustomer
@@ -272,7 +272,7 @@ const TestSampleForm = ({ orderId, customerId, sampleQuantity, serviceType, samp
                         ) : key === 'sampleTypeId' ? (
                           getSampleTypeName(sample.sampleTypeId) // Sử dụng hàm để lấy tên SampleType
                         ) : (
-                          sample[key] || "N/A"
+                          sample[key] || "Không có"
                         )}
                       </div>
                     ))}
