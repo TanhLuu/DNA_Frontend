@@ -128,8 +128,8 @@ const TestResultSampleForm = ({ orderId, testSamples, sampleQuantity, orderStatu
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
     } catch (err) {
-      console.error("Lỗi khi tải PDF:", err);
-      setError("Lỗi khi tải PDF: " + (err.response?.data?.message || err.message));
+      
+      
     }
   };
 

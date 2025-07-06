@@ -33,7 +33,7 @@ const TestResultDetail = ({ orderId, fullName, address, relationship1, relations
 
         setLoading(false);
       } catch (err) {
-        console.error("Lỗi khi tải dữ liệu:", err);
+        console.error("", err);
         setError("Không thể tải dữ liệu kết quả xét nghiệm. Vui lòng thử lại sau.");
         setLoading(false);
       }
