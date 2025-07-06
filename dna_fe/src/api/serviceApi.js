@@ -31,3 +31,7 @@ export const getAllLegalServices = async () => {
   return res.data.filter(service => service.serviceType === "Hành chính");
 };
 
+export const toggleServiceActive = async (id) => {
+  const response = await axiosInstance.put(`/api/services/${id}/toggle-active`);
+  return response.data;
+};

@@ -1,6 +1,7 @@
 // src/constants/orderStatusLabels.js
 
 const STATUS_LABELS = {
+  CANCEL: "Đã hủy",
   PENDING: "Đang chờ thanh toán",
   CONFIRM: "Đặt lịch / Đăng ký",
   SEND_KIT: "Đã gửi kit",

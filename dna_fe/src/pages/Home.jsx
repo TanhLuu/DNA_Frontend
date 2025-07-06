@@ -2,12 +2,26 @@ import React, { useState, useEffect, useRef } from 'react';
 import '../styles/Home.css';
 import * as asset from '../assets';
 import AdnBooking from '../components/UI/AdnBooking';
+import axios from 'axios';
 
 const Home = () => {
     const [hoveredBox, setHoveredBox] = useState(null);
     const scrollToSection = () => {
         document.querySelector('.adn-container').scrollIntoView({ behavior: 'smooth' });
     };
+
+    const [serviceBlogs, setServiceBlogs] = useState([]);
+
+    useEffect(() => {
+        axios.get('http://localhost:8080/api/blogs?type=Dịch vụ')
+            .then(res => {
+                const limitedBlogs = res.data.slice(0, 4); // lấy tối đa 4 bài
+                setServiceBlogs(limitedBlogs);
+            })
+            .catch(err => {
+                console.error('Lỗi khi tải blog dịch vụ:', err);
+            });
+    }, []);
 
     useEffect(() => {
         const elements = document.querySelectorAll('.process-column, .process-image');
@@ -71,39 +85,18 @@ const Home = () => {
             <div className="adn-container">
                 <h2 className="adn-title">THÔNG TIN CÁC LOẠI XÉT NGHIỆM ADN</h2>
                 <div className="adn-box-container">
-                    <a href="/paternity-testing/" className="adn-box">
-                        <div className="image-container">
-                            <img src={asset.ChaCon} alt="Cha – con" />
-                        </div>
-                        <div className="adn-content">
-                            <h5 className="service-title">Xét nghiệm ADN Cha – con</h5>
-                        </div>
-                    </a>
-                    <a href="/prenatal-testing/" className="adn-box">
-                        <div className="image-container">
-                            <img src={asset.MeCon} alt="Mẹ – con" />
-                        </div>
-                        <div className="adn-content">
-                            <h5 className="service-title">Xét nghiệm ADN Mẹ – con</h5>
-                        </div>
-                    </a>
-                    <a href="/sibling-testing/" className="adn-box">
-                        <div className="image-container">
-                            <img src={asset.AnhChiEm} alt="Anh/chị – em" />
-                        </div>
-                        <div className="adn-content">
-                            <h5 className="service-title">Xét nghiệm ADN Anh/chị – em</h5>
-                        </div>
-                    </a>
-                    <a href="/grandparent-testing/" className="adn-box">
-                        <div className="image-container">
-                            <img src={asset.OngBaChau} alt="Ông/bà – cháu" />
-                        </div>
-                        <div className="adn-content">
-                            <h5 className="service-title">Xét nghiệm ADN Ông/bà – cháu</h5>
-                        </div>
-                    </a>
+                    {serviceBlogs.map((blog) => (
+                        <a key={blog.id} href={`/blog/${blog.id}`} className="adn-box">
+                            <div className="image-container">
+                                <img src={blog.titleImageBase64} alt={blog.title} />
+                            </div>
+                            <div className="adn-content">
+                                <h5 className="service-title">{blog.title}</h5>
+                            </div>
+                        </a>
+                    ))}
                 </div>
+
             </div>
 
             <div className="process-container">
@@ -128,7 +121,7 @@ const Home = () => {
                             <a className="nectar-button" onClick={scrollToBooking}>
                                 ĐẶT LỊCH NGAY
                             </a>
-                            <div className="divider"></div>
+                            
                         </div>
                     </div>
                 </div>
@@ -140,7 +133,7 @@ const Home = () => {
                             <div className="process-number">02</div>
                             <h4 className="process-heading">Thu mẫu</h4>
                             <p className="process-desc">Thu mẫu tại trung tâm hoặc Tự thu và gửi mẫu theo yêu cầu.</p>
-                            <div className="divider"></div>
+                            
                         </div>
                     </div>
                     <div className="process-image parallax-enabled">
@@ -164,7 +157,7 @@ const Home = () => {
                             <div className="process-number">03</div>
                             <h4 className="process-heading">Phân tích</h4>
                             <p className="process-desc">Mẫu được xử lý trong phòng Lab hiện đại, đạt chuẩn quốc tế vói những chuyê gia có trình độ cao, đảm bảo chất lượng xét nghiệm có độ chính xác cao nhất.</p>
-                            <div className="divider"></div>
+                            
                         </div>
                     </div>
                 </div>
@@ -176,7 +169,7 @@ const Home = () => {
                             <div className="process-number">04</div>
                             <h4 className="process-heading">Trả kết quả</h4>
                             <p className="process-desc">Kết quả được trả qua email, gửi về nhà hoặc bản cứng tại trung tâm.</p>
-                            <div className="divider"></div>
+                            
                         </div>
                     </div>
                     <div className="process-image parallax-enabled">

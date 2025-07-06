@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {
   Dialog, DialogTitle, DialogContent, DialogActions,
-  TextField, Button, FormControl, InputLabel, Select, MenuItem
+  TextField, Button, FormControl, InputLabel, Select, MenuItem, Switch, FormControlLabel
 } from '@mui/material';
 import { createService, updateService } from '../../../api/serviceApi';
 
@@ -9,23 +9,28 @@ const ServiceFormPopup = ({ open, onClose, serviceToEdit, onSuccess }) => {
   const [formData, setFormData] = useState({
     serviceName: '',
     serviceType: '',
-    timeTest: 0,
+    timeTest: '',
     describe: '',
-    price: 0
+    price: '',
+    numberOfSamples: 2,
+    pricePerAdditionalSample: '',
+    isActive: true
   });
-
-  
 
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
+    console.log('serviceToEdit:', serviceToEdit); // Debug dữ liệu serviceToEdit
     if (serviceToEdit) {
       setFormData({
-        serviceName: serviceToEdit.serviceName,
-        serviceType: serviceToEdit.serviceType,
-        timeTest: serviceToEdit.timeTest,
+        serviceName: serviceToEdit.serviceName || '',
+        serviceType: serviceToEdit.serviceType || '',
+        timeTest: serviceToEdit.timeTest || '',
         describe: serviceToEdit.describe || '',
-        price: serviceToEdit.price
+        price: serviceToEdit.price || '',
+        numberOfSamples: serviceToEdit.numberOfSamples || 2,
+        pricePerAdditionalSample: serviceToEdit.pricePerAdditionalSample || '',
+        isActive: serviceToEdit.active !== undefined ? serviceToEdit.active : true // Sử dụng active thay vì isActive
       });
     } else {
       setFormData({
@@ -33,16 +38,20 @@ const ServiceFormPopup = ({ open, onClose, serviceToEdit, onSuccess }) => {
         serviceType: '',
         timeTest: '',
         describe: '',
-        price: ''
+        price: '',
+        numberOfSamples: 2,
+        pricePerAdditionalSample: '',
+        isActive: true
       });
     }
   }, [serviceToEdit]);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value, type, checked } = e.target;
+    console.log('handleChange:', { name, value, type, checked }); // Debug thay đổi
     setFormData(prev => ({
       ...prev,
-      [name]: name === 'price' || name === 'timeTest' ? Number(value) : value
+      [name]: type === 'checkbox' ? checked : (name === 'price' || name === 'timeTest' || name === 'numberOfSamples' || name === 'pricePerAdditionalSample' ? (value === '' ? '' : Number(value)) : value)
     }));
   };
 
@@ -50,8 +59,12 @@ const ServiceFormPopup = ({ open, onClose, serviceToEdit, onSuccess }) => {
     const newErrors = {};
     if (!formData.serviceName.trim()) newErrors.serviceName = 'Tên dịch vụ là bắt buộc';
     if (!formData.serviceType.trim()) newErrors.serviceType = 'Loại dịch vụ là bắt buộc';
-    if (formData.price <= 0) newErrors.price = 'Giá phải lớn hơn 0';
-    if (formData.timeTest <= 0) newErrors.timeTest = 'Thời gian xét nghiệm phải lớn hơn 0';
+    if (formData.price === '' || formData.price <= 0) newErrors.price = 'Giá phải lớn hơn 0';
+    if (formData.timeTest === '' || formData.timeTest <= 0) newErrors.timeTest = 'Thời gian xét nghiệm phải lớn hơn 0';
+    if (formData.numberOfSamples === '' || formData.numberOfSamples < 0) newErrors.numberOfSamples = 'Số mẫu phải không âm';
+    if (formData.pricePerAdditionalSample !== '' && formData.pricePerAdditionalSample < 0) {
+      newErrors.pricePerAdditionalSample = 'Giá tăng thêm mỗi tùy chọn phải không âm';
+    }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -61,10 +74,16 @@ const ServiceFormPopup = ({ open, onClose, serviceToEdit, onSuccess }) => {
     if (!validateForm()) return;
 
     try {
+      const dataToSubmit = {
+        ...formData,
+        pricePerAdditionalSample: formData.pricePerAdditionalSample === '' ? null : formData.pricePerAdditionalSample,
+        active: formData.isActive // Ánh xạ isActive thành active cho API
+      };
+      console.log('Data sent to API:', dataToSubmit); // Debug dữ liệu gửi đi
       if (serviceToEdit) {
-        await updateService(serviceToEdit.serviceID, formData);
+        await updateService(serviceToEdit.serviceID, dataToSubmit);
       } else {
-        await createService(formData);
+        await createService(dataToSubmit);
       }
       onSuccess();
       onClose();
@@ -130,6 +149,28 @@ const ServiceFormPopup = ({ open, onClose, serviceToEdit, onSuccess }) => {
         />
         <TextField
           margin="dense"
+          name="numberOfSamples"
+          label="Số Mẫu Mặc Định"
+          type="number"
+          fullWidth
+          value={formData.numberOfSamples}
+          onChange={handleChange}
+          error={!!errors.numberOfSamples}
+          helperText={errors.numberOfSamples || 'Mặc định là 2'}
+        />
+        <TextField
+          margin="dense"
+          name="pricePerAdditionalSample"
+          label="Giá Tăng Thêm Mỗi Mẫu (VND, Không bắt buộc)"
+          type="number"
+          fullWidth
+          value={formData.pricePerAdditionalSample}
+          onChange={handleChange}
+          error={!!errors.pricePerAdditionalSample}
+          helperText={errors.pricePerAdditionalSample}
+        />
+        <TextField
+          margin="dense"
           name="describe"
           label="Mô tả (Không bắt buộc)"
           fullWidth
@@ -137,6 +178,18 @@ const ServiceFormPopup = ({ open, onClose, serviceToEdit, onSuccess }) => {
           rows={3}
           value={formData.describe}
           onChange={handleChange}
+        />
+        <FormControlLabel
+          control={
+            <Switch
+              checked={formData.isActive}
+              onChange={handleChange}
+              name="isActive"
+              color="primary"
+            />
+          }
+          label={`Trạng Thái Hoạt Động: ${formData.isActive ? 'Bật' : 'Tắt'}`} // Hiển thị trạng thái rõ ràng
+          style={{ marginTop: '16px' }}
         />
       </DialogContent>
       <DialogActions>

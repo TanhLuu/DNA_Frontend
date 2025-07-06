@@ -3,7 +3,7 @@ import axios from 'axios';
 import { fetchAccountInfo, getCustomerByAccountId } from '../api/accountApi';
 import { useNavigate } from 'react-router-dom';
 
-const useADNRequestForm = (getServices) => {
+const useADNRequestForm = (getServices, isCivil) => {
   const navigate = useNavigate();
 
   const [customer, setCustomer] = useState({
@@ -17,13 +17,14 @@ const useADNRequestForm = (getServices) => {
     email: ''
   });
 
-  const [sampleCount, setSampleCount] = useState('');
+  const [sampleCount, setSampleCount] = useState(2); // Mặc định là 2
   const [isLoading, setIsLoading] = useState(true);
   const [services, setServices] = useState([]);
   const [selectedService, setSelectedService] = useState(null);
-  const [formData, setFormData] = useState({});
+  const [formData, setFormData] = useState({ method: isCivil ? '' : 'center' });
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
+  const [totalPrice, setTotalPrice] = useState(null); // Thêm state để lưu giá tổng
 
   const formatDate = (iso) => iso?.split('T')[0] || '';
 
@@ -66,19 +67,51 @@ const useADNRequestForm = (getServices) => {
     fetchData();
   }, [getServices]);
 
+  useEffect(() => {
+    // Đảm bảo method là "center" khi không phải isCivil
+    if (!isCivil && formData.method !== 'center') {
+      setFormData((prev) => ({ ...prev, method: 'center' }));
+    }
+  }, [isCivil]);
+
+  useEffect(() => {
+    // Gọi API để tính giá tổng khi selectedService hoặc sampleCount thay đổi
+    const fetchTotalPrice = async () => {
+      if (selectedService && sampleCount) {
+        try {
+          const response = await axios.get(
+            `http://localhost:8080/api/services/${selectedService.serviceID}/calculate-price?numberOfSamples=${sampleCount}`,
+            {
+              headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+              }
+            }
+          );
+          setTotalPrice(response.data);
+        } catch (err) {
+          console.error('Error calculating total price:', err);
+          setTotalPrice(null);
+          setError('Không thể tính giá tổng.');
+        }
+      } else {
+        setTotalPrice(null);
+      }
+    };
+
+    fetchTotalPrice();
+  }, [selectedService, sampleCount]);
+
   const handleSampleChange = (e) => {
     const value = e.target.value;
-    setSampleCount(value ? parseInt(value) : '');
+    setSampleCount(value ? parseInt(value) : 2); // Mặc định là 2 nếu không chọn
   };
 
   const handleInputChange = (e) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  const calculateTotalPrice = (isCivil) => {
-    if (!selectedService || !sampleCount || isNaN(sampleCount)) return null;
-    const additionalCost = (sampleCount - 2) * (isCivil ? 1500000 : 2000000);
-    return selectedService.price + (additionalCost > 0 ? additionalCost : 0);
+  const calculateTotalPrice = () => {
+    return totalPrice; // Trả về giá tổng từ state
   };
 
   const handleSubmit = async (e, isCivil) => {
@@ -92,7 +125,10 @@ const useADNRequestForm = (getServices) => {
         throw new Error('Không tìm thấy ID khách hàng. Vui lòng đăng nhập.');
       }
 
-      const amount = calculateTotalPrice(isCivil) || 0;
+      const amount = totalPrice || 0; // Sử dụng totalPrice từ state
+
+      const formDataObj = new FormData(e.target);
+      const formDataEntries = Object.fromEntries(formDataObj);
 
       const orderData = {
         customerId: parseInt(customerId),
@@ -100,9 +136,9 @@ const useADNRequestForm = (getServices) => {
         serviceId: selectedService?.serviceID || parseInt(formData.testType),
         orderDate: formData.orderDate || new Date().toISOString().split('T')[0],
         orderStatus: 'PENDING',
-        sampleMethod: formData.method || '',
-        resultDeliveryMethod: formData.receiveAt || '',
-        resultDeliverAddress: formData.resultAddress || '',
+        sampleMethod: isCivil ? formData.method || formDataEntries.method || '' : 'center',
+        resultDeliveryMethod: formData.receiveAt || formDataEntries.receiveAt || '',
+        resultDeliverAddress: formData.resultAddress || formDataEntries.resultAddress || '',
         sampleQuantity: parseInt(sampleCount) || 2,
         amount: amount
       };
@@ -110,6 +146,8 @@ const useADNRequestForm = (getServices) => {
       if (!orderData.serviceId || !orderData.resultDeliveryMethod || !orderData.sampleQuantity) {
         throw new Error('Vui lòng điền đầy đủ thông tin: Loại xét nghiệm, hình thức nhận kết quả, và số người cần phân tích.');
       }
+
+      console.log('orderData:', orderData);
 
       const res = await axios.post('http://localhost:8080/api/testorders', orderData, {
         headers: {
@@ -121,15 +159,14 @@ const useADNRequestForm = (getServices) => {
       const orderId = res.data.orderId || res.data.id;
 
       setSuccess('Tạo đơn hàng thành công!');
-      setFormData({});
-      setSampleCount('');
+      setFormData({ method: isCivil ? '' : 'center' });
+      setSampleCount(2); // Reset về mặc định
 
-      // Chuyển trang sau khi thành công, bao gồm customerName
       navigate('/payment', {
         state: {
           orderId,
           customerId,
-          customerName: customer.requesterName, // Truyền tên khách hàng
+          customerName: customer.requesterName,
           amount
         }
       });
@@ -147,6 +184,7 @@ const useADNRequestForm = (getServices) => {
     selectedService,
     setSelectedService,
     formData,
+    setFormData,
     error,
     success,
     handleSampleChange,

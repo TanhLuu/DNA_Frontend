@@ -24,9 +24,9 @@ const useCustomerOrders = () => {
 
         const account = await getAccountByCustomerId(customerId); // account đã là data
         setAccountData({
-          fullName: account.fullName || 'N/A',
-          phone: account.phone || 'N/A',
-          email: account.email || 'N/A',
+          fullName: account.fullName || 'Không có',
+          phone: account.phone || 'Không có',
+          email: account.email || 'Không có',
         });
 
         const servicePromises = ordersData.map(async (order) => {
@@ -34,16 +34,16 @@ const useCustomerOrders = () => {
             const service = await getServiceById(order.serviceId); // ✅ không cần `.data` nữa
             return {
               serviceId: order.serviceId,
-              serviceName: service.serviceName || 'N/A',
-              serviceType: service.serviceType || 'N/A',
-              timeTest: service.timeTest || 'N/A',
+              serviceName: service.serviceName || 'Không có',
+              serviceType: service.serviceType || 'Không có',
+              timeTest: service.timeTest || 'Không có',
             };
           } catch {
             return {
               serviceId: order.serviceId,
-              serviceName: 'N/A',
-              serviceType: 'N/A',
-              timeTest: 'N/A',
+              serviceName: 'Không có',
+              serviceType: 'Không có',
+              timeTest: 'Không có',
             };
           }
         });

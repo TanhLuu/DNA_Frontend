@@ -1,0 +1,31 @@
+.rating-feedback-container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.rating-feedback-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.rating-feedback-table th,
+.rating-feedback-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.rating-feedback-table th {
+  background-color: #f2f2f2;
+  font-weight: bold;
+}
+
+.rating-feedback-table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.rating-feedback-table tr:hover {
+  background-color: #f1f1f1;
+}

@@ -86,7 +86,7 @@ const Header = () => {
 
         <nav className={`nav-center ${menuOpen ? 'show' : ''}`}>
           <a href="/">Trang chủ</a>
-          <a href="/services">Dịch vụ</a>
+          <a href="/blog?type=Dịch vụ">Dịch vụ</a>
           <div className="price-dropdown">
             <a href="/all-price">
               Bảng giá <span style={{ fontSize: '12px' }}>▾</span>
@@ -96,8 +96,8 @@ const Header = () => {
               <a href="/legal-price">Pháp lý</a>
             </div>
           </div>
-          <a href="/order-detail">Hướng dẫn</a>
-          <a href="/auth">Tin tức</a>
+          <a href="/blog?type=Hướng dẫn">Hướng dẫn</a>
+          <a href="/blog?type=Tin tức">Tin tức</a>
         </nav>
 
         <div className={`auth-links ${isDropdownOpen ? 'active' : ''}`}>

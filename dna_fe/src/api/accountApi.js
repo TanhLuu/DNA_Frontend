@@ -9,6 +9,11 @@ export const fetchAccountInfo = async () => {
   return response.data;
 };
 
+export const updateAccountInfo = async (accountId, accountData) => {
+  const response = await axiosInstance.put(`/api/account/${accountId}`, accountData);
+  return response.data;
+};
+
 // === Customer APIs ===
 export const getCustomerByAccountId = async (accountId) => {
   const response = await axiosInstance.get(`/api/customers/account/${accountId}`);
@@ -39,5 +44,10 @@ export const saveCustomerProfile = async (data) => {
 // === Staff APIs ===
 export const getStaffByAccountId = async (accountId) => {
   const response = await axiosInstance.get(`/api/staff/account/${accountId}`);
+  return response.data;
+};
+
+export const updateStaff = async (id, staffData) => {
+  const response = await axiosInstance.put(`/api/staff/${id}`, staffData);
   return response.data;
 };

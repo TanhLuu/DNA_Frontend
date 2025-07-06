@@ -31,10 +31,10 @@ const useVNPayReturn = () => {
         }
 
         // Lấy các thông tin khác từ VNPay
-        const vnp_TxnRef = searchParams.get('vnp_TxnRef') || 'N/A';
+        const vnp_TxnRef = searchParams.get('vnp_TxnRef') || 'Không có';
         const vnp_Amount = searchParams.get('vnp_Amount') || '0';
-        const vnp_OrderInfo = searchParams.get('vnp_OrderInfo') || 'N/A';
-        const vnp_BankCode = searchParams.get('vnp_BankCode') || 'N/A';
+        const vnp_OrderInfo = searchParams.get('vnp_OrderInfo') || 'Không có';
+        const vnp_BankCode = searchParams.get('vnp_BankCode') || 'Không có';
         const vnp_PayDate = searchParams.get('vnp_PayDate') || new Date().toLocaleString();
 
         console.log('VNPay response:', {

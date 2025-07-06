@@ -1,0 +1,86 @@
+/* styles/admin/TestResultSampleForm.css */
+
+.trs-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.trs-form-container {
+  background-color: white;
+  padding: 20px 30px;
+  border-radius: 10px;
+  max-height: 90%;
+  overflow-y: auto;
+  width: 90%;
+  max-width: 1200px;
+}
+
+.trs-title {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.trs-error-message {
+  color: red;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.trs-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+.trs-table th,
+.trs-table td {
+  border: 1px solid #ccc;
+  padding: 6px 8px;
+  text-align: center;
+}
+
+.trs-input {
+  width: 100%;
+  padding: 4px;
+  box-sizing: border-box;
+}
+
+.trs-button-group {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.trs-submit-btn,
+.trs-cancel-btn {
+  padding: 8px 20px;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  border-radius: 5px;
+}
+
+.trs-submit-btn {
+  background-color: #4caf50;
+  color: white;
+}
+
+.trs-cancel-btn {
+  background-color: #f44336;
+  color: white;
+}
+
+.trs-submit-btn:disabled,
+.trs-cancel-btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+

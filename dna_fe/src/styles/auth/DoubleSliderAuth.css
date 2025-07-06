@@ -2,7 +2,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Mulish:wght@200;300;400;500;600;700;800&display=swap');
 
 .auth-all {
-    background: linear-gradient(135deg, #4b4b4b, #837b7b);
+    background: linear-gradient(135deg, #ff2d2d, #8d8d8d);
     width: 100%;
     padding: 100px 0;
 }
@@ -30,6 +30,7 @@
     height: 100%;
     top: 0;
     z-index: 2;
+        background: linear-gradient(18deg, #f0f0f0, #575afc);
 }
 
 .sign-in-container {
@@ -42,13 +43,13 @@
     z-index: 1;
 }
 
-.container.active .sign-up-container {
+.container-auth.active .sign-up-container {
     transform: translateX(100%);
     opacity: 1;
     z-index: 5;
 }
 
-.container.active .sign-in-container {
+.container-auth.active .sign-in-container {
     transform: translateX(100%);
     opacity: 0;
     z-index: 1;
@@ -78,7 +79,7 @@
 .auth-btn {
     margin-top: 15px;
     padding: 12px 30px;
-    background: linear-gradient(135deg, #d21a1a, #433c49);
+        background: linear-gradient(120deg, #a76dd5, #ea4545);
     color: #fff;
     font-weight: bold;
     border: none;
@@ -108,7 +109,7 @@
 
 .overlay-container {
     width: 50%;
-    background: linear-gradient(135deg, #d21a1a, #433c49);
+        background: linear-gradient(240deg, #a76dd5, #ea4545);
     color: #fff;
     display: flex;
     flex-direction: column;
@@ -121,7 +122,7 @@
     transition: transform 0.6s ease-in-out;
 }
 
-.container.active .overlay-container {
+.container-auth.active .overlay-container {
     transform: translateX(-100%);
 }
 

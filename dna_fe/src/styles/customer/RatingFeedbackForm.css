@@ -1,0 +1,90 @@
+.rating-feedback-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.rating-feedback-content {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 400px;
+  max-width: 90%;
+}
+
+.rating-error {
+  color: red;
+  margin-bottom: 10px;
+}
+
+.rating-success {
+  color: green;
+  margin-bottom: 10px;
+}
+
+.rating-stars {
+  margin-bottom: 20px;
+}
+
+.star {
+  font-size: 24px;
+  cursor: pointer;
+  color: #ccc;
+}
+
+.star.filled {
+  color: #f39c12;
+}
+
+.comment-section {
+  margin-bottom: 20px;
+}
+
+.comment-section textarea {
+  width: 100%;
+  height: 100px;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.rating-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.submit-button, .cancel-button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.submit-button {
+  background: #007bff;
+  color: white;
+}
+
+.cancel-button {
+  background: #dc3545;
+  color: white;
+}
+
+.existing-feedback {
+  margin-top: 20px;
+  padding: 15px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: #f9f9f9;
+}
+
+.existing-feedback p {
+  margin: 5px 0;
+}

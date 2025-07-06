@@ -13,8 +13,8 @@ const OrderHistory = () => {
     handleFilterChange
   } = useCustomerOrders();
 
-  const formatDate = (dateStr) => dateStr ? new Date(dateStr).toLocaleDateString('vi-VN') : 'N/A';
-  const formatPrice = (amount) => amount ? amount.toLocaleString('vi-VN') + ' VNĐ' : 'N/A';
+  const formatDate = (dateStr) => dateStr ? new Date(dateStr).toLocaleDateString('vi-VN') : 'Không có';
+  const formatPrice = (amount) => amount ? amount.toLocaleString('vi-VN') + ' VNĐ' : 'Không có';
 
   const navigate = useNavigate();
 
@@ -51,11 +51,11 @@ const OrderHistory = () => {
             {nonPendingOrders.map((order) => (
               <tr key={order.orderId}>
                 <td>{order.orderId}</td>
-                <td>{serviceData[order.serviceId]?.serviceName || 'N/A'}</td>
-                <td>{serviceData[order.serviceId]?.serviceType || 'N/A'}</td>
-                <td>{order.resultDeliverAddress || 'N/A'}</td>
-                <td><span className="pill">{order.sampleMethod === 'center' ? 'Tại trung tâm' : 'Tự lấy mẫu'}</span></td>
-                <td>{serviceData[order.serviceId]?.timeTest || 'N/A'} ngày</td>
+                <td>{serviceData[order.serviceId]?.serviceName || 'Không có'}</td>
+                <td>{serviceData[order.serviceId]?.serviceType || 'Không có'}</td>
+                <td>{order.resultDeliverAddress || 'Không có'}</td>
+                <td><span className="pill">{order.sampleMethod === 'center' ? 'Tại trung tâm' : 'Tự thu và gửi mẫu'}</span></td>
+                <td>{serviceData[order.serviceId]?.timeTest || 'Không có'} ngày</td>
                 <td>{formatDate(order.orderDate)}</td>
                 <td>{formatPrice(order.amount)}</td>
                 <td className={`status ${order.orderStatus}`}>

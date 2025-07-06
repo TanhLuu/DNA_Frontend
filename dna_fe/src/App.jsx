@@ -17,10 +17,20 @@ import AllServicePricing from './pages/Pricing/AllServicePricing';
 import OrderHistory from './pages/customer/OrderHistory';
 import OrderDetailAdmin from './pages/admin/OrderDetailAdmin';
 import OrderDetailCustomer from './pages/customer/OrderDetailCustomer';
-import TestResultInput from './pages/admin/TestResultInput';
+
 import DoubleSliderAuth from './pages/auth/DoubleSliderAuth';
 import PaymentPage from './pages/payment/PaymentPage';
 import VNPayReturnPage from './pages/payment/VNPayReturnPage';
+
+import RatingFeedbackList from './pages/admin/RatingFeedbackList';
+import BlogEditor from './pages/admin/BlogEditor';
+import BlogList from './components/Blog/BlogList';
+import BlogDetail from './components/Blog/BlogDetail';
+import BlogListManager from './pages/admin/BlogListManager';
+
+import AccountManagement from './pages/admin/AccountManagement';
+import GeminiChatPopup from './components/GeminiChatPopup';
+
 
 
 function App() {
@@ -61,14 +71,20 @@ function App() {
             <Route path="/legal-price" element={<LegalServicePricing />} />
             <Route path="/all-price" element={<AllServicePricing />} />
             <Route path="/auth" element={<DoubleSliderAuth />} />
+            <Route path="/blog" element={<BlogList />} />
+            <Route path="/blog/:id" element={<BlogDetail />} />
 
             {(role === 'staff' || role === 'manager') && (
               <>
                 <Route path="/ordersPageAdmin" element={<AdminLayout> <OrdersPage /> </AdminLayout>} />
                 <Route path="/serviceManagement" element={<AdminLayout> <ServiceManagement /> </AdminLayout>}/>
                 <Route path="/dashboard" element={<AdminLayout><Dashboard /></AdminLayout>}/>
+                <Route path='/account-management' element={<AdminLayout><AccountManagement /></AdminLayout>}/>
                 <Route path="/admin/orders/:orderId" element={<AdminLayout><OrderDetailAdmin /></AdminLayout>} />
-                <Route path="/admin/test-result-input/:orderId" element={<AdminLayout><TestResultInput /></AdminLayout>} />
+                <Route path="/rating-feedbacks" element={<AdminLayout><RatingFeedbackList /></AdminLayout>} />
+                <Route path="/blog-editor" element={<AdminLayout><BlogEditor /></AdminLayout>} />
+                <Route path="/blog-management" element={<AdminLayout><BlogListManager /></AdminLayout>} />
+                <Route path="/blog-editor/:blogId" element={<AdminLayout><BlogEditor /></AdminLayout>} />
               </>
             )}
 
@@ -85,8 +101,11 @@ function App() {
                 <Route path="/api/payments/vnpay-return" element={<VNPayReturnPage />} />
                 <Route path="/payment/result" element={<VNPayReturnPage />} />
                 <Route path="/payment" element={<PaymentPage />} />
+                
               </>
+              
             )}  
+            
 
             <Route path="*" element={
               (role === 'staff' || role === 'manager') ? (
@@ -96,11 +115,13 @@ function App() {
               )
             } />
           </Routes>
+           {role === 'customer' && <GeminiChatPopup />}
         </main>
 
         {(role !== 'staff' && role !== 'manager') && <Footer />}
       </div>
     </Router>
+    
   );
 }
 

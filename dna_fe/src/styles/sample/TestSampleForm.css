@@ -1,0 +1,173 @@
+.test-sample-form-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(240, 240, 240, 0.95);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  z-index: 1000;
+}
+
+
+.test-sample-form-container {
+  display: flex;
+  width: 500px;
+  height: auto; /* Chiều cao tự động theo nội dung */
+  min-height: 200px; /* Chiều cao tối thiểu */
+  max-height: 80vh; /* Chiều cao tối đa, chiếm 80% chiều cao viewport */
+  background-color: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  font-size: 13px;
+  transition: width 0.3s ease;
+}
+
+.test-sample-form-container.expanded {
+  width: 1000px; /* Mở rộng khi form hiển thị */
+}
+
+.test-sample-form-list {
+  flex: 1;
+  padding: 10px;
+  overflow-y: auto;
+}
+
+.test-sample-form-panel {
+  flex: 1;
+  padding: 12px;
+  border-left: 1px solid #ddd;
+  overflow-y: auto;
+}
+
+.test-sample-form-title {
+  font-size: 15px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.test-sample-form-ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.test-sample-form-item {
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 10px;
+  margin-bottom: 8px;
+  background-color: #f9f9f9;
+}
+
+.test-sample-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.test-sample-form-grid-item {
+  font-size: 12px;
+}
+
+.test-sample-form-edit-btn {
+  margin-top: 6px;
+  background-color: #33e02a;
+  color: #fff;
+  border: none;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.test-sample-form-edit-btn:hover {
+  background-color: #eab308;
+}
+
+.test-sample-form-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+
+.test-sample-form-close-btn {
+  background: none;
+  border: none;
+  font-size: 18px;
+  color: #888;
+  cursor: pointer;
+}
+
+.test-sample-form-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.test-sample-form-field label {
+  font-size: 12px;
+  margin-bottom: 2px;
+  display: block;
+}
+
+.test-sample-form-field input,
+.test-sample-form-field select {
+  padding: 4px 8px;
+  font-size: 13px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 100%;
+}
+
+.test-sample-form-warning {
+  color: red;
+  font-size: 12px;
+}
+
+.test-sample-form-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.cancel-btn,
+.submit-btn {
+  padding: 5px 12px;
+  font-size: 13px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.cancel-btn {
+  background-color: #888;
+  color: white;
+}
+
+.cancel-btn:hover {
+  background-color: #666;
+}
+
+.submit-btn {
+  background-color: #007bff;
+  color: white;
+}
+
+.submit-btn:hover {
+  background-color: #0056b3;
+}
+
+.test-sample-form-group-row {
+  display: flex;
+  gap: 8px;
+}
+
+.test-sample-form-field.flex-1 {
+  flex: 1;
+  min-width: 0;
+}
