@@ -32,7 +32,7 @@
 
 @media (min-width: 1024px) {
   .blog-list-grid {
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr ;
   }
 }
 

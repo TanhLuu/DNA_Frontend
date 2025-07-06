@@ -181,7 +181,7 @@ const BlogEditor = () => {
   console.log('Rendering BlogEditor with title:', title, 'blogType:', blogType, 'blogDate:', blogDate);
   return (
     <div className="blog-editor-container max-w-4xl mx-auto p-4">
-      <h2 className="text-2xl font-bold mb-4">✍️ Blog Editor - Full Features</h2>
+      <h2 className="text-2xl font-bold mb-4">✍️ Thêm/Sửa bài viết</h2>
       <input
         type="text"
         placeholder="Blog Title..."
@@ -197,6 +197,7 @@ const BlogEditor = () => {
       >
         <option value="Tin tức">Tin tức</option>
         <option value="Hướng dẫn">Hướng dẫn</option>
+        <option value="Dịch vụ">Dịch vụ</option>
       </select>
       <label className="block mb-2">Ngày đăng:</label>
       <input

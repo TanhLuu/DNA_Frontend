@@ -8,7 +8,8 @@ const AdminProfile = ({ isOpen, onClose }) => {
     id: null,
     fullName: '',
     email: '',
-    phone: ''
+    phone: '',
+    role: ''
   });
   const [fingerprintImage, setFingerprintImage] = useState('');
   const [isLoading, setIsLoading] = useState(true);
@@ -28,14 +29,18 @@ const AdminProfile = ({ isOpen, onClose }) => {
         try {
           setIsLoading(true);
           const accountData = await fetchAccountInfo();
-          const staffData = await getStaffByAccountId(accountData.id);
           setAccount({
             id: accountData.id || null,
             fullName: accountData.fullName || '',
             email: accountData.email || '',
-            phone: accountData.phone || ''
+            phone: accountData.phone || '',
+            role: accountData.role || ''
           });
-          setFingerprintImage(staffData.fingerprint || '');
+          // Chỉ fetch fingerprint nếu không phải MANAGER
+          if (accountData.role !== 'MANAGER') {
+            const staffData = await getStaffByAccountId(accountData.id);
+            setFingerprintImage(staffData.fingerprint || '');
+          }
         } catch (err) {
           setError('Không thể tải thông tin tài khoản: ' + (err.response?.data?.message || err.message));
         } finally {
@@ -56,10 +61,14 @@ const AdminProfile = ({ isOpen, onClose }) => {
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setFingerprintImage(reader.result); // Lưu base64 của ảnh
+        setFingerprintImage(reader.result);
       };
       reader.readAsDataURL(file);
     }
+  };
+
+  const handleRemoveFingerprintImage = () => {
+    setFingerprintImage('');
   };
 
   const handleSave = async () => {
@@ -71,15 +80,16 @@ const AdminProfile = ({ isOpen, onClose }) => {
         email: account.email,
         phone: account.phone
       });
-      // Cập nhật thông tin nhân viên (bao gồm fingerprint)
-      const staffData = await getStaffByAccountId(account.id);
-      await updateStaff(staffData.id, {
-        accountId: account.id,
-        fingerprint: fingerprintImage, // Sử dụng ảnh base64
-        role: staffData.role
-      });
+      // Cập nhật thông tin nhân viên (bao gồm fingerprint) nếu không phải MANAGER
+      if (account.role !== 'MANAGER') {
+        const staffData = await getStaffByAccountId(account.id);
+        await updateStaff(staffData.id, {
+          accountId: account.id,
+          fingerprint: fingerprintImage,
+          role: staffData.role
+        });
+      }
       setSuccess('Cập nhật hồ sơ thành công!');
-      // Cập nhật localStorage
       localStorage.setItem('fullName', account.fullName);
       localStorage.setItem('email', account.email);
       localStorage.setItem('phone', account.phone);
@@ -142,21 +152,46 @@ const AdminProfile = ({ isOpen, onClose }) => {
                 <label>Email</label>
                 <input type="email" name="email" value={account.email} onChange={handleChange} />
               </div>
-              <div className="profile-field">
-                <label>Ảnh vân tay</label>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleFingerprintImageChange}
-                />
-                {fingerprintImage && (
-                  <img
-                    src={fingerprintImage}
-                    alt="Ảnh vân tay"
-                    style={{ maxWidth: '100px', marginTop: '10px' }}
+              {account.role !== 'MANAGER' && (
+                <div className="profile-field">
+                  <label>Ảnh vân tay</label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFingerprintImageChange}
                   />
-                )}
-              </div>
+                  {fingerprintImage && (
+                    <div style={{ position: 'relative', display: 'inline-block', marginTop: '10px' }}>
+                      <img
+                        src={fingerprintImage}
+                        alt="Ảnh vân tay"
+                        style={{ maxWidth: '100px' }}
+                      />
+                      <button
+                        onClick={handleRemoveFingerprintImage}
+                        style={{
+                          position: 'absolute',
+                          top: '-10px',
+                          right: '-10px',
+                          background: 'red',
+                          color: 'white',
+                          border: 'none',
+                          borderRadius: '50%',
+                          width: '20px',
+                          height: '20px',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          fontSize: '12px'
+                        }}
+                      >
+                        ×
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
 
             <div className="profile-actions">
