@@ -54,7 +54,7 @@ const OrderHistory = () => {
                 <td>{serviceData[order.serviceId]?.serviceName || 'Không có'}</td>
                 <td>{serviceData[order.serviceId]?.serviceType || 'Không có'}</td>
                 <td>{order.resultDeliverAddress || 'Không có'}</td>
-                <td><span className="pill">{order.sampleMethod === 'center' ? 'Tại trung tâm' : 'Tự lấy mẫu'}</span></td>
+                <td><span className="pill">{order.sampleMethod === 'center' ? 'Tại trung tâm' : 'Tự thu và gửi mẫu'}</span></td>
                 <td>{serviceData[order.serviceId]?.timeTest || 'Không có'} ngày</td>
                 <td>{formatDate(order.orderDate)}</td>
                 <td>{formatPrice(order.amount)}</td>

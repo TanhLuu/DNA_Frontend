@@ -29,6 +29,7 @@ import BlogDetail from './components/Blog/BlogDetail';
 import BlogListManager from './pages/admin/BlogListManager';
 
 import AccountManagement from './pages/admin/AccountManagement';
+import GeminiChatPopup from './components/GeminiChatPopup';
 
 
 
@@ -100,8 +101,11 @@ function App() {
                 <Route path="/api/payments/vnpay-return" element={<VNPayReturnPage />} />
                 <Route path="/payment/result" element={<VNPayReturnPage />} />
                 <Route path="/payment" element={<PaymentPage />} />
+                
               </>
+              
             )}  
+            
 
             <Route path="*" element={
               (role === 'staff' || role === 'manager') ? (
@@ -111,11 +115,13 @@ function App() {
               )
             } />
           </Routes>
+           {role === 'customer' && <GeminiChatPopup />}
         </main>
 
         {(role !== 'staff' && role !== 'manager') && <Footer />}
       </div>
     </Router>
+    
   );
 }
 
