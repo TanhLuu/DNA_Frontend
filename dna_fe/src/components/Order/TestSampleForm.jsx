@@ -265,15 +265,22 @@ const TestSampleForm = ({ orderId, customerId, sampleQuantity, serviceType, samp
                     {fieldsToShow().map(key => (
                       <div key={key} className="test-sample-form-grid-item">
                         <strong>{fieldLabels[key]}:</strong>{" "}
-                        {key === 'fingerprint' && sample[key] ? (
-                          <img src={sample[key]} alt="Vân tay" style={{ width: '50px', height: '50px' }} />
-                        ) : key.includes("date") && sample[key] ? (
-                          formatDate(sample[key])
-                        ) : key === 'sampleTypeId' ? (
-                          getSampleTypeName(sample.sampleTypeId) // Sử dụng hàm để lấy tên SampleType
-                        ) : (
-                          sample[key] || "Không có"
-                        )}
+                        {(() => {
+                          if (key === 'fingerprint' && sample[key]) {
+                            return <img src={sample[key]} alt="Vân tay" style={{ width: '50px', height: '50px' }} />;
+                          } else if (
+                            key === 'dateOfBirth' ||
+                            key === 'dateOfIssue' ||
+                            key === 'expirationDate'
+                          ) {
+                            return formatDate(sample[key]);
+                          } else if (key === 'sampleTypeId') {
+                            return getSampleTypeName(sample.sampleTypeId);
+                          } else {
+                            return sample[key] || "Không có";
+                          }
+                        })()}
+
                       </div>
                     ))}
                   </div>

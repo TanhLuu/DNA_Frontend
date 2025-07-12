@@ -8,6 +8,7 @@ const TestResultSampleForm = ({ orderId, testSamples, sampleQuantity, orderStatu
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [selectedResults, setSelectedResults] = useState([]);
+  const role = localStorage.getItem('role'); // Lấy từ bảng account
 
   const isReadOnly = staffRole === "NORMAL_STAFF" || orderStatus !== "COLLECT_SAMPLE";
 
@@ -18,80 +19,80 @@ const TestResultSampleForm = ({ orderId, testSamples, sampleQuantity, orderStatu
   ];
 
   useEffect(() => {
-  const fetchExistingResults = async () => {
-    try {
-      // Lấy dữ liệu mẫu xét nghiệm
-      const sampleResponse = await axios.get(`http://localhost:8080/api/test-result-samples/order/${orderId}`);
-      const existingSamples = sampleResponse.data || [];
+    const fetchExistingResults = async () => {
+      try {
+        // Lấy dữ liệu mẫu xét nghiệm
+        const sampleResponse = await axios.get(`http://localhost:8080/api/test-result-samples/order/${orderId}`);
+        const existingSamples = sampleResponse.data || [];
 
-      // Khởi tạo formData cho bảng nhập allele
-      const initialData = locusNames.map(locus => ({
-        locusName: locus,
-        samples: Array.from({ length: sampleQuantity }, (_, index) => {
-          const testSample = testSamples[index] || { id: index + 1, name: `Sample ${index + 1}`, relationship: "Không có" };
-          const existingSample = existingSamples.find(
-            result => result.testSampleId === testSample.id && result.locusName === locus
-          );
-          return {
-            testSampleId: testSample.id,
-            name: testSample.name || "Không có",
-            relationship: testSample.relationship || "Không có",
-            allele1: existingSample ? existingSample.allele1 : "",
-            allele2: existingSample ? existingSample.allele2 : ""
-          };
-        })
-      }));
-      setFormData(initialData);
+        // Khởi tạo formData cho bảng nhập allele
+        const initialData = locusNames.map(locus => ({
+          locusName: locus,
+          samples: Array.from({ length: sampleQuantity }, (_, index) => {
+            const testSample = testSamples[index] || { id: index + 1, name: `Sample ${index + 1}`, relationship: "Không có" };
+            const existingSample = existingSamples.find(
+              result => result.testSampleId === testSample.id && result.locusName === locus
+            );
+            return {
+              testSampleId: testSample.id,
+              name: testSample.name || "Không có",
+              relationship: testSample.relationship || "Không có",
+              allele1: existingSample ? existingSample.allele1 : "",
+              allele2: existingSample ? existingSample.allele2 : ""
+            };
+          })
+        }));
+        setFormData(initialData);
 
-      // Lấy dữ liệu kết quả
-      const resultResponse = await axios.get(`http://localhost:8080/api/test-results/order/${orderId}`);
-      const existingResults = Array.isArray(resultResponse.data) ? resultResponse.data : []; // Đảm bảo là mảng
+        // Lấy dữ liệu kết quả
+        const resultResponse = await axios.get(`http://localhost:8080/api/test-results/order/${orderId}`);
+        const existingResults = Array.isArray(resultResponse.data) ? resultResponse.data : []; // Đảm bảo là mảng
 
-      // Khởi tạo resultData với tất cả các cặp mẫu, ngay cả khi chưa có dữ liệu
-      const initialResults = [];
-      for (let i = 0; i < sampleQuantity; i++) {
-        for (let j = i + 1; j < sampleQuantity; j++) {
-          const sample1Id = testSamples[i]?.id || i + 1;
-          const sample2Id = testSamples[j]?.id || j + 1;
-          const existingResult = existingResults.find(
-            r => (r.sampleId1 === sample1Id && r.sampleId2 === sample2Id) ||
-                 (r.sampleId1 === sample2Id && r.sampleId2 === sample1Id)
-          );
-          initialResults.push({
-            sample1Id,
-            sample2Id,
-            result: existingResult ? existingResult.result : "",
-            resultPercent: existingResult ? existingResult.resultPercent : ""
-          });
+        // Khởi tạo resultData với tất cả các cặp mẫu, ngay cả khi chưa có dữ liệu
+        const initialResults = [];
+        for (let i = 0; i < sampleQuantity; i++) {
+          for (let j = i + 1; j < sampleQuantity; j++) {
+            const sample1Id = testSamples[i]?.id || i + 1;
+            const sample2Id = testSamples[j]?.id || j + 1;
+            const existingResult = existingResults.find(
+              r => (r.sampleId1 === sample1Id && r.sampleId2 === sample2Id) ||
+                (r.sampleId1 === sample2Id && r.sampleId2 === sample1Id)
+            );
+            initialResults.push({
+              sample1Id,
+              sample2Id,
+              result: existingResult ? existingResult.result : "",
+              resultPercent: existingResult ? existingResult.resultPercent : ""
+            });
+          }
         }
-      }
-      setResultData(initialResults);
-      setSelectedResults(new Array(initialResults.length).fill(false));
-    } catch (err) {
-      console.error("Lỗi khi tải dữ liệu:", err);
-      setError("Lỗi khi tải dữ liệu: " + err.message);
+        setResultData(initialResults);
+        setSelectedResults(new Array(initialResults.length).fill(false));
+      } catch (err) {
+        console.error("Lỗi khi tải dữ liệu:", err);
+        setError("Lỗi khi tải dữ liệu: " + err.message);
 
-      // Khởi tạo resultData mặc định ngay cả khi có lỗi
-      const initialResults = [];
-      for (let i = 0; i < sampleQuantity; i++) {
-        for (let j = i + 1; j < sampleQuantity; j++) {
-          const sample1Id = testSamples[i]?.id || i + 1;
-          const sample2Id = testSamples[j]?.id || j + 1;
-          initialResults.push({
-            sample1Id,
-            sample2Id,
-            result: "",
-            resultPercent: ""
-          });
+        // Khởi tạo resultData mặc định ngay cả khi có lỗi
+        const initialResults = [];
+        for (let i = 0; i < sampleQuantity; i++) {
+          for (let j = i + 1; j < sampleQuantity; j++) {
+            const sample1Id = testSamples[i]?.id || i + 1;
+            const sample2Id = testSamples[j]?.id || j + 1;
+            initialResults.push({
+              sample1Id,
+              sample2Id,
+              result: "",
+              resultPercent: ""
+            });
+          }
         }
+        setResultData(initialResults);
+        setSelectedResults(new Array(initialResults.length).fill(false));
       }
-      setResultData(initialResults);
-      setSelectedResults(new Array(initialResults.length).fill(false));
-    }
-  };
+    };
 
-  fetchExistingResults();
-}, [orderId, testSamples, sampleQuantity]);
+    fetchExistingResults();
+  }, [orderId, testSamples, sampleQuantity]);
   const handleInputChange = (locusIndex, sampleIndex, field, value) => {
     if (isReadOnly) return;
     const updatedData = [...formData];
@@ -128,8 +129,8 @@ const TestResultSampleForm = ({ orderId, testSamples, sampleQuantity, orderStatu
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
     } catch (err) {
-      
-      
+
+
     }
   };
 
@@ -269,7 +270,7 @@ const TestResultSampleForm = ({ orderId, testSamples, sampleQuantity, orderStatu
                 <th>Kết luận</th>
                 <th>Chỉ số kết hợp (CPI)</th>
                 <th>Chọn cặp kết quả</th>
-                {staffRole === "NORMAL_STAFF" && <th>In kết quả</th>}
+                {(staffRole === "NORMAL_STAFF" || role === "MANAGER") && <th>In kết quả</th>}
               </tr>
             </thead>
             <tbody>
@@ -308,7 +309,7 @@ const TestResultSampleForm = ({ orderId, testSamples, sampleQuantity, orderStatu
                         disabled={loading || isReadOnly}
                       />
                     </td>
-                    {staffRole === "NORMAL_STAFF" && (
+                    {(staffRole === "NORMAL_STAFF" || role === "MANAGER") && (
                       <td>
                         <button
                           className="trs-print-btn"
@@ -319,6 +320,7 @@ const TestResultSampleForm = ({ orderId, testSamples, sampleQuantity, orderStatu
                         </button>
                       </td>
                     )}
+
                   </tr>
                 );
               })}
