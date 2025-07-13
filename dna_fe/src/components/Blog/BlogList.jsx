@@ -46,19 +46,25 @@ const BlogList = () => {
         ) : (
           <div className="blog-list-grid">
             {blogs.map((blog) => (
-              <Link key={blog.blogId} to={`/blog/${blog.blogId}`} className="blog-list-card">
-                {blog.titleImageBase64 && (
-                  <img
-                    src={blog.titleImageBase64}
-                    alt={blog.title}
-                    className="blog-list-card-image"
-                  />
-                )}
-                <div className="blog-list-card-content">
-                  <h2 className="blog-list-card-title">{blog.title}</h2>
-                  <p className="blog-list-card-meta">Ngày đăng: {blog.blogDate}</p>
+              blog.id ? ( // Kiểm tra blog.id có tồn tại
+                <Link key={blog.id} to={`/blog/${blog.id}`} className="blog-list-card">
+                  {blog.titleImageBase64 && (
+                    <img
+                      src={blog.titleImageBase64}
+                      alt={blog.title}
+                      className="blog-list-card-image"
+                    />
+                  )}
+                  <div className="blog-list-card-content">
+    <h2 className="blog-list-card-title">{blog.title}</h2>
+    <p className="blog-list-card-meta">Ngày đăng: {blog.blogDate}</p>
+  </div>
+</Link>
+              ) : (
+                <div key={blog.id} className="blog-list-card blog-list-card-error">
+                  <p>Bài viết không có ID hợp lệ</p>
                 </div>
-              </Link>
+              )
             ))}
           </div>
         )}

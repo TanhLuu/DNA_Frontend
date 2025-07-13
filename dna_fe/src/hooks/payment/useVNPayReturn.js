@@ -1,19 +1,31 @@
 import { useEffect, useState } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
-import { confirmVNPayPayment } from '../../api/paymentApi';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { confirmVNPayPayment } from '../../api/paymentApi'; // Adjust the import path as needed
 
 const useVNPayReturn = () => {
-  const [searchParams] = useSearchParams();
-  const [paymentStatus, setPaymentStatus] = useState('pending');
-  const [message, setMessage] = useState('Đang xác thực giao dịch...');
-  const [paymentData, setPaymentData] = useState(null);
+  const [paymentStatus, setPaymentStatus] = useState(null);
+  const [message, setMessage] = useState('');
+  const [paymentData, setPaymentData] = useState({});
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
   useEffect(() => {
     const confirmPayment = async () => {
       try {
-        // Kiểm tra dữ liệu trả về từ VNPay
         const vnp_ResponseCode = searchParams.get('vnp_ResponseCode');
+
+        // Hàm chuyển đổi vnp_PayDate sang định dạng hiển thị
+        const formatVNPayDate = (vnpPayDate) => {
+          if (!vnpPayDate) return new Date().toLocaleString('vi-VN');
+          // Định dạng vnp_PayDate: YYYYMMDDHHMMSS
+          const year = vnpPayDate.slice(0, 4);
+          const month = vnpPayDate.slice(4, 6);
+          const day = vnpPayDate.slice(6, 8);
+          const hour = vnpPayDate.slice(8, 10);
+          const minute = vnpPayDate.slice(10, 12);
+          const second = vnpPayDate.slice(12, 14);
+          return new Date(`${year}-${month}-${day}T${hour}:${minute}:${second}`).toLocaleString('vi-VN');
+        };
 
         // Nếu không có tham số, kiểm tra localStorage
         if ([...searchParams.entries()].length === 0) {
@@ -22,7 +34,15 @@ const useVNPayReturn = () => {
             const paymentInfo = JSON.parse(lastPayment);
             setPaymentStatus('info');
             setMessage('Đang hiển thị thông tin thanh toán gần nhất.');
-            setPaymentData(paymentInfo);
+            setPaymentData({
+              transactionId: paymentInfo.transactionId || 'Không có',
+              amount: paymentInfo.amount || 0,
+              orderInfo: paymentInfo.orderInfo || 'Không có',
+              bankCode: paymentInfo.bankCode || 'Không có',
+              paymentTime: paymentInfo.timestamp
+                ? new Date(paymentInfo.timestamp).toLocaleString('vi-VN')
+                : paymentInfo.paymentTime || paymentInfo.time || new Date().toLocaleString('vi-VN'),
+            });
           } else {
             setPaymentStatus('failed');
             setMessage('Không có thông tin giao dịch.');
@@ -30,12 +50,12 @@ const useVNPayReturn = () => {
           return;
         }
 
-        // Lấy các thông tin khác từ VNPay
+        // Lấy thông tin từ VNPay
         const vnp_TxnRef = searchParams.get('vnp_TxnRef') || 'Không có';
         const vnp_Amount = searchParams.get('vnp_Amount') || '0';
         const vnp_OrderInfo = searchParams.get('vnp_OrderInfo') || 'Không có';
         const vnp_BankCode = searchParams.get('vnp_BankCode') || 'Không có';
-        const vnp_PayDate = searchParams.get('vnp_PayDate') || new Date().toLocaleString();
+        const vnp_PayDate = searchParams.get('vnp_PayDate') || new Date().toLocaleString('vi-VN');
 
         console.log('VNPay response:', {
           code: vnp_ResponseCode,
@@ -49,17 +69,20 @@ const useVNPayReturn = () => {
         await confirmVNPayPayment(params);
         console.log('Backend updated successfully');
 
-        // Xử lý kết quả dựa trên response code
+        // Chuẩn hóa paymentData
+        const paymentData = {
+          transactionId: vnp_TxnRef,
+          amount: parseInt(vnp_Amount) / 100,
+          orderInfo: vnp_OrderInfo,
+          bankCode: vnp_BankCode,
+          paymentTime: formatVNPayDate(vnp_PayDate),
+        };
+
+        // Xử lý kết quả
         if (vnp_ResponseCode === '00') {
           setPaymentStatus('success');
           setMessage('Thanh toán thành công!');
-          setPaymentData({
-            transactionId: vnp_TxnRef,
-            amount: parseInt(vnp_Amount) / 100,
-            orderInfo: vnp_OrderInfo,
-            bankCode: vnp_BankCode,
-            time: vnp_PayDate,
-          });
+          setPaymentData(paymentData);
         } else {
           setPaymentStatus('failed');
           let errorMessage = '';
@@ -94,13 +117,7 @@ const useVNPayReturn = () => {
                 : 'Giao dịch không thành công do lỗi không xác định';
           }
           setMessage(errorMessage);
-          setPaymentData({
-            transactionId: vnp_TxnRef,
-            amount: parseInt(vnp_Amount) / 100,
-            orderInfo: vnp_OrderInfo,
-            bankCode: vnp_BankCode,
-            time: vnp_PayDate,
-          });
+          setPaymentData(paymentData);
         }
       } catch (error) {
         console.error('Error processing payment result:', error);

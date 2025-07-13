@@ -1,14 +1,11 @@
-.BlogList{
-      padding: 0 0 110px 0;
-    background-color: #f1f0f0;
-}
+
 
 .blog-list-container {
   max-width: 1200px;
     margin: 140px auto 30px;
     padding: 40px 20px;
     font-family: Arial, sans-serif;
-    background-color: #f1f0f0;
+
 }
 
 .blog-list-title {
