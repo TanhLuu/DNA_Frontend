@@ -8,7 +8,7 @@ const TestResultSampleForm = ({ orderId, testSamples, sampleQuantity, orderStatu
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [selectedResults, setSelectedResults] = useState([]);
-  const role = localStorage.getItem('role'); // Lấy từ bảng account
+  const role = localStorage.getItem('role');
 
   const isReadOnly = staffRole === "NORMAL_STAFF" || orderStatus !== "COLLECT_SAMPLE";
 
@@ -18,14 +18,17 @@ const TestResultSampleForm = ({ orderId, testSamples, sampleQuantity, orderStatu
     "AMEL", "D5S818", "FGA"
   ];
 
+  // Ánh xạ số mở cho từng locus
+  const getLocusRange = (locusName) => {
+    return locusName === "AMEL" ? "X, Y" : "6-35";
+  };
+
   useEffect(() => {
     const fetchExistingResults = async () => {
       try {
-        // Lấy dữ liệu mẫu xét nghiệm
         const sampleResponse = await axios.get(`http://localhost:8080/api/test-result-samples/order/${orderId}`);
         const existingSamples = sampleResponse.data || [];
 
-        // Khởi tạo formData cho bảng nhập allele
         const initialData = locusNames.map(locus => ({
           locusName: locus,
           samples: Array.from({ length: sampleQuantity }, (_, index) => {
@@ -44,11 +47,9 @@ const TestResultSampleForm = ({ orderId, testSamples, sampleQuantity, orderStatu
         }));
         setFormData(initialData);
 
-        // Lấy dữ liệu kết quả
         const resultResponse = await axios.get(`http://localhost:8080/api/test-results/order/${orderId}`);
-        const existingResults = Array.isArray(resultResponse.data) ? resultResponse.data : []; // Đảm bảo là mảng
+        const existingResults = Array.isArray(resultResponse.data) ? resultResponse.data : [];
 
-        // Khởi tạo resultData với tất cả các cặp mẫu, ngay cả khi chưa có dữ liệu
         const initialResults = [];
         for (let i = 0; i < sampleQuantity; i++) {
           for (let j = i + 1; j < sampleQuantity; j++) {
@@ -72,7 +73,6 @@ const TestResultSampleForm = ({ orderId, testSamples, sampleQuantity, orderStatu
         console.error("Lỗi khi tải dữ liệu:", err);
         setError("Lỗi khi tải dữ liệu: " + err.message);
 
-        // Khởi tạo resultData mặc định ngay cả khi có lỗi
         const initialResults = [];
         for (let i = 0; i < sampleQuantity; i++) {
           for (let j = i + 1; j < sampleQuantity; j++) {
@@ -93,6 +93,7 @@ const TestResultSampleForm = ({ orderId, testSamples, sampleQuantity, orderStatu
 
     fetchExistingResults();
   }, [orderId, testSamples, sampleQuantity]);
+
   const handleInputChange = (locusIndex, sampleIndex, field, value) => {
     if (isReadOnly) return;
     const updatedData = [...formData];
@@ -129,8 +130,7 @@ const TestResultSampleForm = ({ orderId, testSamples, sampleQuantity, orderStatu
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
     } catch (err) {
-
-
+      console.error("Lỗi khi in PDF:", err);
     }
   };
 
@@ -242,6 +242,7 @@ const TestResultSampleForm = ({ orderId, testSamples, sampleQuantity, orderStatu
                           value={sample.allele1}
                           onChange={(e) => handleInputChange(locusIndex, sampleIndex, "allele1", e.target.value)}
                           disabled={loading || isReadOnly}
+                          placeholder={getLocusRange(locus.locusName)} // Thêm placeholder
                         />
                       </td>
                       <td>
@@ -251,6 +252,7 @@ const TestResultSampleForm = ({ orderId, testSamples, sampleQuantity, orderStatu
                           value={sample.allele2}
                           onChange={(e) => handleInputChange(locusIndex, sampleIndex, "allele2", e.target.value)}
                           disabled={loading || isReadOnly}
+                          placeholder={getLocusRange(locus.locusName)} // Thêm placeholder
                         />
                       </td>
                     </React.Fragment>
@@ -320,7 +322,6 @@ const TestResultSampleForm = ({ orderId, testSamples, sampleQuantity, orderStatu
                         </button>
                       </td>
                     )}
-
                   </tr>
                 );
               })}
