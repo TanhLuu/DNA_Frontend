@@ -425,7 +425,7 @@ const OrderDetailCustomer = () => {
         <TestResultDetail
           orderId={orderId}
           fullName={account.fullName}
-          address顧客 = {customer.address}
+          address = {customer.address}
           relationship1={relationship1}
           relationship2={relationship2}
           onClose={() => setShowTestResultModal(false)}

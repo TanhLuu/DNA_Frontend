@@ -31,6 +31,7 @@ const OrderDetailAdmin = () => {
   const [staffRole, setStaffRole] = useState(null);
   const [testSamples, setTestSamples] = useState([]);
   const [selectedTestSampleId, setSelectedTestSampleId] = useState(null);
+  const role = localStorage.getItem('role'); // Lấy từ bảng account
 
   const formatDate = (date) =>
     date ? new Date(date).toLocaleDateString("vi-VN") : "Không có";
@@ -293,23 +294,38 @@ const OrderDetailAdmin = () => {
           </div>
 
           <div className="button-group mt-4 flex gap-4">
-            <button
-              className={`bg-green-500 text-white p-2 rounded hover:bg-green-600 ${isUpdateButtonDisabled() ? 'opacity-50 cursor-not-allowed' : ''}`}
-              onClick={handleUpdateStatus}
-              disabled={isUpdateButtonDisabled()}
-              style={isUpdateButtonDisabled() ? { backgroundColor: '#22c55e', color: '#fff' } : {}}
-            >
-              Cập nhật trạng thái
-            </button>
+            {role !== "MANAGER" && (
+              <button
+                className={`bg-green-500 text-white p-2 rounded hover:bg-green-600 ${isUpdateButtonDisabled() ? 'opacity-50 cursor-not-allowed' : ''
+                  }`}
+                onClick={handleUpdateStatus}
+                disabled={isUpdateButtonDisabled()}
+                style={
+                  isUpdateButtonDisabled()
+                    ? { backgroundColor: '#22c55e', color: '#fff' }
+                    : {}
+                }
+              >
+                Cập nhật trạng thái
+              </button>
+            )}
 
-            <button
-              className={`bg-blue-500 text-white p-2 rounded hover:bg-blue-600 ${isTestSampleButtonDisabled() ? 'opacity-50 cursor-not-allowed' : ''}`}
-              onClick={() => setShowModal(true)}
-              disabled={isTestSampleButtonDisabled()}
-              style={isTestSampleButtonDisabled() ? { backgroundColor: '#3b82f6', color: '#fff' } : {}}
-            >
-              Nhập mẫu xét nghiệm
-            </button>
+
+            {staffRole === 'NORMAL_STAFF' && (
+              <button
+                className={`bg-blue-500 text-white p-2 rounded 
+                ${isTestSampleButtonDisabled() ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-600'}`}
+                onClick={() => setShowModal(true)}
+                disabled={isTestSampleButtonDisabled()}
+                style={{
+                  backgroundColor: '#3b82f6',
+                  color: '#fff'
+                }}
+              >
+                Nhập mẫu xét nghiệm
+              </button>
+            )}
+
 
             {shouldShowCancelButton() && (
               <button

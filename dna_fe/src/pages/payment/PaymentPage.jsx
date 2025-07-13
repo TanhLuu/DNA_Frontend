@@ -33,7 +33,7 @@ const PaymentPage = () => {
         />
       </div>
       <div className="payment-field">
-        <label className="payment-label">Customer ID:</label>
+        <label className="payment-label">Mã khách hàng:</label>
         <input
           value={customerId}
           readOnly

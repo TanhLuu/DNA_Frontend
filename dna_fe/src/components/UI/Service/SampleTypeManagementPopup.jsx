@@ -9,7 +9,7 @@ const SampleTypeManagementPopup = ({ open, onClose }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const API_URL = '/api/sample-types';
+  const API_URL = 'http://localhost:8080/api/sample-types';
 
   const fetchSampleTypes = async () => {
     setLoading(true);
