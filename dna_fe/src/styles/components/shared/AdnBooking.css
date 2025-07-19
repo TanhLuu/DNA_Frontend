@@ -1,20 +1,26 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 .adn-booking-container {
-  background-color: #333333;
-  padding: 80px 20px;
-  color: #fff;
+  background-color: #ffffff; /* White to match header */
+  padding: 60px 20px; /* Reduced padding for balance */
   text-align: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); /* Subtle shadow for depth */
+  border-radius: 16px; /* Rounded corners for modern look */
 }
 
 .adn-booking-title {
   font-size: 28px;
-  color: white;
+  color: #003366; /* Dark blue to match footer */
   margin-bottom: 10px;
   font-weight: bold;
+  text-transform: uppercase;
 }
 
 .adn-booking-subtitle {
   font-size: 16px;
-  color: #ccc;
+  color: #4b5e7a; /* Blue-gray for softer contrast */
   margin-bottom: 40px;
   max-width: 700px;
   margin-left: auto;
@@ -26,42 +32,43 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 40px;
+  gap: 30px; /* Reduced gap for tighter layout */
 }
 
 .adn-card {
-  background-color: #7d7878;
-  border-radius: 16px;
-  padding: 30px 25px;
-  width: 350px;
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+  background-color: #f9f9f9; /* Light gray for contrast with white background */
+  border-radius: 12px;
+  padding: 25px 20px;
+  width: 320px; /* Slightly smaller for elegance */
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1); /* Softer shadow */
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .adn-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.5);
+  transform: translateY(-5px); /* Subtle lift effect */
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
 }
 
 .adn-card h3 {
-  font-size: 20px;
-  color: white;
-  margin-bottom: 15px;
+  font-size: 18px; /* Slightly smaller for balance */
+  color: #003366; /* Dark blue to match footer */
+  margin-bottom: 12px;
   text-transform: uppercase;
+  font-weight: bold;
 }
 
 .adn-description {
   font-size: 14px;
-  color: #ccc;
+  color: #333333; /* Dark gray for readability */
   margin-bottom: 20px;
   line-height: 1.6;
 }
 
 .adn-features {
   text-align: left;
-  margin-bottom: 30px;
-  padding-left: 18px;
-  color: #eee;
+  margin-bottom: 25px;
+  padding-left: 20px;
+  color: #4b5e7a; /* Blue-gray for consistency */
   font-size: 14px;
   line-height: 1.5;
 }
@@ -72,17 +79,30 @@
 }
 
 .adn-button {
-  background-color: #e53935;
-  color: white;
+  background-color: #005eb8; /* Blue to match footer */
+  color: #ffffff;
   border: none;
-  padding: 12px 20px;
+  padding: 10px 18px; /* Slightly smaller for elegance */
   font-size: 14px;
   font-weight: bold;
-  border-radius: 8px;
+  border-radius: 6px; /* Softer corners */
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 .adn-button:hover {
-  background-color: #c62828;
+  background-color: #004a8f; /* Darker blue for hover */
+  transform: translateY(-2px); /* Subtle lift effect */
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .adn-booking {
+    flex-direction: column;
+    align-items: center;
+  }
+  .adn-card {
+    width: 100%;
+    max-width: 400px;
+  }
 }

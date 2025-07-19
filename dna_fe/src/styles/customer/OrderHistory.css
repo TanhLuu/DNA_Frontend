@@ -1,119 +1,105 @@
-.customer-orders-container {
-  max-width: 1200px;
-  margin: 160px auto 50px;
-  padding: 20px;
-  font-family: Arial, sans-serif;
+/* src/styles/customer/OrderHistory.css */
+
+:root {
+  --order-primary: #1b61d3; /* màu đồng bộ với footer */
+  --order-bg: #ffffff;
+  --order-card-bg: #f8f9fc;
+  --order-border: #e0e4ef;
+  --order-text: #333;
+  --order-muted: #777;
+  --order-radius: 10px;
+  --order-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  --order-transition: 0.25s ease;
 }
 
-.customer-orders-container h2 {
-  color: #333;
+/* Container */
+.customer-order-history-container {
+  background: var(--order-bg);
+  padding: 40px 20px;
+  min-height: calc(100vh - 120px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.customer-order-history-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--order-text);
+  margin-bottom: 25px;
   text-align: center;
-  margin-bottom: 20px;
 }
 
-.orders-table-wrapper {
+/* Table wrapper */
+.customer-order-history-table-wrapper {
+  width: 100%;
+  max-width: 1100px;
+  background: var(--order-card-bg);
+  border-radius: var(--order-radius);
+  box-shadow: var(--order-shadow);
   overflow-x: auto;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
 }
 
-.orders-table {
+/* Table style */
+.customer-order-history-table {
   width: 100%;
   border-collapse: collapse;
-  background-color: #fff;
+  color: var(--order-text);
+  font-size: 15px;
+  text-align: center; /* ✅ Căn giữa toàn bộ nội dung bảng */
 }
 
-.orders-table th,
-.orders-table td {
-  padding: 12px 15px;
-  text-align: center;
-  border-bottom: 1px solid #ddd;
+.customer-order-history-table thead {
+  background: #eef2fa;
 }
 
-.orders-table th {
-  background-color: #f4f4f4;
-  font-weight: bold;
-  color: #333;
+.customer-order-history-table th,
+.customer-order-history-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--order-border);
+  text-align: center; /* ✅ Căn giữa từng ô */
+  vertical-align: middle;
 }
 
-.orders-table tbody tr:hover {
-  background-color: #f9f9f9;
+.customer-order-history-table th {
+  font-weight: 600;
+  color: var(--order-text);
 }
 
-.status {
-  font-weight: bold;
-  padding: 5px 10px;
-  border-radius: 12px;
-  display: inline-block;
+.customer-order-history-table tbody tr:hover {
+  background: rgba(27, 97, 211, 0.05);
+  transition: var(--order-transition);
 }
 
-.status-pending {
-  background-color: #ffebee;
-  color: #c62828;
-}
-
-.status-preparing {
-  background-color: #eceff1;
-  color: #455a64;
-}
-
-.status-collecting {
-  background-color: #fff3e0;
-  color: #ef6c00;
-}
-
-.status-transferring {
-  background-color: #e1f5fe;
-  color: #0277bd;
-}
-
-.status-testing {
-  background-color: #e8eaf6;
-  color: #3f51b5;
-}
-
-.status-completed {
-  background-color: #e8f5e9;
-  color: #2e7d32;
-}
-
-.pill {
-  color: #333;
-  padding: 5px 10px;
-  border-radius: 12px;
-  font-size: 0.9em;
-}
-
-.action-btn {
-  background-color: #2196f3;
-  color: white;
+/* Action button */
+.customer-order-history-action-btn {
+  background: var(--order-primary);
+  color: #fff;
   border: none;
-  padding: 8px 12px;
-  margin: 0 5px;
-  border-radius: 4px;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 14px;
   cursor: pointer;
-  font-size: 0.9em;
-  transition: background-color 0.3s;
+  transition: var(--order-transition);
 }
 
-.action-btn:hover {
-  background-color: #1976d2;
+.customer-order-history-action-btn:hover {
+  background: #154fb0;
 }
 
-.action-btn:disabled {
-  background-color: #bdbdbd;
-  cursor: not-allowed;
-}
-
-.orders-loading {
+/* Loading & error */
+.customer-order-history-loading,
+.customer-order-history-error {
+  font-size: 16px;
   text-align: center;
-  padding: 20px;
-  font-size: 1.2em;
-  color: #666;
+  padding: 40px;
+  color: var(--order-muted);
 }
 
-.orders-error {
-  text-align: center;
-  padding: 20px;
-  font-size: 1.2em;
+.customer-order-history-error {
+  color: #d32f2f;
+  font-weight: 600;
 }
+

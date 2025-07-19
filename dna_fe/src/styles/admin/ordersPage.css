@@ -1,98 +1,70 @@
-.orders-container {
-  padding: 10px 0;
-  background-color: #f3f4f6;
-  min-height: 100vh;
-  font-family: Arial, sans-serif;
-  text-align: center;
+.admin-orders-container {
+  padding: 20px;
 }
 
-.orders-buttons {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-bottom: 24px;
-  justify-content: center;
-}
-
-.btn {
-  padding: 10px 16px;
-  border: none;
-  border-radius: 6px;
-  color: white;
+.admin-orders-title {
+  font-size: 22px;
   font-weight: bold;
-  cursor: pointer;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  margin-bottom: 15px;
 }
 
-.btn-red {
-  background-color: #e53935;
-}
-
-.btn-gray {
-  background-color: #9e9e9e;
-}
-
-.btn-yellow {
-  background-color: #fbc02d;
-}
-
-.btn-light-blue {
-  background-color: #4fc3f7;
-}
-
-.btn-blue {
-  background-color: #1e88e5;
-}
-
-.btn-green {
-  background-color: #43a047;
-}
-
-.btn-dark-blue {
-  background-color: #0d47a1;
-}
-
-.orders-table-wrapper {
-  background-color: white;
-  border-radius: 8px;
+.admin-orders-table-wrapper {
   overflow-x: auto;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin-top: 15px;
 }
 
-.orders-table {
+.admin-orders-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 14px;
-  color: #333;
+  background: #fff;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
 }
 
-.orders-table th {
-  background-color: #1f2937;
+.admin-orders-table th,
+.admin-orders-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #eee;
+  text-align: left;
+}
+
+.admin-orders-table th {
+  background: #f5f5f5;
+  font-weight: 600;
+}
+
+.admin-orders-empty {
+  text-align: center;
+  padding: 1rem;
+  color: #777;
+}
+
+.admin-orders-pill {
+  display: inline-block;
+  padding: 4px 8px;
+  background: #f0f0f0;
+  border-radius: 6px;
+  font-size: 12px;
+}
+
+.admin-orders-action-btn {
+  padding: 6px 10px;
+  background: #007bff;
   color: white;
-  padding: 10px;
-}
-
-.orders-table td {
-  padding: 10px;
-  border-bottom: 1px solid #e0e0e0;
-}
-
-.status {
-  font-weight: bold;
-}
-
-.action-btn {
-  background-color: #43a047;
-  color: white;
-  padding: 5px;
-  margin: 2px;
   border: none;
-  border-radius: 4px;
-  font-size: 10px;
+  border-radius: 6px;
   cursor: pointer;
+  transition: background 0.2s;
 }
 
-.action-btn:disabled {
-  background-color: #ccc;
-  cursor: not-allowed;
+.admin-orders-action-btn:hover {
+  background: #0056b3;
 }
+
+/* Trạng thái màu sắc (ví dụ) */
+.admin-orders-status.CANCEL { color: red; font-weight: 600; }
+.admin-orders-status.CONFIRM { color: orange; }
+.admin-orders-status.SEND_KIT { color: #17a2b8; }
+.admin-orders-status.SEND_SAMPLE { color: #6c757d; }
+.admin-orders-status.COLLECT_SAMPLE { color: #20c997; }
+.admin-orders-status.TESTED { color: #6610f2; }
+.admin-orders-status.COMPLETED { color: green; font-weight: bold; }

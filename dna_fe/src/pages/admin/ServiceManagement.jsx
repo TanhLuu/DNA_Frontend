@@ -69,7 +69,7 @@ const ServiceManagement = () => {
     <div className="service-container">
       <div className="service-card">
         <div className="service-header">
-          <span>Quản lý dịch vụ</span>
+          <span>QUẢN LÝ DỊCH VỤ</span>
           <div>
             {userRole === 'MANAGER' && (
               <button className="service-btn-add" onClick={openAddModal}>+ Thêm dịch vụ </button>

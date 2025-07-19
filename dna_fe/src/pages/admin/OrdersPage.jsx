@@ -1,19 +1,20 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useOrders from '../../hooks/Order/useOrdersPage';
 import STATUS_LABELS from '../../constants/orderStatusLabels';
+import StatusFilterBar from '../../constants/StatusFilterBar'; // ✅ Thêm component lọc
 import '../../styles/admin/ordersPage.css';
 
 const OrdersPage = () => {
   const {
-    orders,
     filteredOrders,
     isLoading,
     error,
-    handleFilterChange,
     accountData,
     serviceData
   } = useOrders();
+
+  const [selectedStatus, setSelectedStatus] = useState(""); // ✅ Trạng thái đang chọn
 
   const formatDate = d => d ? new Date(d).toLocaleDateString('vi-VN') : 'Không có';
   const formatPrice = a => a ? a.toLocaleString('vi-VN') + ' VNĐ' : 'Không có';
@@ -23,26 +24,36 @@ const OrdersPage = () => {
     navigate(`/admin/orders/${orderId}`);
   };
 
-  if (isLoading) return <div className="orders-loading">Đang tải dữ liệu...</div>;
-  if (error) return <div className="orders-error text-red-500">{error}</div>;
+  if (isLoading) return <div className="admin-orders-loading">Đang tải dữ liệu...</div>;
+  if (error) return <div className="admin-orders-error">{error}</div>;
 
-  const nonPendingOrders = filteredOrders.filter(order => order.orderStatus !== 'PENDING');
+  // ✅ Bỏ đơn PENDING
+  let nonPendingOrders = filteredOrders.filter(order => order.orderStatus !== 'PENDING');
+
+  // ✅ Nếu có chọn trạng thái thì lọc thêm
+  if (selectedStatus) {
+    nonPendingOrders = nonPendingOrders.filter(order => order.orderStatus === selectedStatus);
+  }
 
   return (
-    <div className="orders-container">
-      <div className="orders-table-wrapper">
-        <table className="orders-table">
+    <div className="admin-orders-container">
+      <h2 className="admin-orders-title">DANH SÁCH ĐƠN HÀNG</h2>
+
+      {/* ✅ Thanh lọc trạng thái */}
+      <StatusFilterBar
+        selectedStatus={selectedStatus}
+        setSelectedStatus={setSelectedStatus}
+      />
+
+      <div className="admin-orders-table-wrapper">
+        <table className="admin-orders-table">
           <thead>
             <tr>
               <th>ID</th>
               <th>Tên khách</th>
-              <th>SĐT</th>
-              <th>Email</th>
               <th>Dịch vụ</th>
               <th>Mục đích</th>
-              <th>Địa chỉ nhận kết quả</th>
               <th>Hình thức thu mẫu</th>
-              <th>Thời gian xét nghiệm</th>
               <th>Ngày đặt</th>
               <th>Giá</th>
               <th>Trạng thái</th>
@@ -55,26 +66,33 @@ const OrdersPage = () => {
                 <tr key={order.orderId}>
                   <td>{order.orderId}</td>
                   <td>{accountData[order.customerId]?.fullName || 'Không có'}</td>
-                  <td>{accountData[order.customerId]?.phone || 'Không có'}</td>
-                  <td>{accountData[order.customerId]?.email || 'Không cóA'}</td>
                   <td>{serviceData[order.serviceId]?.serviceName || 'Không có'}</td>
                   <td>{serviceData[order.serviceId]?.serviceType || 'Không có'}</td>
-                  <td>{order.resultDeliverAddress || 'Không có'}</td>
-                  <td><span className="pill">{order.sampleMethod === 'center' ? 'Tại trung tâm' : 'Tự thu và gửi mẫu'}</span></td>
-                  <td>{serviceData[order.serviceId]?.timeTest || 'Không có'} ngày</td>
+                  <td>
+                    <span className="admin-orders-pill">
+                      {order.sampleMethod === 'center' ? 'Tại trung tâm' : 'Tự thu và gửi mẫu'}
+                    </span>
+                  </td>
                   <td>{formatDate(order.orderDate)}</td>
                   <td>{formatPrice(order.amount)}</td>
-                  <td className={`status ${order.orderStatus}`}>
+                  <td className={`admin-orders-status ${order.orderStatus}`}>
                     {STATUS_LABELS[order.orderStatus] || 'Không có'}
                   </td>
                   <td>
-                    <button className="action-btn" onClick={() => handleViewDetails(order.orderId)}>Chi tiết đơn</button>
+                    <button
+                      className="admin-orders-action-btn"
+                      onClick={() => handleViewDetails(order.orderId)}
+                    >
+                      Chi tiết đơn
+                    </button>
                   </td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan="13" className="text-center">Không có đơn hàng nào phù hợp</td>
+                <td colSpan="9" className="admin-orders-empty">
+                  Không có đơn hàng nào phù hợp
+                </td>
               </tr>
             )}
           </tbody>

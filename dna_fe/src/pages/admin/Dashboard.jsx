@@ -151,7 +151,7 @@ const Dashboard = () => {
 
   return (
     <div className="dashboard-container">
-      <h1 className="dashboard-title">Dashboard</h1>
+      <h1 className="dashboard-title">THỐNG KÊ VÀ BÁO CÁO</h1>
 
       <div className="filter-container">
         <label>Lọc theo tháng:</label>

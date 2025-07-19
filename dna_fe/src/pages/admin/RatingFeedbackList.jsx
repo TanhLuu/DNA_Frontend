@@ -71,7 +71,7 @@ const RatingFeedbackList = () => {
 
   return (
     <div className="rating-feedback-container">
-      <h2><strong>Danh Sách Đánh Giá và Phản Hồi</strong></h2>
+      <h2><strong>DANH SÁCH ĐÁNH GIÁ VÀ PHẢN HỒI</strong></h2>
       {ratingFeedbacks.length === 0 ? (
         <p>Không có đánh giá nào.</p>
       ) : (

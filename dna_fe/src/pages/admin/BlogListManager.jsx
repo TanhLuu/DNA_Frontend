@@ -77,8 +77,8 @@ const BlogListManager = () => {
                 />
               )}
               <h2 className="text-xl font-semibold mb-2">{blog.title}</h2>
-              <p className="text-gray-600 mb-2">Type: {blog.blogType}</p>
-              <p className="text-gray-600 mb-4">Date: {blog.blogDate}</p>
+              <p className="text-gray-600 mb-2">Loại: {blog.blogType}</p>
+              <p className="text-gray-600 mb-4">Ngày: {blog.blogDate}</p>
               {/* <div className="ql-snow">
                 <div
                   className="ql-editor line-clamp-3"
