@@ -35,3 +35,8 @@ export const toggleServiceActive = async (id) => {
   const response = await axiosInstance.put(`/api/services/${id}/toggle-active`);
   return response.data;
 };
+
+export const calculateServicePrice = async (serviceId, sampleCount) => {
+  const res = await axiosInstance.get(`/api/services/${serviceId}/calculate-price?numberOfSamples=${sampleCount}`);
+  return res.data;
+};
