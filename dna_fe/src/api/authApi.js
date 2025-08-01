@@ -5,7 +5,7 @@ const BASE_URL = '/auth';
 // Đăng nhập
 export const loginUser = async (username, password) => {
   const response = await axiosInstance.post(`${BASE_URL}/login`, { username, password });
-  return response.data; // ✅ Sửa tại đây: Trả về trực tiếp { account, token }
+  return response.data; 
 };
 
 // Đăng ký
