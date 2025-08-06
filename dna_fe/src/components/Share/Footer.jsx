@@ -21,7 +21,7 @@ const Footer = () => {
             <h4>Thông tin</h4>
             <ul>
               <li><a href="/about">Về MedLab</a></li>
-              <li><a href="/services">Dịch vụ</a></li>
+              <li><a href="/service-swp">Dịch vụ</a></li>
               <li><a href="/pricing">Bảng giá</a></li>
               <li><a href="/contact">Liên hệ</a></li>
             </ul>

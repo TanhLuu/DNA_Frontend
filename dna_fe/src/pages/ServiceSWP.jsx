@@ -13,19 +13,14 @@ const ServiceList = () => {
     }, []);
 
     return (
-     
         <div className="service-grid">
-        
           {services.map((service) => (
             <div key={service.serviceID}>
               <h3 >{service.serviceName}</h3>
                 <p >{service.describe || 'Không có mô tả chi tiết.'}</p>
               </div>
           ))}
-     </div>
- 
-       
+     </div>    
     )
-    
  };
   export default ServiceList ;

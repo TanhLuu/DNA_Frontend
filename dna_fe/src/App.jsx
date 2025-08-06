@@ -31,7 +31,7 @@ import BlogListManager from './pages/admin/BlogListManager';
 import AccountManagement from './pages/admin/AccountManagement';
 import GeminiChatPopup from './components/GeminiChatPopup';
 
-
+import ServiceSWP from './pages/ServiceSWP';
 
 function App() {
 
@@ -74,6 +74,7 @@ function App() {
             <Route path="/blog" element={<BlogList />} />
             <Route path="/blog/:id" element={<BlogDetail />} />
 
+            <Route path="/service-swp" element={<ServiceSWP />} />
             {(role === 'staff' || role === 'manager') && (
               <>
                 <Route path="/ordersPageAdmin" element={<AdminLayout> <OrdersPage /> </AdminLayout>} />
