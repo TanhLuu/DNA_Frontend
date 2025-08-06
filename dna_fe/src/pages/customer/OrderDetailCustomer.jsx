@@ -240,6 +240,7 @@ const OrderDetailCustomer = () => {
     };
   };
 
+
   const { relationship1, relationship2 } =
     order && getRelationships(order.sampleId1, order.sampleId2);
 

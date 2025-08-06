@@ -42,14 +42,14 @@ const BlogListManager = () => {
     }
   };
   const handleToggleActive = async (blogId) => {
-  try {
-    await axios.put(`http://localhost:8080/api/blogs/${blogId}/toggle-active`);
-    fetchBlogs(); // Cập nhật lại danh sách blog
-  } catch (error) {
-    console.error('Error toggling active state:', error);
-    alert('Không thể thay đổi trạng thái bài viết!');
-  }
-};
+    try {
+      await axios.put(`http://localhost:8080/api/blogs/${blogId}/toggle-active`);
+      fetchBlogs(); // Cập nhật lại danh sách blog
+    } catch (error) {
+      console.error('Error toggling active state:', error);
+      alert('Không thể thay đổi trạng thái bài viết!');
+    }
+  };
 
 
   return (
@@ -86,33 +86,33 @@ const BlogListManager = () => {
                 />
               </div> */}
               <div className="flex justify-between items-center mt-4">
-  <div>
-    <p className={`font-bold ${blog.isActive ? 'text-green-600' : 'text-red-600'}`}>
-      Trạng thái: {blog.isActive ? 'Đang hiển thị' : 'Đã ẩn'}
-    </p>
-    <button
-      onClick={() => handleToggleActive(blog.id)}
-      className={`mt-2 px-3 py-1 rounded text-white font-semibold 
+                <div>
+                  <p className={`font-bold ${blog.isActive ? 'text-green-600' : 'text-red-600'}`}>
+                    Trạng thái: {blog.isActive ? 'Đang hiển thị' : 'Đã ẩn'}
+                  </p>
+                  <button
+                    onClick={() => handleToggleActive(blog.id)}
+                    className={`mt-2 px-3 py-1 rounded text-white font-semibold 
         ${blog.isActive ? 'bg-gray-500 hover:bg-gray-700' : 'bg-green-500 hover:bg-green-700'}`}
-    >
-      {blog.isActive ? 'Ẩn bài viết' : 'Hiện bài viết'}
-    </button>
-  </div>
-  <div className="flex space-x-2">
-    <button
-      onClick={() => handleEditBlog(blog.id)}
-      className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded"
-    >
-      Sửa
-    </button>
-    <button
-      onClick={() => handleDeleteBlog(blog.id)}
-      className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
-    >
-      Xóa
-    </button>
-  </div>
-</div>
+                  >
+                    {blog.isActive ? 'Ẩn bài viết' : 'Hiện bài viết'}
+                  </button>
+                </div>
+                <div className="flex space-x-2">
+                  <button
+                    onClick={() => handleEditBlog(blog.id)}
+                    className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded"
+                  >
+                    Sửa
+                  </button>
+                  <button
+                    onClick={() => handleDeleteBlog(blog.id)}
+                    className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                  >
+                    Xóa
+                  </button>
+                </div>
+              </div>
 
             </div>
           ))

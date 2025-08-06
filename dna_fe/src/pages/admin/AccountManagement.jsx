@@ -118,39 +118,41 @@ const AccountManagement = () => {
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {accounts.map((account) => (
-              <tr key={account.id}>
-                <td className="px-6 py-4 whitespace-nowrap">{account.id}</td>
-                <td className="px-6 py-4 whitespace-nowrap">{account.fullName}</td>
-                <td className="px-6 py-4 whitespace-nowrap">{account.email}</td>
-                <td className="px-6 py-4 whitespace-nowrap">{account.phone}</td>
-                <td className="px-6 py-4 whitespace-nowrap">{account.role}</td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                    account.active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                  }`}>
-                    {account.active ? 'Hoạt động' : 'Đã vô hiệu'}
-                  </span>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  {account.active ? (
-                    <button
-                      onClick={() => handleDeactivate(account.id)}
-                      className="text-red-600 hover:text-red-900 mr-4"
-                    >
-                      Vô hiệu hóa
-                    </button>
-                  ) : (
-                    <button
-                      onClick={() => handleActivate(account.id)}
-                      className="text-green-600 hover:text-green-900 mr-4"
-                    >
-                      Kích hoạt
-                    </button>
-                  )}
-                </td>
-              </tr>
-            ))}
+            {accounts
+              .filter(account => account.role !== 'MANAGER') // Ẩn tài khoản có vai trò MANAGER
+              .map((account) => (
+                <tr key={account.id}>
+                  <td className="px-6 py-4 whitespace-nowrap">{account.id}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">{account.fullName}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">{account.email}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">{account.phone}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">{account.role}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                      account.active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                    }`}>
+                      {account.active ? 'Hoạt động' : 'Đã vô hiệu'}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {account.active ? (
+                      <button
+                        onClick={() => handleDeactivate(account.id)}
+                        className="text-red-600 hover:text-red-900 mr-4"
+                      >
+                        Vô hiệu hóa
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => handleActivate(account.id)}
+                        className="text-green-600 hover:text-green-900 mr-4"
+                      >
+                        Kích hoạt
+                      </button>
+                    )}
+                  </td>
+                </tr>
+              ))}
           </tbody>
         </table>
       </div>

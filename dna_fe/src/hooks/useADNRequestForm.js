@@ -28,7 +28,7 @@ const useADNRequestForm = (getServices, isCivil) => {
   const [success, setSuccess] = useState(null);
   const [totalPrice, setTotalPrice] = useState(null);
 
-  const formatDate = (iso) => iso?.split('T')[0] || '';
+  const formatDate = (iso) => iso?.split('T')[0] || ''; 
 
   useEffect(() => {
     const fetchData = async () => {
@@ -70,12 +70,6 @@ const useADNRequestForm = (getServices, isCivil) => {
   }, [getServices]);
 
   useEffect(() => {
-    if (!isCivil && formData.method !== 'center') {
-      setFormData((prev) => ({ ...prev, method: 'center' }));
-    }
-  }, [isCivil]);
-
-  useEffect(() => {
     const fetchTotalPrice = async () => {
       if (selectedService && sampleCount) {
         try {
@@ -106,56 +100,58 @@ const useADNRequestForm = (getServices, isCivil) => {
   const calculateTotalPrice = () => totalPrice;
 
   const handleSubmit = async (e, isCivil) => {
-    e.preventDefault();
-    setError(null);
-    setSuccess(null);
+  e.preventDefault();
+  setError(null);
+  setSuccess(null);
 
-    try {
-      const customerId = localStorage.getItem('customerId');
-      if (!customerId) throw new Error('Không tìm thấy ID khách hàng. Vui lòng đăng nhập.');
-
-      const amount = totalPrice || 0;
-
-      const formDataObj = new FormData(e.target);
-      const formDataEntries = Object.fromEntries(formDataObj);
-
-      const orderData = {
-        customerId: parseInt(customerId),
-        staffId: null,
-        serviceId: selectedService?.serviceID || parseInt(formData.testType),
-        orderDate: formData.orderDate || new Date().toISOString().split('T')[0],
-        orderStatus: 'PENDING',
-        sampleMethod: isCivil ? formData.method || formDataEntries.method || '' : 'center',
-        resultDeliveryMethod: formData.receiveAt || formDataEntries.receiveAt || '',
-        resultDeliverAddress: formData.resultAddress || formDataEntries.resultAddress || '',
-        sampleQuantity: parseInt(sampleCount) || 2,
-        amount: amount
-      };
-
-      if (!orderData.serviceId || !orderData.resultDeliveryMethod || !orderData.sampleQuantity) {
-        throw new Error('Vui lòng điền đầy đủ thông tin: Loại xét nghiệm, hình thức nhận kết quả, và số người cần phân tích.');
-      }
-
-      const res = await createTestOrder(orderData);
-      const orderId = res.orderId || res.id;
-
-      setSuccess('Tạo đơn hàng thành công!');
-      setFormData({ method: isCivil ? '' : 'center' });
-      setSampleCount(2);
-
-      navigate('/payment', {
-        state: {
-          orderId,
-          customerId,
-          customerName: customer.requesterName,
-          amount
-        }
-      });
-    } catch (err) {
-      setError(err.response?.data?.message || err.message || 'Tạo đơn hàng thất bại.');
-      console.error('Submit error:', err);
+  try {
+    const customerId = localStorage.getItem('customerId');
+    if (!customerId) {
+      throw new Error('Không tìm thấy ID khách hàng. Vui lòng đăng nhập.');
     }
-  };
+
+    const amount = totalPrice || 0;
+
+    const orderData = {
+      customerId: parseInt(customerId),
+      staffId: null,
+      serviceId: selectedService?.serviceID || parseInt(formData.testType),
+      orderDate: formData.orderDate || new Date().toISOString().split('T')[0],
+      orderStatus: 'PENDING',
+      sampleMethod: isCivil ? (formData.method || '') : 'center',
+      resultDeliveryMethod: formData.receiveAt || '',
+      resultDeliverAddress: formData.resultAddress || '',
+      sampleQuantity: parseInt(sampleCount) || 2,
+      amount: amount
+    };
+
+    if (!orderData.serviceId || !orderData.resultDeliveryMethod || !orderData.sampleQuantity) {
+      throw new Error('Vui lòng điền đầy đủ thông tin: Loại xét nghiệm, hình thức nhận kết quả, và số người cần phân tích.');
+    }
+
+    const response = await createTestOrder(orderData);
+    const orderId = response.orderId || response.id;
+
+    setSuccess('Tạo đơn hàng thành công!');
+
+    setFormData({ method: isCivil ? '' : 'center' });
+    setSampleCount(2);
+
+    navigate('/payment', {
+      state: {
+        orderId,
+        customerId,
+        customerName: customer.requesterName,
+        amount
+      }
+    });
+
+  } catch (err) {
+    const errorMessage = err.response?.data?.message || err.message || 'Tạo đơn hàng thất bại.';
+    setError(errorMessage);
+    console.error('Submit error:', err);
+  }
+};
 
   return {
     customer,

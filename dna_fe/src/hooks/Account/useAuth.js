@@ -80,13 +80,12 @@ export const useAuth = () => {
     }
   };
 
-  const registerStaff = async (form, callback) => {
+  const registerStaff = async (form) => {
     setError('');
     setSuccess('');
     try {
       await createStaff(form); // ✅ bỏ .data
       setSuccess('Tạo tài khoản nhân viên thành công!');
-      callback?.();
     } catch (err) {
       setError(err.response?.data || 'Tạo tài khoản thất bại');
     }

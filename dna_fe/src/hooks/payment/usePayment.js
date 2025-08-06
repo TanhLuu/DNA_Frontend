@@ -34,10 +34,7 @@ const usePayment = () => {
   }, [location.state]);
 
   const handlePayment = async () => {
-    if (!orderId || !customerId || !amount) {
-      setError('Vui lòng nhập đầy đủ thông tin!');
-      return;
-    }
+    
 
     setLoading(true);
     setError('');
