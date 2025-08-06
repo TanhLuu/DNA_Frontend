@@ -15,7 +15,7 @@ const Home = () => {
     useEffect(() => {
         axios.get('http://localhost:8080/api/blogs?type=Dịch vụ')
             .then(res => {
-                const limitedBlogs = res.data.slice(0, 4); // lấy tối đa 4 bài
+                const limitedBlogs = res.data.slice(0, 4); // 4 blog
                 setServiceBlogs(limitedBlogs);
             })
             .catch(err => {

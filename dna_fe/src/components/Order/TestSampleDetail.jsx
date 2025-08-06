@@ -1,29 +1,30 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import { getTestSampleById, getAllSampleTypes } from "../../api/orderApi";
 import "../../styles/sample/TestSampleDetail.css";
 
 const TestSampleDetail = ({ orderId, testSampleId, serviceType, sampleMethod, onClose }) => {
   const [testSample, setTestSample] = useState(null);
-  const [sampleTypes, setSampleTypes] = useState([]); // Thêm state để lưu danh sách SampleType
+  const [sampleTypes, setSampleTypes] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   const formatDate = (date) =>
     date ? new Date(date).toLocaleDateString("vi-VN") : "Không có";
 
-  // Hàm lấy tên SampleType từ sampleTypeId
   const getSampleTypeName = (sampleTypeId) => {
     const sampleType = sampleTypes.find(type => type.id === sampleTypeId);
     return sampleType ? sampleType.sampleType : "Không có";
   };
 
   useEffect(() => {
-    const fetchTestSample = async () => {
+    const fetchData = async () => {
       setLoading(true);
       setError(null);
       try {
-        const response = await axios.get(`http://localhost:8080/api/testSamples/${testSampleId}`);
-        setTestSample(response.data);
+        const sample = await getTestSampleById(testSampleId);
+        const types = await getAllSampleTypes();
+        setTestSample(sample);
+        setSampleTypes(types);
       } catch (err) {
         setError("Không thể lấy thông tin TestSample. Vui lòng thử lại.");
         console.error(err);
@@ -32,17 +33,7 @@ const TestSampleDetail = ({ orderId, testSampleId, serviceType, sampleMethod, on
       }
     };
 
-    const fetchSampleTypes = async () => {
-      try {
-        const response = await axios.get('http://localhost:8080/api/sample-types');
-        setSampleTypes(response.data);
-      } catch (err) {
-        console.error('Lỗi khi lấy danh sách loại mẫu:', err);
-      }
-    };
-
-    fetchTestSample();
-    fetchSampleTypes();
+    fetchData();
   }, [testSampleId]);
 
   const getFieldsToDisplay = () => {
@@ -52,7 +43,7 @@ const TestSampleDetail = ({ orderId, testSampleId, serviceType, sampleMethod, on
         { key: "gender", label: "Giới tính" },
         { key: "dateOfBirth", label: "Ngày sinh", format: formatDate },
         { key: "relationship", label: "Mối quan hệ" },
-        { key: "sampleTypeId", label: "Loại mẫu", format: getSampleTypeName }, // Sử dụng sampleTypeId và format
+        { key: "sampleTypeId", label: "Loại mẫu", format: getSampleTypeName },
       ];
       if (sampleMethod === "home") {
         return [...baseFields, { key: "kitCode", label: "Mã kit" }];
@@ -70,7 +61,7 @@ const TestSampleDetail = ({ orderId, testSampleId, serviceType, sampleMethod, on
         { key: "placeOfIssue", label: "Nơi cấp" },
         { key: "nationality", label: "Quốc tịch" },
         { key: "address", label: "Địa chỉ" },
-        { key: "sampleTypeId", label: "Loại mẫu", format: getSampleTypeName }, // Sử dụng sampleTypeId và format
+        { key: "sampleTypeId", label: "Loại mẫu", format: getSampleTypeName },
         { key: "numberOfSample", label: "Số lượng mẫu" },
         { key: "relationship", label: "Mối quan hệ" },
         { key: "medicalHistory", label: "Có bệnh về máu, truyền máu, ghép tủy trong 6 tháng" },

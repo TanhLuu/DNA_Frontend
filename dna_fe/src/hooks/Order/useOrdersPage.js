@@ -42,28 +42,28 @@ const useOrders = () => {
         const accounts = await Promise.all(accountPromises);
         setAccountData(accounts.reduce((acc, a) => ({ ...acc, [a.customerId]: a }), {}));
 
-        const servicePromises = ordersData.map(order =>
-          order.serviceId
-            ? getServiceById(order.serviceId)
-              .then(service => ({
-                serviceId: order.serviceId,
-                serviceName: service.serviceName || 'Không có',
-                serviceType: service.serviceType || 'Không có',
-                timeTest: service.timeTest || 'Không có',
-              }))
-              .catch(() => ({
-                serviceId: order.serviceId,
-                serviceName: 'Không có',
-                serviceType: 'Không có',
-                timeTest: 'Không có',
-              }))
-            : Promise.resolve({
+        const safeGetService = async (order) => {
+          try {
+            if (!order.serviceId) throw new Error();
+            const service = await getServiceById(order.serviceId);
+            return {
+              serviceId: order.serviceId,
+              serviceName: service.serviceName || 'Không có',
+              serviceType: service.serviceType || 'Không có',
+              timeTest: service.timeTest || 'Không có',
+            };
+          } catch {
+            return {
               serviceId: order.serviceId,
               serviceName: 'Không có',
               serviceType: 'Không có',
               timeTest: 'Không có',
-            })
-        );
+            };
+          }
+        };
+
+        const servicePromises = ordersData.map(safeGetService);
+
         const services = await Promise.all(servicePromises);
         setServiceData(services.reduce((acc, s) => ({ ...acc, [s.serviceId]: s }), {}));
 

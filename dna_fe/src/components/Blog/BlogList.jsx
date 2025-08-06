@@ -56,10 +56,10 @@ const BlogList = () => {
                     />
                   )}
                   <div className="blog-list-card-content">
-    <h2 className="blog-list-card-title">{blog.title}</h2>
-    <p className="blog-list-card-meta">Ngày đăng: {blog.blogDate}</p>
-  </div>
-</Link>
+                    <h2 className="blog-list-card-title">{blog.title}</h2>
+                    
+                  </div>
+                </Link>
               ) : (
                 <div key={blog.id} className="blog-list-card blog-list-card-error">
                   <p>Bài viết không có ID hợp lệ</p>

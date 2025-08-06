@@ -1,0 +1,27 @@
+.status-filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 1rem;
+}
+
+.status-btn {
+  padding: 8px 14px;
+  border: 1px solid #ccc;
+  background: #f8f8f8;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s ease-in-out;
+}
+
+.status-btn:hover {
+  background: #eaeaea;
+}
+
+.status-btn.active {
+  background: #256cea;
+  color: #fff;
+  border-color: #007bff;
+  font-weight: bold;
+}

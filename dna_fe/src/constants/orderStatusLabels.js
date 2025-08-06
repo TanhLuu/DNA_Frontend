@@ -2,7 +2,7 @@
 
 const STATUS_LABELS = {
   CANCEL: "Đã hủy",
-  PENDING: "Đang chờ thanh toán",
+  //PENDING: "Đang chờ thanh toán",
   CONFIRM: "Đặt lịch / Đăng ký",
   SEND_KIT: "Đã gửi kit",
   SEND_SAMPLE: "Đã gửi mẫu lại trung tâm",

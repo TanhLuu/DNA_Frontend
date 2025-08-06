@@ -1,133 +1,136 @@
-/* Container chính */
-.vnpay-container {
-  max-width: 28rem; /* max-w-md */
-  margin: 100px auto 20px;
-  background: white;
-  border-radius: 5px;
-}
-
+/* vnpay-return.css */
 .vnpay-return-page {
-  background: linear-gradient(120deg, #a76dd5, #ea4545);
-  padding: 200px 0;
+  display: flex;
+  justify-content: center;
+  padding: 40px 20px;
+  min-height: calc(100vh - 160px);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* Trạng thái thanh toán pending */
-.vnpay-pending {
+.vnpay-container {
+  background-color: #ffffff;
+  padding: 32px;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  width: 100%;
+  max-width: 520px;
   text-align: center;
 }
 
+/* PENDING */
 .vnpay-pending-icon {
-  font-size: 1.5rem; /* text-2xl */
-  margin-bottom: 1rem; /* mb-4 */
+  font-size: 48px;
+  color: #f39c12;
+  margin-bottom: 12px;
 }
-
 .vnpay-pending-title {
-  font-size: 1.125rem; /* text-lg */
+  font-size: 20px;
+  color: #e67e22;
+  font-weight: 600;
 }
 
-/* Trạng thái thanh toán thành công */
+/* SUCCESS */
 .vnpay-success-container {
-  border: 1px solid white; /* border-green-500 */
-  padding: 1rem; /* p-4 */
-  border-radius: 0.25rem; /* rounded */
+  color: #2ecc71;
 }
-
 .vnpay-success-icon {
-  font-size: 1.875rem; /* text-3xl */
-  color: #22c55e; /* text-green-500 */
-  text-align: center;
+  font-size: 48px;
+  margin-bottom: 12px;
 }
-
 .vnpay-success-title {
-  text-align: center;
-  font-size: 1.125rem; /* text-lg */
-  margin-bottom: 1rem; /* mb-4 */
+  font-size: 22px;
+  font-weight: 700;
+  color: #27ae60;
+  margin-bottom: 20px;
 }
-
 .vnpay-success-details {
-  margin-bottom: 1rem; /* mb-4 */
+  color: #2c3e50;
+  text-align: left;
+  margin-top: 12px;
+  margin-bottom: 20px;
 }
 
-/* Trạng thái thanh toán thất bại */
+/* FAILED */
 .vnpay-failed-container {
-  border: 1px solid white; /* border-red-500 */
-  padding: 1rem; /* p-4 */
-  border-radius: 0.25rem; /* rounded */
+  color: #e74c3c;
 }
-
 .vnpay-failed-icon {
-  font-size: 1.875rem; /* text-3xl */
-  color: #ef4444; /* text-red-500 */
-  text-align: center;
+  font-size: 48px;
+  margin-bottom: 12px;
 }
-
 .vnpay-failed-title {
-  text-align: center;
-  font-size: 1.125rem; /* text-lg */
-  margin-bottom: 1rem; /* mb-4 */
+  font-size: 22px;
+  font-weight: 700;
+  color: #c0392b;
+  margin-bottom: 10px;
 }
-
 .vnpay-failed-message {
-  color: #ef4444; /* text-red-500 */
-  text-align: center;
-  margin-bottom: 1rem; /* mb-4 */
+  font-size: 16px;
+  margin-bottom: 16px;
 }
-
 .vnpay-failed-details {
-  margin-bottom: 1rem; /* mb-4 */
+  color: #2c3e50;
+  text-align: left;
+  margin-top: 12px;
+  margin-bottom: 20px;
 }
 
-/* Trạng thái thông tin thanh toán */
+/* INFO */
 .vnpay-info-container {
-  border: 1px solid #3b82f6; /* border-blue-500 */
-  padding: 1rem; /* p-4 */
-  border-radius: 0.25rem; /* rounded */
+  color: #3498db;
 }
-
 .vnpay-info-icon {
-  font-size: 1.875rem; /* text-3xl */
-  color: #3b82f6; /* text-blue-500 */
-  text-align: center;
+  font-size: 36px;
+  margin-bottom: 10px;
 }
-
 .vnpay-info-title {
-  text-align: center;
-  font-size: 1.125rem; /* text-lg */
-  margin-bottom: 1rem; /* mb-4 */
+  font-size: 22px;
+  font-weight: 700;
+  color: #2980b9;
+  margin-bottom: 14px;
 }
-
 .vnpay-info-details {
-  margin-bottom: 1rem; /* mb-4 */
+  color: #2c3e50;
+  text-align: left;
+  margin-top: 12px;
+  margin-bottom: 20px;
 }
 
-/* Nút điều hướng */
+/* Button Group */
 .vnpay-button-group {
   display: flex;
-  gap: 1rem; /* gap-4 */
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
-.vnpay-button-primary {
-  flex: 1;
-  background-color: #2563eb; /* bg-blue-600 */
-  color: white;
-  padding: 0.5rem 1rem; /* py-2 px-4 */
-  border-radius: 0.25rem; /* rounded */
-  text-align: center;
-}
-
-.vnpay-button-primary:hover {
-  background-color: #1d4ed8; /* hover:bg-blue-700 */
-}
-
+/* Buttons */
+.vnpay-button-primary,
 .vnpay-button-secondary {
-  flex: 1;
-  background-color: #6b7280; /* bg-gray-500 */
-  color: white;
-  padding: 0.5rem 1rem; /* py-2 px-4 */
-  border-radius: 0.25rem; /* rounded */
-  text-align: center;
+  padding: 12px 20px;
+  font-size: 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  min-width: 140px;
+  border: none;
 }
 
+/* Primary = xanh lá cho success hoặc đỏ cho retry */
+.vnpay-button-primary {
+  background-color: #27ae60;
+  color: #fff;
+}
+.vnpay-button-primary:hover {
+  background-color: #219150;
+}
+
+/* Secondary = về trang chủ */
+.vnpay-button-secondary {
+  background-color: #ecf0f1;
+  color: #2c3e50;
+}
 .vnpay-button-secondary:hover {
-  background-color: #4b5563; /* hover:bg-gray-600 */
+  background-color: #d0d7dc;
 }

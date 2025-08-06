@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
-import {getAccountByCustomerId, getOrdersByCustomerId } from '../../api/customerOrderApi';
-import { getServiceById } from '../../api/customerOrderApi';
+import {getAccountByCustomerId, getOrdersByCustomerId , getServiceById } from '../../api/customerOrderApi';
 
 const useCustomerOrders = () => {
   const [orders, setOrders] = useState([]);
@@ -31,7 +30,7 @@ const useCustomerOrders = () => {
 
         const servicePromises = ordersData.map(async (order) => {
           try {
-            const service = await getServiceById(order.serviceId); // ✅ không cần `.data` nữa
+            const service = await getServiceById(order.serviceId); 
             return {
               serviceId: order.serviceId,
               serviceName: service.serviceName || 'Không có',

@@ -1,132 +1,174 @@
+/* === Container & Card === */
 .service-container {
-  background-color: #f5f8fc;
-  padding: 30px;
+  padding: 20px;
+  background: #f7f9fc;
   min-height: 100vh;
+  font-family: 'Segoe UI', sans-serif;
 }
 
 .service-card {
-  background: white;
+  background: #fff;
+  border-radius: 12px;
   padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
 }
 
+/* === Header === */
 .service-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #0080ff;
-  color: white;
-  padding: 10px 20px;
-  border-radius: 6px;
-  font-weight: bold;
-  margin-bottom: 15px;
+  margin-bottom: 20px;
 }
 
-.add-button {
-  background-color: #e0e0e0;
+.service-header span {
+  font-size: 22px;
+  font-weight: bold;
+  color: #333;
+}
+
+/* === Buttons === */
+.service-btn-add {
+  background: #007bff;
+  color: #fff;
   border: none;
-  padding: 6px 12px;
-  border-radius: 4px;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 14px;
   cursor: pointer;
-  font-weight: bold;
+  transition: all 0.2s ease;
 }
 
-.search-bar {
+.service-btn-add:hover {
+  background: #0056b3;
+}
+
+/* === Search Bar === */
+.service-search-bar {
   display: flex;
   align-items: center;
+  gap: 8px;
+  background: #f1f3f5;
+  padding: 8px 12px;
+  border-radius: 8px;
   margin-bottom: 15px;
 }
 
-.search-bar input {
-  padding: 6px 10px;
-  width: 250px;
-  border-radius: 4px;
-  border: 1px solid #ccc;
-  margin-left: 5px;
-}
-
-.service-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.service-table th,
-.service-table td {
-  border: 1px solid #ddd;
-  padding: 12px;
-  text-align: left;
-}
-
-.service-table th {
-  background-color: #f1f1f1;
-  font-weight: bold;
-}
-
-.edit-btn {
-  background-color: #ffc107;
-  color: black;
+.service-search-bar input {
+  flex: 1;
   border: none;
-  padding: 6px 12px;
-  margin-right: 5px;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.delete-btn {
-  background-color: #dc3545;
-  color: white;
-  border: none;
-  padding: 6px 12px;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-/* Nút hành động chung */
-.service-btn {
-  padding: 6px 10px;
-  border-radius: 6px;
-  margin-right: 5px;
-  border: none;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
+  outline: none;
+  background: transparent;
   font-size: 14px;
 }
 
-/* Nút Chi tiết */
+/* === Table === */
+.service-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.service-table thead {
+  background: #f5f6fa;
+}
+
+.service-table th, 
+.service-table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+
+.service-table th {
+  font-weight: 600;
+  color: #444;
+}
+
+.service-table tbody tr:hover {
+  background: #f9fbff;
+  transition: background 0.2s;
+}
+
+/* === Action Buttons === */
+.service-btn {
+  padding: 6px 10px;
+  border: none;
+  border-radius: 6px;
+  margin-right: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* Chi tiết */
 .service-detail-btn {
-  background-color: #e0f0ff;
-  border: 1px solid #2196f3;
-  color: #0d47a1;
+  background: #17a2b8;
+  color: #fff;
 }
 
 .service-detail-btn:hover {
-  background-color: #bbdefb;
+  background: #117a8b;
 }
 
-/* Nút Sửa */
+/* Sửa */
 .service-edit-btn {
-  background-color: #ffe082;
-  color: #8d6e63;
+  background: #ffc107;
+  color: #333;
 }
 
 .service-edit-btn:hover {
-  background-color: #ffd54f;
+  background: #e0a800;
 }
 
-/* Nút Xóa */
+/* Xóa */
 .service-delete-btn {
-  background-color: #ef9a9a;
-  color: #b71c1c;
+  background: #dc3545;
+  color: #fff;
 }
 
 .service-delete-btn:hover {
-  background-color: #e57373;
+  background: #b52a36;
 }
 
-/* Khi disable */
+/* Disabled button */
 .service-btn:disabled {
-  background-color: #ccc !important;
-  color: #666 !important;
-  cursor: not-allowed !important;
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* === Empty State === */
+.service-table td[colspan="5"] {
+  color: #777;
+  font-style: italic;
+  padding: 20px;
+}
+
+/* === Loading Text === */
+.service-card p {
+  text-align: center;
+  color: #555;
+}
+
+/* === Responsive === */
+@media (max-width: 768px) {
+  .service-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .service-btn-add {
+    width: 100%;
+  }
+
+  .service-table th, 
+  .service-table td {
+    padding: 10px;
+    font-size: 13px;
+  }
+
+  .service-btn {
+    margin-bottom: 5px;
+  }
 }

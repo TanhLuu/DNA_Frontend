@@ -34,10 +34,7 @@ const usePayment = () => {
   }, [location.state]);
 
   const handlePayment = async () => {
-    if (!orderId || !customerId || !amount) {
-      setError('Vui lòng nhập đầy đủ thông tin!');
-      return;
-    }
+    
 
     setLoading(true);
     setError('');
@@ -60,27 +57,14 @@ const usePayment = () => {
 
       const response = await createVNPayPayment(paymentData);
 
-      if (response.paymentUrl) {
+      if (response?.paymentUrl) {
         window.location.href = response.paymentUrl;
       } else {
         setError('Không nhận được link thanh toán từ server.');
       }
     } catch (error) {
       console.error('Lỗi thanh toán:', error);
-      if (error.response) {
-        if (error.response.status === 403) {
-          setError('Truy cập bị từ chối. Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại.');
-          setTimeout(() => navigate('/login'), 2000);
-        } else if (error.response.status === 404) {
-          setError('Không tìm thấy API thanh toán. Vui lòng kiểm tra URL kết nối.');
-        } else {
-          setError(`Lỗi máy chủ: ${error.response.data?.error || error.response.status}`);
-        }
-      } else if (error.request) {
-        setError('Không nhận được phản hồi từ máy chủ thanh toán. Vui lòng kiểm tra kết nối mạng.');
-      } else {
-        setError(`Lỗi kết nối: ${error.message}`);
-      }
+      setError('Đã xảy ra lỗi khi gửi yêu cầu thanh toán.');
     } finally {
       setLoading(false);
     }

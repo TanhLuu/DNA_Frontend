@@ -3,7 +3,7 @@ import useVNPayReturn from '../../hooks/payment/useVNPayReturn';
 import '../../styles/payment/vnpay-return.css';
 
 const VNPayReturnPage = () => {
-  const { paymentStatus, message, paymentData, goToHome, goToOrderHistory, retryPayment, testAgain } = useVNPayReturn();
+  const { paymentStatus, message, paymentData, goToHome, goToOrderHistory, retryPayment } = useVNPayReturn();
 
   return (
     <div className="vnpay-return-page">
@@ -56,30 +56,6 @@ const VNPayReturnPage = () => {
             <div className="vnpay-button-group">
               <button onClick={retryPayment} className="vnpay-button-primary">
                 Thử lại
-              </button>
-              <button onClick={goToHome} className="vnpay-button-secondary">
-                Về trang chủ
-              </button>
-            </div>
-          </div>
-        )}
-
-        {paymentStatus === 'info' && (
-          <div className="vnpay-info-container">
-            <div className="vnpay-info-icon">i</div>
-            <h2 className="vnpay-info-title">Thông tin thanh toán</h2>
-            {paymentData && (
-              <div className="vnpay-info-details">
-                <p><strong>Thông tin giao dịch gần nhất:</strong></p>
-                {paymentData.transactionId && <p><strong>Mã giao dịch:</strong> {paymentData.transactionId}</p>}
-                {paymentData.amount && <p><strong>Số tiền:</strong> {paymentData.amount?.toLocaleString('vi-VN')} VNĐ</p>}
-                {paymentData.bankCode && <p><strong>Ngân hàng:</strong> {paymentData.bankCode}</p>}
-                {paymentData.paymentTime && <p><strong>Thời gian:</strong> {paymentData.paymentTime}</p>}
-              </div>
-            )}
-            <div className="vnpay-button-group">
-              <button onClick={testAgain} className="vnpay-button-primary">
-                Test thanh toán
               </button>
               <button onClick={goToHome} className="vnpay-button-secondary">
                 Về trang chủ

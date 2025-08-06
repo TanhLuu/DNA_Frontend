@@ -1,31 +1,100 @@
+/* === Container === */
 .rating-feedback-container {
   padding: 20px;
-  max-width: 1200px;
-  margin: 0 auto;
+  background: #f7f9fc;
+  min-height: 100vh;
+  font-family: 'Segoe UI', sans-serif;
 }
 
+.rating-feedback-container h2 {
+  text-align: center;
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+/* === Table === */
 .rating-feedback-table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 20px;
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  font-size: 14px;
+}
+
+.rating-feedback-table thead {
+  background: #f1f3f5;
 }
 
 .rating-feedback-table th,
 .rating-feedback-table td {
-  border: 1px solid #ddd;
-  padding: 8px;
+  padding: 12px 14px;
   text-align: left;
+  border-bottom: 1px solid #eee;
 }
 
 .rating-feedback-table th {
-  background-color: #f2f2f2;
+  font-weight: 600;
+  color: #444;
+  text-transform: uppercase;
+  font-size: 13px;
+  letter-spacing: 0.5px;
+}
+
+.rating-feedback-table tbody tr:hover {
+  background: #f9fbff;
+  transition: background 0.2s ease-in-out;
+}
+
+/* === Empty state === */
+.rating-feedback-container p {
+  text-align: center;
+  color: #666;
+  font-style: italic;
+  margin-top: 20px;
+}
+
+/* === Loading & Error === */
+.rating-feedback-container > div {
+  text-align: center;
+  font-size: 16px;
+  color: #555;
+  margin-top: 30px;
+}
+
+/* === Rating highlight === */
+.rating-feedback-table td:nth-child(4) {
   font-weight: bold;
+  color: #ff9800; /* màu vàng nổi bật cho điểm đánh giá */
 }
 
-.rating-feedback-table tr:nth-child(even) {
-  background-color: #f9f9f9;
+/* === Comment column === */
+.rating-feedback-table td:nth-child(5) {
+  color: #555;
+  font-style: italic;
+  max-width: 300px;
+  white-space: pre-wrap;
+  word-break: break-word;
 }
 
-.rating-feedback-table tr:hover {
-  background-color: #f1f1f1;
+/* === Date column === */
+.rating-feedback-table td:nth-child(6) {
+  color: #777;
+  font-size: 13px;
+}
+
+/* === Responsive === */
+@media (max-width: 768px) {
+  .rating-feedback-table th,
+  .rating-feedback-table td {
+    padding: 10px;
+    font-size: 13px;
+  }
+
+  .rating-feedback-container h2 {
+    font-size: 20px;
+  }
 }
